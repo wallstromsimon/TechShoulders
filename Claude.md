@@ -7,7 +7,7 @@ TechShoulders is an "IMDb for tech pioneers" — a static-first site with an exp
 ## Tech stack
 
 - **Framework:** Astro (static output)
-- **Package manager:** pnpm
+- **Package manager:** pnpm (NEVER use npm or yarn)
 - **Hosting:** Cloudflare Pages
 - **Graph:** Cytoscape.js (React island)
 - **Search:** Fuse.js (client-side fuzzy search)
