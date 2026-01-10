@@ -42,6 +42,32 @@ Two edge categories:
 - Include license and attribution fields in frontmatter
 - Display attribution on the site
 
+## Development commands
+
+```bash
+pnpm install    # Install dependencies
+pnpm dev        # Start dev server
+pnpm build      # Build for production
+pnpm preview    # Preview production build
+```
+
+## Key files
+
+- `src/content/config.ts` — Collection schemas (Zod validation)
+- `src/lib/data.ts` — Data loading helpers (findNodeById, listNodes, etc.)
+- `src/pages/node/[id].astro` — Unified node renderer for all types
+- `src/components/NodeAttribution.astro` — Image attribution display
+
+## Adding content
+
+Create MDX files in `src/content/{people,works,institutions}/`. Required frontmatter:
+
+**People:** id, name, era
+**Works:** id, name, kind, year
+**Institutions:** id, name, kind
+
+Optional `image` object: `{ url, source, license, author }`
+
 ## Development guidelines
 
 - Keep it simple and scalable
