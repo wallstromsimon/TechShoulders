@@ -1,4 +1,4 @@
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type NodeKind = 'people' | 'works' | 'institutions';
 export type EdgeKind = 'influence' | 'affiliation';
@@ -104,7 +104,7 @@ export async function buildSearchIndex(): Promise<SearchableNode[]> {
       subtitle: person.data.title,
       domains: person.data.domains || [],
       era: person.data.era,
-      imageUrl: person.data.image?.url,
+      imageUrl: person.data.image?.file.src,
     });
   }
 

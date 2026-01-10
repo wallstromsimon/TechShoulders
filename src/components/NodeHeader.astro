@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import type { NodeKind } from '../lib/data';
 import { getKindLabel } from '../lib/data';
 
@@ -7,7 +9,7 @@ interface Props {
   kind: NodeKind;
   meta?: string;
   image?: {
-    url: string;
+    file: ImageMetadata;
     source: string;
     license: string;
     author: string;
@@ -25,7 +27,7 @@ const kindLabel = getKindLabel(kind);
 
   {image && (
     <figure class="node-image">
-      <img src={image.url} alt={name} loading="lazy" />
+      <Image src={image.file} alt={name} width={800} loading="lazy" />
     </figure>
   )}
 </header>
