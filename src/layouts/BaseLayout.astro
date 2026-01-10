@@ -15,7 +15,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const siteUrl = 'https://techshoulders.com';
+const siteUrl = 'https://techshoulders.kihlbergwallstrom.com';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 const ogImage = image || `${siteUrl}/og-default.png`;
 const fullTitle = title === 'Home' ? 'TechShoulders' : `${title} | TechShoulders`;
