@@ -3,7 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import NodeHeader from '../../components/NodeHeader.astro';
 import NodeAttribution from '../../components/NodeAttribution.astro';
 import NodeLinks from '../../components/NodeLinks.astro';
-import { getAllNodeIds, findNodeById, type PersonEntry, type WorkEntry, type InstitutionEntry } from '../../lib/data';
+import NodeCard from '../../components/NodeCard.astro';
+import { getAllNodeIds, findNodeById, loadAll, type PersonEntry, type WorkEntry, type InstitutionEntry } from '../../lib/data';
 
 export async function getStaticPaths() {
   const ids = await getAllNodeIds();
@@ -20,20 +21,52 @@ if (!result) {
 const { kind, entry } = result;
 const { Content } = await entry.render();
 
+// Load all data for related items lookup
+const allData = await loadAll();
+
 // Build meta string based on kind
 let meta = '';
+let domains: string[] = [];
+
 if (kind === 'people') {
   const person = entry as PersonEntry;
   meta = person.data.era;
+  domains = person.data.domains || [];
 } else if (kind === 'works') {
   const work = entry as WorkEntry;
   meta = `${work.data.kind} · ${work.data.year}`;
+  domains = work.data.domains || [];
 } else if (kind === 'institutions') {
   const inst = entry as InstitutionEntry;
   meta = inst.data.kind;
   if (inst.data.location) {
     meta += ` · ${inst.data.location}`;
   }
+}
+
+// Get signature works for person pages
+let signatureWorks: WorkEntry[] = [];
+if (kind === 'people') {
+  const person = entry as PersonEntry;
+  const workIds = person.data.signatureWorks || [];
+  signatureWorks = allData.works.filter(w => workIds.includes(w.data.id));
+}
+
+// Get related institutions (manual links based on content for now)
+// This is a simple approach - in the future, we could add explicit institution links in the schema
+let relatedInstitutions: InstitutionEntry[] = [];
+if (kind === 'people') {
+  // For now, show all institutions as potentially related (manual curation in future)
+  relatedInstitutions = allData.institutions;
+}
+
+// For works and institutions, find related people
+let relatedPeople: PersonEntry[] = [];
+if (kind === 'works') {
+  const work = entry as WorkEntry;
+  relatedPeople = allData.people.filter(p =>
+    p.data.signatureWorks?.includes(work.data.id)
+  );
 }
 ---
 
@@ -45,25 +78,57 @@ if (kind === 'people') {
     image={entry.data.image}
   />
 
+  {domains.length > 0 && (
+    <div class="domains">
+      {domains.map(domain => (
+        <a href={`/browse?domain=${encodeURIComponent(domain)}`} class="domain-link">
+          {domain}
+        </a>
+      ))}
+    </div>
+  )}
+
   <article class="content">
     <Content />
   </article>
 
-  {kind === 'people' && (entry as PersonEntry).data.signatureWorks && (
-    <section class="signature-works">
-      <h3>Signature Works</h3>
-      <ul>
-        {(entry as PersonEntry).data.signatureWorks!.map(workId => (
-          <li><a href={`/node/${workId}`}>{workId}</a></li>
+  {kind === 'people' && signatureWorks.length > 0 && (
+    <section class="related-section">
+      <h2>Signature Works</h2>
+      <div class="related-grid">
+        {signatureWorks.map(work => (
+          <NodeCard entry={work} kind="works" variant="compact" />
         ))}
-      </ul>
+      </div>
+    </section>
+  )}
+
+  {kind === 'people' && relatedInstitutions.length > 0 && (
+    <section class="related-section">
+      <h2>Related Institutions</h2>
+      <div class="related-grid">
+        {relatedInstitutions.map(inst => (
+          <NodeCard entry={inst} kind="institutions" variant="compact" />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {kind === 'works' && relatedPeople.length > 0 && (
+    <section class="related-section">
+      <h2>Key Contributors</h2>
+      <div class="related-grid">
+        {relatedPeople.map(person => (
+          <NodeCard entry={person} kind="people" variant="compact" />
+        ))}
+      </div>
     </section>
   )}
 
   {kind === 'people' && (entry as PersonEntry).data.whyYouCare && (
     <section class="why-care">
-      <h3>Why You Should Care</h3>
-      <ul>
+      <h2>Why You Should Care</h2>
+      <ul class="reasons">
         {(entry as PersonEntry).data.whyYouCare!.map(reason => (
           <li>{reason}</li>
         ))}
@@ -77,6 +142,33 @@ if (kind === 'people') {
 </BaseLayout>
 
 <style>
+  .domains {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .domain-link {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .domain-link:hover {
+    background: var(--color-link);
+    color: white;
+    border-color: var(--color-link);
+    text-decoration: none;
+  }
+
   .content {
     margin-top: 1.5rem;
   }
@@ -85,21 +177,77 @@ if (kind === 'people') {
     margin-bottom: 1rem;
   }
 
-  .signature-works,
-  .why-care {
-    margin-top: 1.5rem;
+  .content :global(h2) {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
   }
 
-  .signature-works h3,
-  .why-care h3 {
-    font-size: 1rem;
+  .content :global(ul),
+  .content :global(ol) {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  .content :global(li) {
     margin-bottom: 0.5rem;
   }
 
-  .signature-works ul,
-  .why-care ul {
-    list-style: disc;
-    padding-left: 1.5rem;
+  .related-section {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .related-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .why-care {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .why-care h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .reasons {
+    list-style: none;
+    padding: 0;
     margin: 0;
+  }
+
+  .reasons li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .reasons li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--color-link);
+    font-weight: bold;
+  }
+
+  @media (max-width: 600px) {
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

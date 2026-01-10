@@ -1,41 +1,276 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import NodeCard from '../components/NodeCard.astro';
 import { loadAll } from '../lib/data';
 
 const { people, works, institutions } = await loadAll();
+const totalCount = people.length + works.length + institutions.length;
+
+// Get featured items (first of each)
+const featuredPerson = people[0];
+const featuredWorks = works.slice(0, 2);
 ---
 
 <BaseLayout title="Home">
-  <h1>TechShoulders</h1>
-  <p>Standing on the shoulders of tech giants. Explore the people, works, and institutions that shaped modern technology.</p>
-
-  <section class="overview">
-    <div class="card">
-      <h3><a href="/people">People</a></h3>
-      <p class="meta">{people.length} {people.length === 1 ? 'person' : 'people'}</p>
-      <p>The visionaries and engineers who created foundational technologies.</p>
+  <div class="hero">
+    <h1>TechShoulders</h1>
+    <p class="tagline">Standing on the shoulders of tech giants.</p>
+    <p class="description">
+      Explore the people, works, and institutions that shaped modern technology.
+      A collectible directory of the pioneers who built the digital world.
+    </p>
+    <div class="hero-actions">
+      <a href="/browse" class="btn-primary">Browse Collection</a>
+      <span class="stat">{totalCount} items to discover</span>
     </div>
+  </div>
 
-    <div class="card">
-      <h3><a href="/works">Works</a></h3>
-      <p class="meta">{works.length} {works.length === 1 ? 'work' : 'works'}</p>
-      <p>Projects, tools, and systems that changed how we build software.</p>
-    </div>
+  <section class="category-overview">
+    <a href="/people" class="category-card people">
+      <div class="category-icon">P</div>
+      <div class="category-info">
+        <h3>People</h3>
+        <span class="count">{people.length}</span>
+      </div>
+      <p>Visionaries and engineers who created foundational technologies</p>
+    </a>
 
-    <div class="card">
-      <h3><a href="/institutions">Institutions</a></h3>
-      <p class="meta">{institutions.length} {institutions.length === 1 ? 'institution' : 'institutions'}</p>
-      <p>Universities, labs, and organizations where innovation happened.</p>
-    </div>
+    <a href="/works" class="category-card works">
+      <div class="category-icon">W</div>
+      <div class="category-info">
+        <h3>Works</h3>
+        <span class="count">{works.length}</span>
+      </div>
+      <p>Projects, tools, and systems that changed software</p>
+    </a>
+
+    <a href="/institutions" class="category-card institutions">
+      <div class="category-icon">I</div>
+      <div class="category-info">
+        <h3>Institutions</h3>
+        <span class="count">{institutions.length}</span>
+      </div>
+      <p>Universities, labs, and organizations where innovation happened</p>
+    </a>
   </section>
+
+  {featuredPerson && (
+    <section class="featured-section">
+      <h2>Featured Pioneer</h2>
+      <div class="featured-grid">
+        <NodeCard entry={featuredPerson} kind="people" variant="featured" />
+      </div>
+    </section>
+  )}
+
+  {featuredWorks.length > 0 && (
+    <section class="featured-section">
+      <h2>Notable Works</h2>
+      <div class="featured-grid wide">
+        {featuredWorks.map(work => (
+          <NodeCard entry={work} kind="works" />
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>
 
 <style>
-  h1 {
+  .hero {
+    text-align: center;
+    padding: 2rem 0 3rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .tagline {
+    font-size: 1.25rem;
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+  }
+
+  .description {
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
+    color: var(--color-text);
+    line-height: 1.6;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--color-link);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-primary:hover {
+    background: #0052a3;
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+
+  .stat {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+
+  .category-overview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .category-card {
+    display: block;
+    padding: 1.25rem;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+  }
+
+  .category-card.people {
+    border-top: 3px solid #e74c3c;
+  }
+
+  .category-card.people:hover {
+    border-color: #e74c3c;
+  }
+
+  .category-card.works {
+    border-top: 3px solid #3498db;
+  }
+
+  .category-card.works:hover {
+    border-color: #3498db;
+  }
+
+  .category-card.institutions {
+    border-top: 3px solid #27ae60;
+  }
+
+  .category-card.institutions:hover {
+    border-color: #27ae60;
+  }
+
+  .category-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .category-card.people .category-icon {
+    background: #fce4e4;
+    color: #c0392b;
+  }
+
+  .category-card.works .category-icon {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  .category-card.institutions .category-icon {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .category-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 0.5rem;
   }
 
-  .overview {
-    margin-top: 2rem;
+  .category-info h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .count {
+    background: var(--color-bg);
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+
+  .category-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    line-height: 1.4;
+  }
+
+  .featured-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .featured-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 400px;
+  }
+
+  .featured-grid.wide {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    max-width: none;
+  }
+
+  @media (max-width: 700px) {
+    .category-overview {
+      grid-template-columns: 1fr;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .featured-grid {
+      max-width: none;
+    }
   }
 </style>

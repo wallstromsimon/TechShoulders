@@ -69,3 +69,77 @@ export function getKindPluralLabel(kind: NodeKind): string {
   };
   return labels[kind];
 }
+
+export interface SearchableNode {
+  id: string;
+  name: string;
+  kind: NodeKind;
+  subtitle?: string;
+  domains: string[];
+  era?: string;
+  year?: number;
+  location?: string;
+  imageUrl?: string;
+}
+
+export async function buildSearchIndex(): Promise<SearchableNode[]> {
+  const { people, works, institutions } = await loadAll();
+
+  const nodes: SearchableNode[] = [];
+
+  for (const person of people) {
+    nodes.push({
+      id: person.data.id,
+      name: person.data.name,
+      kind: 'people',
+      subtitle: person.data.title,
+      domains: person.data.domains || [],
+      era: person.data.era,
+      imageUrl: person.data.image?.url,
+    });
+  }
+
+  for (const work of works) {
+    nodes.push({
+      id: work.data.id,
+      name: work.data.name,
+      kind: 'works',
+      subtitle: work.data.kind,
+      domains: work.data.domains || [],
+      year: work.data.year,
+    });
+  }
+
+  for (const institution of institutions) {
+    nodes.push({
+      id: institution.data.id,
+      name: institution.data.name,
+      kind: 'institutions',
+      subtitle: institution.data.kind,
+      domains: [],
+      location: institution.data.location,
+    });
+  }
+
+  return nodes;
+}
+
+export function getAllDomains(nodes: SearchableNode[]): string[] {
+  const domains = new Set<string>();
+  for (const node of nodes) {
+    for (const domain of node.domains) {
+      domains.add(domain);
+    }
+  }
+  return Array.from(domains).sort();
+}
+
+export function getAllEras(nodes: SearchableNode[]): string[] {
+  const eras = new Set<string>();
+  for (const node of nodes) {
+    if (node.era) {
+      eras.add(node.era);
+    }
+  }
+  return Array.from(eras).sort();
+}
