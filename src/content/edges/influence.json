@@ -1,0 +1,14 @@
+[
+  {
+    "source": "linus-torvalds",
+    "target": "linux-kernel",
+    "kind": "influence",
+    "label": "created"
+  },
+  {
+    "source": "linus-torvalds",
+    "target": "git",
+    "kind": "influence",
+    "label": "created"
+  }
+]

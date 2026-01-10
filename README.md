@@ -55,6 +55,7 @@ All content is stored in the repo (content-as-code):
 - **Framework:** Astro (static output)
 - **Package manager:** pnpm
 - **Hosting:** Cloudflare Pages
+- **Graph visualization:** Cytoscape.js (React island)
 - **Architecture:**
   - Content collections + schema validation
   - Build-time indexes for search/graph data
@@ -92,28 +93,41 @@ The site is fully static and requires no server-side runtime.
 
 ```
 src/
-├── content/           # Content collections (MDX files)
+├── content/           # Content collections
 │   ├── config.ts      # Collection schemas
-│   ├── people/        # Person profiles
-│   ├── works/         # Project/tool entries
-│   └── institutions/  # University/lab/org entries
-├── components/        # Reusable Astro components
+│   ├── people/        # Person profiles (MDX)
+│   ├── works/         # Project/tool entries (MDX)
+│   ├── institutions/  # University/lab/org entries (MDX)
+│   └── edges/         # Relationship data (JSON)
+├── components/        # Reusable components (Astro + React)
 ├── layouts/           # Page layouts
 ├── lib/               # Data loading utilities
 └── pages/             # Route pages
     ├── index.astro
+    ├── browse.astro
+    ├── graph.astro      # Interactive influence graph
     ├── people/
     ├── works/
     ├── institutions/
     └── node/[id].astro  # Unified node renderer
 ```
 
-## Phase 1 content
+## Current content
 
-The initial seed content includes:
+The seed content includes:
 
 - **Person:** Linus Torvalds
 - **Works:** Linux kernel, Git
 - **Institutions:** University of Helsinki, Open Source Development Labs
+- **Edges:** Influence (created) and affiliation (studied at, fellow at) relationships
 
 All nodes include Wikimedia Commons images with proper license attribution.
+
+## Features
+
+- **Browse:** Search and filter nodes by type, domain, and era
+- **Graph:** Interactive influence visualization with Cytoscape.js
+  - Toggle between "Influence only" and "Include affiliations"
+  - Click nodes to navigate to detail pages
+  - Color-coded by node type
+- **Node pages:** Detailed profiles with related items and external links

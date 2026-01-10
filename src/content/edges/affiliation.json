@@ -1,0 +1,14 @@
+[
+  {
+    "source": "linus-torvalds",
+    "target": "university-of-helsinki",
+    "kind": "affiliation",
+    "label": "studied at"
+  },
+  {
+    "source": "linus-torvalds",
+    "target": "open-source-development-labs",
+    "kind": "affiliation",
+    "label": "fellow at"
+  }
+]

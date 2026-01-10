@@ -12,6 +12,18 @@ const linksSchema = z.array(z.object({
   url: z.string(),
 })).optional();
 
+const edgeSchema = z.object({
+  source: z.string(),
+  target: z.string(),
+  kind: z.enum(['influence', 'affiliation']),
+  label: z.string().optional(),
+});
+
+const edges = defineCollection({
+  type: 'data',
+  schema: z.array(edgeSchema),
+});
+
 const people = defineCollection({
   type: 'content',
   schema: z.object({
@@ -56,4 +68,5 @@ export const collections = {
   people,
   works,
   institutions,
+  edges,
 };

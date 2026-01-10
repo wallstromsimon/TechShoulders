@@ -9,6 +9,8 @@ TechShoulders is an "IMDb for tech pioneers" — a static-first site with an exp
 - **Framework:** Astro (static output)
 - **Package manager:** pnpm
 - **Hosting:** Cloudflare Pages
+- **Graph:** Cytoscape.js (React island)
+- **Search:** Fuse.js (client-side fuzzy search)
 - **No backend for MVP**
 
 ## Architecture principles
@@ -21,13 +23,15 @@ TechShoulders is an "IMDb for tech pioneers" — a static-first site with an exp
 
 ## Content structure
 
-Three node types:
+Three node types (MDX files in `src/content/`):
 
-1. **People** — Markdown/MDX files with frontmatter (e.g., Linus Torvalds)
+1. **People** — tech pioneers (e.g., Linus Torvalds)
 2. **Works** — projects, papers, standards, languages, books (e.g., Linux kernel, Git)
 3. **Institutions** — universities, companies, labs, standards bodies
 
-Edges are stored as JSON files in the repo.
+Edges are stored as JSON arrays in `src/content/edges/`:
+- `influence.json` — "created", "invented", "built on" relationships
+- `affiliation.json` — "studied at", "worked at", "fellow at" relationships
 
 ## Graph model
 
@@ -54,8 +58,10 @@ pnpm preview    # Preview production build
 ## Key files
 
 - `src/content/config.ts` — Collection schemas (Zod validation)
-- `src/lib/data.ts` — Data loading helpers (findNodeById, listNodes, etc.)
+- `src/lib/data.ts` — Data loading helpers (findNodeById, listNodes, loadAllEdges, buildGraphData, etc.)
 - `src/pages/node/[id].astro` — Unified node renderer for all types
+- `src/pages/graph.astro` — Interactive influence graph page
+- `src/components/InfluenceGraph.tsx` — React island for Cytoscape.js graph
 - `src/components/NodeAttribution.astro` — Image attribution display
 
 ## Adding content
@@ -67,6 +73,21 @@ Create MDX files in `src/content/{people,works,institutions}/`. Required frontma
 **Institutions:** id, name, kind
 
 Optional `image` object: `{ url, source, license, author }`
+
+## Adding edges
+
+Add entries to JSON arrays in `src/content/edges/`:
+
+```json
+{
+  "source": "person-id",
+  "target": "work-id",
+  "kind": "influence",
+  "label": "created"
+}
+```
+
+Edge kinds: `influence` (solid lines) or `affiliation` (dashed lines)
 
 ## Development guidelines
 
