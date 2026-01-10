@@ -13,6 +13,7 @@ export interface Edge {
 export type PersonEntry = CollectionEntry<'people'>;
 export type WorkEntry = CollectionEntry<'works'>;
 export type InstitutionEntry = CollectionEntry<'institutions'>;
+export type PackEntry = CollectionEntry<'packs'>;
 
 export type AnyEntry = PersonEntry | WorkEntry | InstitutionEntry;
 
@@ -182,6 +183,62 @@ export async function buildGraphData(includeAffiliations: boolean = true): Promi
   const edges = includeAffiliations
     ? allEdges
     : allEdges.filter(e => e.kind === 'influence');
+
+  return { nodes, edges };
+}
+
+// Pack-related functions
+
+export async function loadAllPacks(): Promise<PackEntry[]> {
+  const packs = await getCollection('packs');
+  return packs.sort((a, b) => a.data.name.localeCompare(b.data.name));
+}
+
+export async function getPackById(id: string): Promise<PackEntry | undefined> {
+  const packs = await getCollection('packs');
+  return packs.find(p => p.data.id === id);
+}
+
+export async function getPackCards(pack: PackEntry): Promise<SearchableNode[]> {
+  const allNodes = await buildSearchIndex();
+  const cardIds = pack.data.cards;
+
+  // Return nodes in the order specified by the pack's cards array (learning path order)
+  const orderedNodes: SearchableNode[] = [];
+  for (const cardId of cardIds) {
+    const node = allNodes.find(n => n.id === cardId);
+    if (node) {
+      orderedNodes.push(node);
+    }
+  }
+
+  return orderedNodes;
+}
+
+export async function buildPackGraphData(pack: PackEntry, includeAffiliations: boolean = true): Promise<GraphData> {
+  const [allNodes, allEdges] = await Promise.all([
+    buildSearchIndex(),
+    loadAllEdges(),
+  ]);
+
+  const cardIds = new Set(pack.data.cards);
+
+  // Filter nodes to only those in the pack
+  const nodes = allNodes.filter(n => cardIds.has(n.id));
+
+  // Filter edges to only those connecting pack nodes
+  const edges = allEdges.filter(edge => {
+    const sourceInPack = cardIds.has(edge.source);
+    const targetInPack = cardIds.has(edge.target);
+
+    // Include edge if both endpoints are in the pack
+    if (!sourceInPack || !targetInPack) return false;
+
+    // Filter by affiliation preference
+    if (!includeAffiliations && edge.kind === 'affiliation') return false;
+
+    return true;
+  });
 
   return { nodes, edges };
 }

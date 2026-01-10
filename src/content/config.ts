@@ -64,9 +64,22 @@ const institutions = defineCollection({
   }),
 });
 
+const packs = defineCollection({
+  type: 'content',
+  schema: z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string(),
+    icon: z.string().optional(), // emoji or icon identifier
+    cards: z.array(z.string()), // ordered array of node IDs - serves as learning path
+    image: imageSchema,
+  }),
+});
+
 export const collections = {
   people,
   works,
   institutions,
   edges,
+  packs,
 };
