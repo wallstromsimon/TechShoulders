@@ -30,9 +30,10 @@
 - [ ] `whyYouCare` - Array of bullet points explaining importance
 - [ ] `links` - Array of {label, url} for external resources
 
-### Image Attribution (Required if image provided)
-- [ ] `image.url` - Direct URL to image
-- [ ] `image.source` - Source page URL
+### Image (Required if image provided)
+- [ ] Image file saved to `src/assets/images/entities/<id>.jpg`
+- [ ] `image.file` - Relative path to local image
+- [ ] `image.source` - Source page URL (e.g., Wikimedia Commons)
 - [ ] `image.license` - License type (e.g., "CC BY 2.0", "Public Domain")
 - [ ] `image.author` - Attribution to creator
 
@@ -68,7 +69,7 @@ links:
   - label: Wikipedia
     url: https://en.wikipedia.org/wiki/Ada_Lovelace
 image:
-  url: https://example.com/image.jpg
+  file: ../../assets/images/entities/ada-lovelace.jpg
   source: https://commons.wikimedia.org/wiki/File:Example.jpg
   license: Public Domain
   author: Unknown

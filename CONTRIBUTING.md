@@ -63,8 +63,8 @@ links:                  # Optional
   - label: Wikipedia
     url: https://...
 image:                  # Optional (but recommended)
-  url: https://...      # Direct image URL
-  source: https://...   # Source page URL
+  file: ../../assets/images/entities/person-id.jpg  # Local image path
+  source: https://...   # Source page URL (for attribution)
   license: CC BY 2.0    # License type
   author: Author Name   # Attribution
 ---
@@ -86,7 +86,7 @@ links:                  # Optional
   - label: Official Site
     url: https://...
 image:                  # Optional
-  url: https://...
+  file: ../../assets/images/entities/work-id.jpg
   source: https://...
   license: License Type
   author: Author Name
@@ -107,7 +107,7 @@ links:                  # Optional
   - label: Official Site
     url: https://...
 image:                  # Optional
-  url: https://...
+  file: ../../assets/images/entities/institution-id.jpg
   source: https://...
   license: License Type
   author: Author Name
@@ -146,11 +146,15 @@ Edges are stored in JSON files:
 
 ## Image Guidelines
 
-### Preferred Sources
+### Local Images (Preferred)
 
-1. **Wikimedia Commons** - Best option for licensed images
-2. **Public domain** - Historical images, US government works
-3. **CC-licensed** - Creative Commons with proper attribution
+Images should be stored locally in `src/assets/images/entities/` for reliability and optimization. Astro automatically converts them to optimized WebP format.
+
+**Steps to add an image:**
+
+1. Download the image from Wikimedia Commons or another licensed source
+2. Save it to `src/assets/images/entities/<entity-id>.jpg`
+3. Reference it in your frontmatter with a relative path
 
 ### Required Attribution Fields
 
@@ -158,11 +162,17 @@ When including an image, ALL fields are required:
 
 ```yaml
 image:
-  url: https://upload.wikimedia.org/...    # Direct URL to image
-  source: https://commons.wikimedia.org/... # Page where image is hosted
-  license: CC BY 2.0                        # Exact license
-  author: Photographer Name                 # Creator attribution
+  file: ../../assets/images/entities/person-id.jpg  # Relative path to local image
+  source: https://commons.wikimedia.org/wiki/File:... # Source page for attribution
+  license: CC BY 2.0                                  # Exact license
+  author: Photographer Name                           # Creator attribution
 ```
+
+### Preferred Sources
+
+1. **Wikimedia Commons** - Best option for licensed images
+2. **Public domain** - Historical images, US government works
+3. **CC-licensed** - Creative Commons with proper attribution
 
 ### License Types
 

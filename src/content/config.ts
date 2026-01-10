@@ -1,12 +1,5 @@
 import { z, defineCollection } from 'astro:content';
 
-const imageSchema = z.object({
-  url: z.string(),
-  source: z.string(),
-  license: z.string(),
-  author: z.string(),
-}).optional();
-
 const linksSchema = z.array(z.object({
   label: z.string(),
   url: z.string(),
@@ -26,7 +19,7 @@ const edges = defineCollection({
 
 const people = defineCollection({
   type: 'content',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     id: z.string(),
     name: z.string(),
     title: z.string().optional(),
@@ -35,44 +28,64 @@ const people = defineCollection({
     signatureWorks: z.array(z.string()).optional(),
     whyYouCare: z.array(z.string()).optional(),
     links: linksSchema,
-    image: imageSchema,
+    image: z.object({
+      file: image(),
+      source: z.string(),
+      license: z.string(),
+      author: z.string(),
+    }).optional(),
   }),
 });
 
 const works = defineCollection({
   type: 'content',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     id: z.string(),
     name: z.string(),
     kind: z.string(),
     year: z.number(),
     domains: z.array(z.string()).optional(),
     links: linksSchema,
-    image: imageSchema,
+    image: z.object({
+      file: image(),
+      source: z.string(),
+      license: z.string(),
+      author: z.string(),
+    }).optional(),
   }),
 });
 
 const institutions = defineCollection({
   type: 'content',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     id: z.string(),
     name: z.string(),
     kind: z.string(),
     location: z.string().optional(),
     links: linksSchema,
-    image: imageSchema,
+    image: z.object({
+      file: image(),
+      source: z.string(),
+      license: z.string(),
+      author: z.string(),
+    }).optional(),
   }),
 });
 
 const packs = defineCollection({
   type: 'content',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     id: z.string(),
     name: z.string(),
     description: z.string(),
     icon: z.string().optional(), // emoji or icon identifier
     cards: z.array(z.string()), // ordered array of node IDs - serves as learning path
-    image: imageSchema,
+    image: z.object({
+      file: image(),
+      source: z.string(),
+      license: z.string(),
+      author: z.string(),
+    }).optional(),
   }),
 });
 

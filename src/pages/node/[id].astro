@@ -124,7 +124,7 @@ if (kind === 'people') {
 }
 
 // Get OG image
-const ogImage = entry.data.image?.url;
+const ogImage = entry.data.image?.file.src;
 
 // Determine OG type
 const ogType = kind === 'people' ? 'profile' : 'article';
