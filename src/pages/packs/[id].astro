@@ -1,0 +1,315 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NodeCard from '../../components/NodeCard.astro';
+import InfluenceGraph from '../../components/InfluenceGraph';
+import { loadAllPacks, getPackById, getPackCards, buildPackGraphData, findNodeById } from '../../lib/data';
+
+export async function getStaticPaths() {
+  const packs = await loadAllPacks();
+  return packs.map(pack => ({
+    params: { id: pack.data.id },
+  }));
+}
+
+const { id } = Astro.params;
+const pack = await getPackById(id);
+
+if (!pack) {
+  return Astro.redirect('/packs');
+}
+
+// Get cards in learning path order
+const cards = await getPackCards(pack);
+
+// Get full entries for card rendering
+const cardEntries = await Promise.all(
+  cards.map(async (card) => {
+    const node = await findNodeById(card.id);
+    return node;
+  })
+);
+
+// Build filtered graph data
+const { nodes: graphNodes, edges: graphEdges } = await buildPackGraphData(pack, true);
+
+// Transform for graph component
+const graphNodesFormatted = graphNodes.map(n => ({
+  id: n.id,
+  name: n.name,
+  kind: n.kind,
+}));
+
+const graphEdgesFormatted = graphEdges.map(e => ({
+  source: e.source,
+  target: e.target,
+  kind: e.kind,
+  label: e.label,
+}));
+
+// Render the MDX content
+const { Content } = await pack.render();
+---
+
+<BaseLayout title={pack.data.name}>
+  <div class="pack-header">
+    <a href="/packs" class="back-link">← All Packs</a>
+    <div class="pack-title-row">
+      {pack.data.icon && <span class="pack-icon">{pack.data.icon}</span>}
+      <h1>{pack.data.name}</h1>
+    </div>
+    <p class="pack-description">{pack.data.description}</p>
+    <div class="pack-stats">
+      <span class="stat">{cards.length} cards in this pack</span>
+    </div>
+  </div>
+
+  <section class="pack-section">
+    <h2>Learning Path</h2>
+    <p class="section-description">
+      Follow these cards in order to build your understanding of this topic.
+    </p>
+    <div class="learning-path">
+      {cardEntries.map((nodeResult, index) => nodeResult && (
+        <div class="path-item">
+          <div class="path-row">
+            <div class="path-number">{index + 1}</div>
+            <div class="path-card">
+              <NodeCard entry={nodeResult.entry} kind={nodeResult.kind} variant="compact" />
+            </div>
+          </div>
+          {index < cardEntries.length - 1 && (
+            <div class="path-connector">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+              </svg>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {graphEdges.length > 0 && (
+    <section class="pack-section graph-section">
+      <h2>Connections</h2>
+      <p class="section-description">
+        See how the items in this pack are connected to each other.
+      </p>
+      <InfluenceGraph
+        client:load
+        nodes={graphNodesFormatted}
+        edges={graphEdgesFormatted}
+      />
+    </section>
+  )}
+
+  <section class="pack-section pack-content">
+    <Content />
+  </section>
+
+  <div class="pack-share">
+    <h3>Share this pack</h3>
+    <p>Help others discover this learning path.</p>
+    <button class="share-btn" id="copy-link">Copy link</button>
+  </div>
+</BaseLayout>
+
+<script>
+  const copyBtn = document.getElementById('copy-link');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(window.location.href);
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => {
+        copyBtn.textContent = originalText;
+      }, 2000);
+    });
+  }
+</script>
+
+<style>
+  .pack-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+  }
+
+  .back-link:hover {
+    color: var(--color-link);
+  }
+
+  .pack-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .pack-icon {
+    font-size: 2rem;
+  }
+
+  .pack-header h1 {
+    margin: 0;
+  }
+
+  .pack-description {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    margin: 0 0 1rem 0;
+    max-width: 600px;
+  }
+
+  .pack-stats {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .stat {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    background: var(--color-bg);
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+  }
+
+  .pack-section {
+    margin-bottom: 3rem;
+  }
+
+  .pack-section h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .section-description {
+    color: var(--color-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .learning-path {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .path-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .path-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .path-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-link);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .path-card {
+    flex: 1;
+  }
+
+  .path-connector {
+    margin-left: 16px;
+    padding: 0.5rem 0;
+    color: var(--color-border);
+    transform: translateX(-4px);
+  }
+
+  .pack-content {
+    padding: 1.5rem;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+
+  .pack-content :global(h2) {
+    font-size: 1.25rem;
+    margin-top: 0;
+  }
+
+  .pack-content :global(h3) {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+  }
+
+  .pack-share {
+    text-align: center;
+    padding: 2rem;
+    background: var(--color-bg);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+  }
+
+  .pack-share h3 {
+    margin: 0 0 0.25rem 0;
+  }
+
+  .pack-share p {
+    color: var(--color-muted);
+    margin: 0 0 1rem 0;
+  }
+
+  .share-btn {
+    padding: 0.625rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: var(--color-link);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .share-btn:hover {
+    background: #0052a3;
+  }
+
+  /* Hide graph on mobile - doesn't render well at narrow widths */
+  @media (max-width: 700px) {
+    .graph-section {
+      display: none;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .path-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .path-number {
+      margin-bottom: 0.5rem;
+    }
+
+    .path-card {
+      width: 100%;
+    }
+
+    .path-connector {
+      margin-left: 12px;
+    }
+  }
+</style>
