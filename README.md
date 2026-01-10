@@ -131,3 +131,63 @@ All nodes include Wikimedia Commons images with proper license attribution.
   - Click nodes to navigate to detail pages
   - Color-coded by node type
 - **Node pages:** Detailed profiles with related items and external links
+- **Packs:** Curated learning paths that guide you through related concepts
+- **RSS Feed:** Subscribe at `/rss.xml` for content updates
+- **SEO Optimized:** Sitemap, Open Graph tags, meta descriptions
+
+## Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+
+- Adding new people, works, or institutions
+- Creating edges (relationships)
+- Content quality standards
+- Image attribution requirements
+
+### PR Templates
+
+When creating a pull request, use the appropriate template:
+- **Add Person:** For new tech pioneer profiles
+- **Add Work:** For projects, tools, papers
+- **Add Institution:** For universities, labs, companies
+- **Add Edges:** For relationship data
+
+### CI Validation
+
+All PRs are automatically validated for:
+- **Schema compliance:** Required fields present, correct types
+- **Edge integrity:** Referenced nodes must exist
+- **Image attribution:** Complete source/license/author when images present
+- **JSON syntax:** Valid edge files
+
+```bash
+# Run validation locally
+pnpm validate
+
+# Type checking
+pnpm lint
+```
+
+## Scripts
+
+```bash
+pnpm dev       # Start development server
+pnpm build     # Build for production
+pnpm preview   # Preview production build
+pnpm validate  # Validate all content
+pnpm lint      # TypeScript type checking
+```
+
+## Analytics
+
+To enable analytics, uncomment your preferred provider in `src/layouts/BaseLayout.astro`:
+
+```html
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "YOUR_TOKEN"}'></script>
+
+<!-- Or Plausible Analytics -->
+<script defer data-domain="techshoulders.com"
+        src="https://plausible.io/js/script.js"></script>
+```

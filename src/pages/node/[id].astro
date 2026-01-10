@@ -68,9 +68,45 @@ if (kind === 'works') {
     p.data.signatureWorks?.includes(work.data.id)
   );
 }
+
+// Build SEO description
+let description = '';
+if (kind === 'people') {
+  const person = entry as PersonEntry;
+  description = person.data.title
+    ? `${person.data.title}. ${person.data.era}.`
+    : `Tech pioneer active ${person.data.era}.`;
+  if (domains.length > 0) {
+    description += ` Domains: ${domains.join(', ')}.`;
+  }
+} else if (kind === 'works') {
+  const work = entry as WorkEntry;
+  description = `${work.data.name} (${work.data.year}) - ${work.data.kind}.`;
+  if (domains.length > 0) {
+    description += ` Categories: ${domains.join(', ')}.`;
+  }
+} else if (kind === 'institutions') {
+  const inst = entry as InstitutionEntry;
+  description = `${inst.data.name} - ${inst.data.kind}`;
+  if (inst.data.location) {
+    description += ` located in ${inst.data.location}`;
+  }
+  description += '.';
+}
+
+// Get OG image
+const ogImage = entry.data.image?.url;
+
+// Determine OG type
+const ogType = kind === 'people' ? 'profile' : 'article';
 ---
 
-<BaseLayout title={entry.data.name}>
+<BaseLayout
+  title={entry.data.name}
+  description={description}
+  image={ogImage}
+  type={ogType}
+>
   <NodeHeader
     name={entry.data.name}
     kind={kind}

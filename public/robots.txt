@@ -1,0 +1,10 @@
+# robots.txt for TechShoulders
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://techshoulders.com/sitemap-index.xml
+
+# Disallow search API
+Disallow: /search-index.json
