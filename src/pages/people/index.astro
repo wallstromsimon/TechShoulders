@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { listNodes } from '../../lib/data';
+
+const people = await listNodes('people');
+---
+
+<BaseLayout title="People">
+  <h1>People</h1>
+  <p>The visionaries and engineers who created foundational technologies.</p>
+
+  <section class="list">
+    {people.length === 0 ? (
+      <p class="empty">No people added yet.</p>
+    ) : (
+      people.map(person => (
+        <div class="card">
+          <h3><a href={`/node/${person.data.id}`}>{person.data.name}</a></h3>
+          <p class="meta">{person.data.era}</p>
+          {person.data.title && <p>{person.data.title}</p>}
+        </div>
+      ))
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .list {
+    margin-top: 1.5rem;
+  }
+
+  .empty {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+</style>

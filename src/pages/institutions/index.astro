@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { listNodes, type InstitutionEntry } from '../../lib/data';
+
+const institutions = await listNodes('institutions') as InstitutionEntry[];
+---
+
+<BaseLayout title="Institutions">
+  <h1>Institutions</h1>
+  <p>Universities, labs, and organizations where innovation happened.</p>
+
+  <section class="list">
+    {institutions.length === 0 ? (
+      <p class="empty">No institutions added yet.</p>
+    ) : (
+      institutions.map(inst => (
+        <div class="card">
+          <h3><a href={`/node/${inst.data.id}`}>{inst.data.name}</a></h3>
+          <p class="meta">
+            {inst.data.kind}
+            {inst.data.location && <span> &middot; {inst.data.location}</span>}
+          </p>
+        </div>
+      ))
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .list {
+    margin-top: 1.5rem;
+  }
+
+  .empty {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+</style>

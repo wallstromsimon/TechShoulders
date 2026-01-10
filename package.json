@@ -1,0 +1,17 @@
+{
+  "name": "techshoulders",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Standing on the shoulders of tech giants - a knowledge graph of influential people, works, and institutions",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@astrojs/mdx": "^4.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}
