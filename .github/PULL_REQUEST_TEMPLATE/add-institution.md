@@ -18,9 +18,10 @@
 - [ ] `location` - Geographic location
 - [ ] `links` - Array of {label, url} for external resources
 
-### Image Attribution (Required if image provided)
-- [ ] `image.url` - Direct URL to image (logo or building)
-- [ ] `image.source` - Source page URL
+### Image (Required if image provided)
+- [ ] Image file saved to `src/assets/images/entities/<id>.jpg`
+- [ ] `image.file` - Relative path to local image
+- [ ] `image.source` - Source page URL (e.g., Wikimedia Commons)
 - [ ] `image.license` - License type (e.g., "CC BY 2.0", "Public Domain")
 - [ ] `image.author` - Attribution to creator
 
@@ -50,7 +51,7 @@ links:
   - label: Official Site
     url: https://www.bell-labs.com/
 image:
-  url: https://example.com/bell-labs.jpg
+  file: ../../assets/images/entities/bell-labs.jpg
   source: https://commons.wikimedia.org/wiki/File:BellLabs.jpg
   license: CC BY-SA 3.0
   author: Photographer Name

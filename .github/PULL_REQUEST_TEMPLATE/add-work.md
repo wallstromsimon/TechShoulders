@@ -31,9 +31,10 @@
 - [ ] `domains` - Array of domain tags
 - [ ] `links` - Array of {label, url} for external resources
 
-### Image Attribution (Required if image provided)
-- [ ] `image.url` - Direct URL to image
-- [ ] `image.source` - Source page URL
+### Image (Required if image provided)
+- [ ] Image file saved to `src/assets/images/entities/<id>.jpg`
+- [ ] `image.file` - Relative path to local image
+- [ ] `image.source` - Source page URL (e.g., Wikimedia Commons)
 - [ ] `image.license` - License type (e.g., "CC BY 2.0", "Public Domain")
 - [ ] `image.author` - Attribution to creator
 
@@ -66,7 +67,7 @@ links:
   - label: The Open Group
     url: https://www.opengroup.org/unix
 image:
-  url: https://example.com/unix-logo.png
+  file: ../../assets/images/entities/unix.jpg
   source: https://commons.wikimedia.org/wiki/File:Unix.png
   license: Public Domain
   author: Bell Labs
