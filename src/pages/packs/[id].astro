@@ -48,11 +48,25 @@ const graphEdgesFormatted = graphEdges.map(e => ({
 
 // Render the MDX content
 const { Content } = await pack.render();
+
+// Get OG image - use pack image if available, otherwise fall back to first card's image
+let ogImage: string | undefined = pack.data.image?.file.src;
+if (!ogImage && cardEntries.length > 0) {
+  // Try to use the first card's image as a fallback
+  for (const entry of cardEntries) {
+    if (entry?.entry.data.image?.file.src) {
+      ogImage = entry.entry.data.image.file.src;
+      break;
+    }
+  }
+}
 ---
 
 <BaseLayout
   title={pack.data.name}
   description={`${pack.data.description} - A curated learning path with ${cards.length} cards.`}
+  image={ogImage}
+  type="article"
 >
   <div class="pack-header">
     <a href="/packs" class="back-link">← All Packs</a>
