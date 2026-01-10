@@ -169,6 +169,16 @@ export async function loadEdgesByKind(kind: EdgeKind): Promise<Edge[]> {
   return allEdges.filter(edge => edge.kind === kind);
 }
 
+export async function getOutgoingEdges(nodeId: string): Promise<Edge[]> {
+  const allEdges = await loadAllEdges();
+  return allEdges.filter(edge => edge.source === nodeId);
+}
+
+export async function getIncomingEdges(nodeId: string): Promise<Edge[]> {
+  const allEdges = await loadAllEdges();
+  return allEdges.filter(edge => edge.target === nodeId);
+}
+
 export interface GraphData {
   nodes: SearchableNode[];
   edges: Edge[];

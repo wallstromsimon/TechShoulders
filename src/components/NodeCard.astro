@@ -6,9 +6,10 @@ interface Props {
   entry: AnyEntry;
   kind: NodeKind;
   variant?: 'default' | 'compact' | 'featured';
+  relationshipLabel?: string;
 }
 
-const { entry, kind, variant = 'default' } = Astro.props;
+const { entry, kind, variant = 'default', relationshipLabel } = Astro.props;
 const { data } = entry;
 const kindLabel = getKindLabel(kind);
 
@@ -52,6 +53,10 @@ const hasImage = !!data.image?.url;
       </div>
 
       <h3 class="card-title">{data.name}</h3>
+
+      {relationshipLabel && (
+        <p class="relationship-label">— {relationshipLabel}</p>
+      )}
 
       {kind === 'people' && (data as PersonEntry['data']).title && (
         <p class="card-subtitle">{(data as PersonEntry['data']).title}</p>
@@ -194,6 +199,13 @@ const hasImage = !!data.image?.url;
     color: var(--color-muted);
     margin: 0 0 0.25rem 0;
     font-style: italic;
+  }
+
+  .relationship-label {
+    font-size: 0.8rem;
+    color: var(--color-link);
+    margin: 0 0 0.25rem 0;
+    font-weight: 500;
   }
 
   .card-meta {

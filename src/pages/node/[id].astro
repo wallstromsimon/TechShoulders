@@ -4,7 +4,7 @@ import NodeHeader from '../../components/NodeHeader.astro';
 import NodeAttribution from '../../components/NodeAttribution.astro';
 import NodeLinks from '../../components/NodeLinks.astro';
 import NodeCard from '../../components/NodeCard.astro';
-import { getAllNodeIds, findNodeById, loadAll, type PersonEntry, type WorkEntry, type InstitutionEntry } from '../../lib/data';
+import { getAllNodeIds, findNodeById, loadAll, getOutgoingEdges, getIncomingEdges, type PersonEntry, type WorkEntry, type InstitutionEntry, type Edge } from '../../lib/data';
 
 export async function getStaticPaths() {
   const ids = await getAllNodeIds();
@@ -44,29 +44,58 @@ if (kind === 'people') {
   }
 }
 
-// Get signature works for person pages
-let signatureWorks: WorkEntry[] = [];
+// Load edges for relationship-based lookups
+const outgoingEdges = await getOutgoingEdges(id);
+const incomingEdges = await getIncomingEdges(id);
+
+// Get signature works for person pages (from influence edges)
+let signatureWorks: { entry: WorkEntry; label: string }[] = [];
 if (kind === 'people') {
-  const person = entry as PersonEntry;
-  const workIds = person.data.signatureWorks || [];
-  signatureWorks = allData.works.filter(w => workIds.includes(w.data.id));
+  const influenceEdges = outgoingEdges.filter(e => e.kind === 'influence');
+  for (const edge of influenceEdges) {
+    const work = allData.works.find(w => w.data.id === edge.target);
+    if (work) {
+      signatureWorks.push({ entry: work, label: edge.label || 'contributed to' });
+    }
+  }
 }
 
-// Get related institutions (manual links based on content for now)
-// This is a simple approach - in the future, we could add explicit institution links in the schema
-let relatedInstitutions: InstitutionEntry[] = [];
+// Get related institutions for person pages (from affiliation edges)
+let relatedInstitutions: { entry: InstitutionEntry; label: string }[] = [];
 if (kind === 'people') {
-  // For now, show all institutions as potentially related (manual curation in future)
-  relatedInstitutions = allData.institutions;
+  const affiliationEdges = outgoingEdges.filter(e => e.kind === 'affiliation');
+  for (const edge of affiliationEdges) {
+    const institution = allData.institutions.find(i => i.data.id === edge.target);
+    if (institution) {
+      relatedInstitutions.push({ entry: institution, label: edge.label || 'affiliated with' });
+    }
+  }
 }
 
-// For works and institutions, find related people
-let relatedPeople: PersonEntry[] = [];
+// For works, find related people (from incoming influence edges)
+let relatedPeople: { entry: PersonEntry; label: string }[] = [];
 if (kind === 'works') {
-  const work = entry as WorkEntry;
-  relatedPeople = allData.people.filter(p =>
-    p.data.signatureWorks?.includes(work.data.id)
-  );
+  for (const edge of incomingEdges) {
+    if (edge.kind === 'influence') {
+      const person = allData.people.find(p => p.data.id === edge.source);
+      if (person) {
+        relatedPeople.push({ entry: person, label: edge.label || 'contributed to' });
+      }
+    }
+  }
+}
+
+// For institutions, find related people (from incoming affiliation edges)
+let institutionPeople: { entry: PersonEntry; label: string }[] = [];
+if (kind === 'institutions') {
+  for (const edge of incomingEdges) {
+    if (edge.kind === 'affiliation') {
+      const person = allData.people.find(p => p.data.id === edge.source);
+      if (person) {
+        institutionPeople.push({ entry: person, label: edge.label || 'affiliated' });
+      }
+    }
+  }
 }
 
 // Build SEO description
@@ -132,8 +161,8 @@ const ogType = kind === 'people' ? 'profile' : 'article';
     <section class="related-section">
       <h2>Signature Works</h2>
       <div class="related-grid">
-        {signatureWorks.map(work => (
-          <NodeCard entry={work} kind="works" variant="compact" />
+        {signatureWorks.map(({ entry: work, label }) => (
+          <NodeCard entry={work} kind="works" variant="compact" relationshipLabel={label} />
         ))}
       </div>
     </section>
@@ -143,8 +172,8 @@ const ogType = kind === 'people' ? 'profile' : 'article';
     <section class="related-section">
       <h2>Related Institutions</h2>
       <div class="related-grid">
-        {relatedInstitutions.map(inst => (
-          <NodeCard entry={inst} kind="institutions" variant="compact" />
+        {relatedInstitutions.map(({ entry: inst, label }) => (
+          <NodeCard entry={inst} kind="institutions" variant="compact" relationshipLabel={label} />
         ))}
       </div>
     </section>
@@ -154,8 +183,19 @@ const ogType = kind === 'people' ? 'profile' : 'article';
     <section class="related-section">
       <h2>Key Contributors</h2>
       <div class="related-grid">
-        {relatedPeople.map(person => (
-          <NodeCard entry={person} kind="people" variant="compact" />
+        {relatedPeople.map(({ entry: person, label }) => (
+          <NodeCard entry={person} kind="people" variant="compact" relationshipLabel={label} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {kind === 'institutions' && institutionPeople.length > 0 && (
+    <section class="related-section">
+      <h2>Notable People</h2>
+      <div class="related-grid">
+        {institutionPeople.map(({ entry: person, label }) => (
+          <NodeCard entry={person} kind="people" variant="compact" relationshipLabel={label} />
         ))}
       </div>
     </section>
