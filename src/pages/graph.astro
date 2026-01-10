@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import InfluenceGraph from '../components/InfluenceGraph';
+import { buildGraphData } from '../lib/data';
+
+const { nodes, edges } = await buildGraphData(true);
+
+// Transform to the format expected by the graph component
+const graphNodes = nodes.map(n => ({
+  id: n.id,
+  name: n.name,
+  kind: n.kind,
+}));
+
+const graphEdges = edges.map(e => ({
+  source: e.source,
+  target: e.target,
+  kind: e.kind,
+  label: e.label,
+}));
+---
+
+<BaseLayout title="Influence Graph">
+  <h1>Influence Graph</h1>
+  <p style="margin-bottom: 1.5rem; color: #666;">
+    Explore the connections between people, their works, and institutions.
+    Solid lines show influence (created, invented), dashed lines show affiliations (studied at, worked at).
+  </p>
+
+  <InfluenceGraph
+    client:load
+    nodes={graphNodes}
+    edges={graphEdges}
+  />
+</BaseLayout>

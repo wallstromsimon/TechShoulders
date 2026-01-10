@@ -1,6 +1,14 @@
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 export type NodeKind = 'people' | 'works' | 'institutions';
+export type EdgeKind = 'influence' | 'affiliation';
+
+export interface Edge {
+  source: string;
+  target: string;
+  kind: EdgeKind;
+  label?: string;
+}
 
 export type PersonEntry = CollectionEntry<'people'>;
 export type WorkEntry = CollectionEntry<'works'>;
@@ -142,4 +150,38 @@ export function getAllEras(nodes: SearchableNode[]): string[] {
     }
   }
   return Array.from(eras).sort();
+}
+
+export async function loadAllEdges(): Promise<Edge[]> {
+  const edgesCollection = await getCollection('edges');
+  const allEdges: Edge[] = [];
+
+  for (const entry of edgesCollection) {
+    allEdges.push(...entry.data);
+  }
+
+  return allEdges;
+}
+
+export async function loadEdgesByKind(kind: EdgeKind): Promise<Edge[]> {
+  const allEdges = await loadAllEdges();
+  return allEdges.filter(edge => edge.kind === kind);
+}
+
+export interface GraphData {
+  nodes: SearchableNode[];
+  edges: Edge[];
+}
+
+export async function buildGraphData(includeAffiliations: boolean = true): Promise<GraphData> {
+  const [nodes, allEdges] = await Promise.all([
+    buildSearchIndex(),
+    loadAllEdges(),
+  ]);
+
+  const edges = includeAffiliations
+    ? allEdges
+    : allEdges.filter(e => e.kind === 'influence');
+
+  return { nodes, edges };
 }

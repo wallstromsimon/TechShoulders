@@ -11,8 +11,13 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",
+    "@astrojs/react": "^4.4.2",
+    "@types/cytoscape": "^3.31.0",
     "astro": "^5.0.0",
-    "fuse.js": "^7.1.0"
+    "cytoscape": "^3.33.1",
+    "fuse.js": "^7.1.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "packageManager": "pnpm@9.0.0"
 }
