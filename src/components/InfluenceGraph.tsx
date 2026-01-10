@@ -89,8 +89,7 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
             'height': 40,
             'border-width': 2,
             'border-color': '#fff',
-            'cursor': 'pointer',
-          },
+          } as cytoscape.Css.Node,
         },
         {
           selector: 'edge',

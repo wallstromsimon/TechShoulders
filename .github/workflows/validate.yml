@@ -1,0 +1,119 @@
+name: Validate Content
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/content/**'
+      - 'scripts/validate-content.js'
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/**'
+      - 'scripts/validate-content.js'
+
+jobs:
+  validate:
+    name: Validate Content & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Validate content schemas
+        run: pnpm validate
+
+      - name: Type check
+        run: pnpm lint
+
+      - name: Build site
+        run: pnpm build
+
+  content-checks:
+    name: Content Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for duplicate IDs
+        run: |
+          echo "Checking for duplicate IDs in content..."
+
+          # Extract all IDs from MDX files
+          ids=$(grep -rh "^id: " src/content/people src/content/works src/content/institutions src/content/packs 2>/dev/null | sed 's/^id: //' | sort)
+
+          # Check for duplicates
+          duplicates=$(echo "$ids" | uniq -d)
+
+          if [ -n "$duplicates" ]; then
+            echo "ERROR: Duplicate IDs found:"
+            echo "$duplicates"
+            exit 1
+          fi
+
+          echo "No duplicate IDs found"
+
+      - name: Check JSON syntax
+        run: |
+          echo "Validating JSON files..."
+
+          for file in src/content/edges/*.json; do
+            if [ -f "$file" ]; then
+              if ! python3 -m json.tool "$file" > /dev/null 2>&1; then
+                echo "ERROR: Invalid JSON in $file"
+                exit 1
+              fi
+              echo "  OK: $file"
+            fi
+          done
+
+          echo "All JSON files are valid"
+
+      - name: Check for broken internal links
+        run: |
+          echo "Checking signatureWorks and pack cards references..."
+
+          # Collect all node IDs
+          all_ids=$(grep -rh "^id: " src/content/people src/content/works src/content/institutions 2>/dev/null | sed 's/^id: //' | tr -d '\r')
+
+          # Check signatureWorks in people files
+          for file in src/content/people/*.mdx; do
+            if [ -f "$file" ]; then
+              # Extract signatureWorks array items
+              in_sig_works=false
+              while IFS= read -r line; do
+                if echo "$line" | grep -q "^signatureWorks:"; then
+                  in_sig_works=true
+                  continue
+                fi
+                if $in_sig_works; then
+                  if echo "$line" | grep -q "^  - "; then
+                    ref=$(echo "$line" | sed 's/^  - //' | tr -d '\r')
+                    if ! echo "$all_ids" | grep -qx "$ref"; then
+                      echo "ERROR: $file references non-existent work: $ref"
+                      exit 1
+                    fi
+                  elif ! echo "$line" | grep -q "^  "; then
+                    in_sig_works=false
+                  fi
+                fi
+              done < "$file"
+            fi
+          done
+
+          echo "All internal references are valid"

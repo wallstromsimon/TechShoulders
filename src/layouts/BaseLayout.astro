@@ -1,9 +1,24 @@
 ---
 interface Props {
   title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article' | 'profile';
+  noindex?: boolean;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description = 'Standing on the shoulders of tech giants - explore the people, works, and institutions that shaped computing history.',
+  image,
+  type = 'website',
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = 'https://techshoulders.com';
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const ogImage = image || `${siteUrl}/og-default.png`;
+const fullTitle = title === 'Home' ? 'TechShoulders' : `${title} | TechShoulders`;
 ---
 
 <!doctype html>
@@ -11,7 +26,41 @@ const { title } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | TechShoulders</title>
+    <title>{fullTitle}</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="TechShoulders" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="TechShoulders RSS Feed" href="/rss.xml" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Analytics: Uncomment and configure your preferred analytics provider -->
+    <!-- Cloudflare Web Analytics (privacy-friendly, free) -->
+    <!-- <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR_TOKEN"}'></script> -->
+
+    <!-- Or Plausible Analytics (privacy-friendly) -->
+    <!-- <script defer data-domain="techshoulders.com" src="https://plausible.io/js/script.js"></script> -->
+
     <style is:global>
       :root {
         --color-bg: #fafafa;
@@ -151,6 +200,29 @@ const { title } = Astro.props;
         letter-spacing: 0.05em;
         margin-right: 0.5rem;
       }
+
+      .site-footer {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-border);
+        font-size: 0.875rem;
+        color: var(--color-muted);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-links a {
+        color: var(--color-muted);
+      }
+
+      .footer-links a:hover {
+        color: var(--color-link);
+      }
     </style>
   </head>
   <body>
@@ -170,5 +242,13 @@ const { title } = Astro.props;
     <main>
       <slot />
     </main>
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="/rss.xml">RSS Feed</a>
+        <a href="https://github.com/wallstromsimon/TechShoulders" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/wallstromsimon/TechShoulders/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contribute</a>
+      </div>
+      <p>Standing on the shoulders of tech giants.</p>
+    </footer>
   </body>
 </html>

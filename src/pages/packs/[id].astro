@@ -50,7 +50,10 @@ const graphEdgesFormatted = graphEdges.map(e => ({
 const { Content } = await pack.render();
 ---
 
-<BaseLayout title={pack.data.name}>
+<BaseLayout
+  title={pack.data.name}
+  description={`${pack.data.description} - A curated learning path with ${cards.length} cards.`}
+>
   <div class="pack-header">
     <a href="/packs" class="back-link">← All Packs</a>
     <div class="pack-title-row">

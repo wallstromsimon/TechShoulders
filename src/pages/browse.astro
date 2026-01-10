@@ -102,8 +102,9 @@ const allEntries = [
   // Fetch search index and initialize Fuse.js
   Promise.all([
     fetch('/search-index.json').then(r => r.json()),
+    // @ts-ignore - CDN import
     import('https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.mjs')
-  ]).then(([searchIndex, { default: Fuse }]) => {
+  ]).then(([searchIndex, { default: Fuse }]: [any, { default: any }]) => {
     const fuse = new Fuse(searchIndex, {
       keys: [
         { name: 'name', weight: 2 },
@@ -116,22 +117,26 @@ const allEntries = [
       includeMatches: true,
     });
 
-    const searchInput = document.getElementById('search-input');
+    const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
     const searchResults = document.getElementById('search-results');
     const cardGrid = document.getElementById('card-grid');
-    const filterKind = document.getElementById('filter-kind');
-    const filterDomain = document.getElementById('filter-domain');
-    const filterEra = document.getElementById('filter-era');
+    const filterKind = document.getElementById('filter-kind') as HTMLSelectElement | null;
+    const filterDomain = document.getElementById('filter-domain') as HTMLSelectElement | null;
+    const filterEra = document.getElementById('filter-era') as HTMLSelectElement | null;
     const clearBtn = document.getElementById('clear-filters');
     const resultCount = document.getElementById('result-count');
     const noResults = document.getElementById('no-results');
     const resetBtn = document.getElementById('reset-filters');
 
+    if (!searchInput || !searchResults || !cardGrid || !filterKind || !filterDomain || !filterEra || !clearBtn || !resultCount || !noResults || !resetBtn) {
+      return;
+    }
+
     let currentSearchTerm = '';
 
     // Search functionality
-    searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.trim();
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim();
       currentSearchTerm = query;
 
       if (query.length < 2) {
@@ -148,7 +153,7 @@ const allEntries = [
         return;
       }
 
-      searchResults.innerHTML = results.map(result => {
+      searchResults.innerHTML = results.map((result: any) => {
         const item = result.item;
         const kindClass = `kind-${item.kind}`;
         const kindLabel = item.kind === 'people' ? 'Person' : item.kind === 'works' ? 'Work' : 'Institution';
@@ -167,7 +172,8 @@ const allEntries = [
 
     // Close search results when clicking outside
     document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+      const target = e.target as Node | null;
+      if (target && !searchInput.contains(target) && !searchResults.contains(target)) {
         searchResults.hidden = true;
       }
     });
@@ -181,18 +187,18 @@ const allEntries = [
 
     // Filter functionality
     function applyFilters() {
-      const kindFilter = filterKind.value;
-      const domainFilter = filterDomain.value;
-      const eraFilter = filterEra.value;
+      const kindFilter = filterKind!.value;
+      const domainFilter = filterDomain!.value;
+      const eraFilter = filterEra!.value;
 
-      const gridItems = cardGrid.querySelectorAll('.grid-item');
+      const gridItems = cardGrid!.querySelectorAll<HTMLElement>('.grid-item');
       let visibleCount = 0;
 
       // Get search match IDs if there's a search term
-      let searchMatchIds = null;
+      let searchMatchIds: Set<string> | null = null;
       if (currentSearchTerm.length >= 2) {
         const results = fuse.search(currentSearchTerm);
-        searchMatchIds = new Set(results.map(r => r.item.id));
+        searchMatchIds = new Set(results.map((r: any) => r.item.id));
       }
 
       gridItems.forEach(item => {
@@ -204,7 +210,7 @@ const allEntries = [
         let visible = true;
 
         // Search filter
-        if (searchMatchIds && !searchMatchIds.has(id)) {
+        if (searchMatchIds && !searchMatchIds.has(id || '')) {
           visible = false;
         }
 
@@ -227,9 +233,9 @@ const allEntries = [
         if (visible) visibleCount++;
       });
 
-      resultCount.textContent = `${visibleCount} item${visibleCount !== 1 ? 's' : ''}`;
-      noResults.hidden = visibleCount > 0;
-      cardGrid.hidden = visibleCount === 0;
+      resultCount!.textContent = `${visibleCount} item${visibleCount !== 1 ? 's' : ''}`;
+      noResults!.hidden = visibleCount > 0;
+      cardGrid!.hidden = visibleCount === 0;
     }
 
     filterKind.addEventListener('change', applyFilters);
@@ -239,18 +245,18 @@ const allEntries = [
     // Handle URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const domainParam = urlParams.get('domain');
-    if (domainParam && filterDomain) {
+    if (domainParam) {
       filterDomain.value = domainParam;
       applyFilters();
     }
 
     function clearAllFilters() {
-      filterKind.value = '';
-      filterDomain.value = '';
-      filterEra.value = '';
-      searchInput.value = '';
+      filterKind!.value = '';
+      filterDomain!.value = '';
+      filterEra!.value = '';
+      searchInput!.value = '';
       currentSearchTerm = '';
-      searchResults.hidden = true;
+      searchResults!.hidden = true;
       applyFilters();
     }
 
