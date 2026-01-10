@@ -1,40 +1,56 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import NodeCard from '../../components/NodeCard.astro';
 import { listNodes } from '../../lib/data';
 
 const people = await listNodes('people');
 ---
 
 <BaseLayout title="People">
-  <h1>People</h1>
-  <p>The visionaries and engineers who created foundational technologies.</p>
+  <div class="page-header">
+    <h1>People</h1>
+    <p>The visionaries and engineers who created foundational technologies.</p>
+  </div>
 
-  <section class="list">
-    {people.length === 0 ? (
-      <p class="empty">No people added yet.</p>
-    ) : (
-      people.map(person => (
-        <div class="card">
-          <h3><a href={`/node/${person.data.id}`}>{person.data.name}</a></h3>
-          <p class="meta">{person.data.era}</p>
-          {person.data.title && <p>{person.data.title}</p>}
-        </div>
-      ))
-    )}
-  </section>
+  {people.length === 0 ? (
+    <p class="empty">No people added yet.</p>
+  ) : (
+    <div class="card-grid">
+      {people.map(person => (
+        <NodeCard entry={person} kind="people" />
+      ))}
+    </div>
+  )}
 </BaseLayout>
 
 <style>
-  h1 {
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
     margin-bottom: 0.5rem;
   }
 
-  .list {
-    margin-top: 1.5rem;
+  .page-header p {
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
   }
 
   .empty {
     color: var(--color-muted);
     font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

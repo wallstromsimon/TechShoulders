@@ -1,39 +1,56 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { listNodes, type WorkEntry } from '../../lib/data';
+import NodeCard from '../../components/NodeCard.astro';
+import { listNodes } from '../../lib/data';
 
-const works = await listNodes('works') as WorkEntry[];
+const works = await listNodes('works');
 ---
 
 <BaseLayout title="Works">
-  <h1>Works</h1>
-  <p>Projects, tools, and systems that changed how we build software.</p>
+  <div class="page-header">
+    <h1>Works</h1>
+    <p>Projects, tools, and systems that changed how we build software.</p>
+  </div>
 
-  <section class="list">
-    {works.length === 0 ? (
-      <p class="empty">No works added yet.</p>
-    ) : (
-      works.map(work => (
-        <div class="card">
-          <h3><a href={`/node/${work.data.id}`}>{work.data.name}</a></h3>
-          <p class="meta">{work.data.kind} &middot; {work.data.year}</p>
-        </div>
-      ))
-    )}
-  </section>
+  {works.length === 0 ? (
+    <p class="empty">No works added yet.</p>
+  ) : (
+    <div class="card-grid">
+      {works.map(work => (
+        <NodeCard entry={work} kind="works" />
+      ))}
+    </div>
+  )}
 </BaseLayout>
 
 <style>
-  h1 {
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
     margin-bottom: 0.5rem;
   }
 
-  .list {
-    margin-top: 1.5rem;
+  .page-header p {
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
   }
 
   .empty {
     color: var(--color-muted);
     font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
