@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadAll } from '../lib/data';
+
+const { people, works, institutions } = await loadAll();
+---
+
+<BaseLayout title="Home">
+  <h1>TechShoulders</h1>
+  <p>Standing on the shoulders of tech giants. Explore the people, works, and institutions that shaped modern technology.</p>
+
+  <section class="overview">
+    <div class="card">
+      <h3><a href="/people">People</a></h3>
+      <p class="meta">{people.length} {people.length === 1 ? 'person' : 'people'}</p>
+      <p>The visionaries and engineers who created foundational technologies.</p>
+    </div>
+
+    <div class="card">
+      <h3><a href="/works">Works</a></h3>
+      <p class="meta">{works.length} {works.length === 1 ? 'work' : 'works'}</p>
+      <p>Projects, tools, and systems that changed how we build software.</p>
+    </div>
+
+    <div class="card">
+      <h3><a href="/institutions">Institutions</a></h3>
+      <p class="meta">{institutions.length} {institutions.length === 1 ? 'institution' : 'institutions'}</p>
+      <p>Universities, labs, and organizations where innovation happened.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .overview {
+    margin-top: 2rem;
+  }
+</style>

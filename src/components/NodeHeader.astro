@@ -1,0 +1,59 @@
+---
+import type { NodeKind } from '../lib/data';
+import { getKindLabel } from '../lib/data';
+
+interface Props {
+  name: string;
+  kind: NodeKind;
+  meta?: string;
+  image?: {
+    url: string;
+    source: string;
+    license: string;
+    author: string;
+  };
+}
+
+const { name, kind, meta, image } = Astro.props;
+const kindLabel = getKindLabel(kind);
+---
+
+<header class="node-header">
+  <span class="badge">{kindLabel}</span>
+  <h1>{name}</h1>
+  {meta && <p class="meta">{meta}</p>}
+
+  {image && (
+    <figure class="node-image">
+      <img src={image.url} alt={name} loading="lazy" />
+    </figure>
+  )}
+</header>
+
+<style>
+  .node-header {
+    margin-bottom: 2rem;
+  }
+
+  .node-header h1 {
+    margin-top: 0.5rem;
+  }
+
+  .meta {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+  }
+
+  .node-image {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+  }
+
+  .node-image img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+</style>

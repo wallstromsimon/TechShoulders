@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { listNodes, type WorkEntry } from '../../lib/data';
+
+const works = await listNodes('works') as WorkEntry[];
+---
+
+<BaseLayout title="Works">
+  <h1>Works</h1>
+  <p>Projects, tools, and systems that changed how we build software.</p>
+
+  <section class="list">
+    {works.length === 0 ? (
+      <p class="empty">No works added yet.</p>
+    ) : (
+      works.map(work => (
+        <div class="card">
+          <h3><a href={`/node/${work.data.id}`}>{work.data.name}</a></h3>
+          <p class="meta">{work.data.kind} &middot; {work.data.year}</p>
+        </div>
+      ))
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .list {
+    margin-top: 1.5rem;
+  }
+
+  .empty {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+</style>

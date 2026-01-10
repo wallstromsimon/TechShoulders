@@ -1,0 +1,47 @@
+---
+interface Props {
+  image: {
+    url: string;
+    source: string;
+    license: string;
+    author: string;
+  };
+}
+
+const { image } = Astro.props;
+---
+
+<aside class="attribution">
+  <h4>Image Attribution</h4>
+  <p>
+    <strong>Author:</strong> {image.author}<br />
+    <strong>License:</strong> {image.license}<br />
+    <strong>Source:</strong> <a href={image.source} target="_blank" rel="noopener noreferrer">{image.source}</a>
+  </p>
+</aside>
+
+<style>
+  .attribution {
+    background: #f5f5f5;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 2rem;
+    font-size: 0.875rem;
+  }
+
+  .attribution h4 {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  .attribution p {
+    margin: 0;
+    line-height: 1.8;
+  }
+
+  .attribution a {
+    word-break: break-all;
+  }
+</style>

@@ -59,3 +59,61 @@ All content is stored in the repo (content-as-code):
   - Content collections + schema validation
   - Build-time indexes for search/graph data
   - Minimal JS by default; islands only for interactive components
+
+## Getting started
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
+```
+
+## Cloudflare Pages deployment
+
+Configure your Cloudflare Pages project with:
+
+| Setting | Value |
+|---------|-------|
+| Build command | `pnpm build` |
+| Output directory | `dist` |
+| Install command | `pnpm install` |
+
+The site is fully static and requires no server-side runtime.
+
+## Project structure
+
+```
+src/
+├── content/           # Content collections (MDX files)
+│   ├── config.ts      # Collection schemas
+│   ├── people/        # Person profiles
+│   ├── works/         # Project/tool entries
+│   └── institutions/  # University/lab/org entries
+├── components/        # Reusable Astro components
+├── layouts/           # Page layouts
+├── lib/               # Data loading utilities
+└── pages/             # Route pages
+    ├── index.astro
+    ├── people/
+    ├── works/
+    ├── institutions/
+    └── node/[id].astro  # Unified node renderer
+```
+
+## Phase 1 content
+
+The initial seed content includes:
+
+- **Person:** Linus Torvalds
+- **Works:** Linux kernel, Git
+- **Institutions:** University of Helsinki, Open Source Development Labs
+
+All nodes include Wikimedia Commons images with proper license attribution.
