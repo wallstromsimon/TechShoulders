@@ -17,7 +17,15 @@ const {
 
 const siteUrl = 'https://techshoulders.kihlbergwallstrom.com';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
-const ogImage = image || `${siteUrl}/og-default.png`;
+
+// Handle OG image - convert relative paths to absolute URLs
+let ogImage: string;
+if (image) {
+  // If it's already an absolute URL, use it; otherwise prepend site URL
+  ogImage = image.startsWith('http') ? image : new URL(image, siteUrl).toString();
+} else {
+  ogImage = `${siteUrl}/og-default.png`;
+}
 const fullTitle = title === 'Home' ? 'TechShoulders' : `${title} | TechShoulders`;
 ---
 
