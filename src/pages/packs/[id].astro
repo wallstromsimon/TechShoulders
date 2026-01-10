@@ -63,20 +63,6 @@ const { Content } = await pack.render();
     </div>
   </div>
 
-  {graphNodes.length > 1 && (
-    <section class="pack-section">
-      <h2>Connections</h2>
-      <p class="section-description">
-        See how the items in this pack are connected to each other.
-      </p>
-      <InfluenceGraph
-        client:load
-        nodes={graphNodesFormatted}
-        edges={graphEdgesFormatted}
-      />
-    </section>
-  )}
-
   <section class="pack-section">
     <h2>Learning Path</h2>
     <p class="section-description">
@@ -85,9 +71,11 @@ const { Content } = await pack.render();
     <div class="learning-path">
       {cardEntries.map((nodeResult, index) => nodeResult && (
         <div class="path-item">
-          <div class="path-number">{index + 1}</div>
-          <div class="path-card">
-            <NodeCard entry={nodeResult.entry} kind={nodeResult.kind} variant="compact" />
+          <div class="path-row">
+            <div class="path-number">{index + 1}</div>
+            <div class="path-card">
+              <NodeCard entry={nodeResult.entry} kind={nodeResult.kind} variant="compact" />
+            </div>
           </div>
           {index < cardEntries.length - 1 && (
             <div class="path-connector">
@@ -100,6 +88,20 @@ const { Content } = await pack.render();
       ))}
     </div>
   </section>
+
+  {graphEdges.length > 0 && (
+    <section class="pack-section graph-section">
+      <h2>Connections</h2>
+      <p class="section-description">
+        See how the items in this pack are connected to each other.
+      </p>
+      <InfluenceGraph
+        client:load
+        nodes={graphNodesFormatted}
+        edges={graphEdgesFormatted}
+      />
+    </section>
+  )}
 
   <section class="pack-section pack-content">
     <Content />
@@ -203,7 +205,7 @@ const { Content } = await pack.render();
     align-items: flex-start;
   }
 
-  .path-item > div:first-child {
+  .path-row {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -285,8 +287,15 @@ const { Content } = await pack.render();
     background: #0052a3;
   }
 
+  /* Hide graph on mobile - doesn't render well at narrow widths */
+  @media (max-width: 700px) {
+    .graph-section {
+      display: none;
+    }
+  }
+
   @media (max-width: 500px) {
-    .path-item > div:first-child {
+    .path-row {
       flex-direction: column;
       align-items: flex-start;
     }
