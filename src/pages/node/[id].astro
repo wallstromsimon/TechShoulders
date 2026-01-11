@@ -4,7 +4,8 @@ import NodeHeader from '../../components/NodeHeader.astro';
 import NodeAttribution from '../../components/NodeAttribution.astro';
 import NodeLinks from '../../components/NodeLinks.astro';
 import NodeCard from '../../components/NodeCard.astro';
-import { getAllNodeIds, findNodeById, loadAll, getOutgoingEdges, getIncomingEdges, type PersonEntry, type WorkEntry, type InstitutionEntry, type Edge } from '../../lib/data';
+import MiniGraph from '../../components/MiniGraph.tsx';
+import { getAllNodeIds, findNodeById, loadAll, getOutgoingEdges, getIncomingEdges, buildNodeNeighborhoodData, type PersonEntry, type WorkEntry, type InstitutionEntry, type Edge } from '../../lib/data';
 
 export async function getStaticPaths() {
   const ids = await getAllNodeIds();
@@ -97,6 +98,70 @@ if (kind === 'institutions') {
     }
   }
 }
+
+// Build Connections data for all node types
+// "Influenced by" - people/works that influenced this node (incoming influence edges)
+let influencedBy: { entry: PersonEntry | WorkEntry; label: string; kind: 'people' | 'works' }[] = [];
+for (const edge of incomingEdges) {
+  if (edge.kind === 'influence') {
+    const person = allData.people.find(p => p.data.id === edge.source);
+    if (person) {
+      influencedBy.push({ entry: person, label: edge.label || 'influenced', kind: 'people' });
+      continue;
+    }
+    const work = allData.works.find(w => w.data.id === edge.source);
+    if (work) {
+      influencedBy.push({ entry: work, label: edge.label || 'influenced', kind: 'works' });
+    }
+  }
+}
+
+// "Influenced" - people/works this node influenced (outgoing influence edges)
+let influenced: { entry: PersonEntry | WorkEntry; label: string; kind: 'people' | 'works' }[] = [];
+for (const edge of outgoingEdges) {
+  if (edge.kind === 'influence') {
+    const person = allData.people.find(p => p.data.id === edge.target);
+    if (person) {
+      influenced.push({ entry: person, label: edge.label || 'influenced', kind: 'people' });
+      continue;
+    }
+    const work = allData.works.find(w => w.data.id === edge.target);
+    if (work) {
+      influenced.push({ entry: work, label: edge.label || 'contributed to', kind: 'works' });
+    }
+  }
+}
+
+// "Affiliations" - institutions connected to this node
+let affiliations: { entry: InstitutionEntry; label: string }[] = [];
+for (const edge of [...outgoingEdges, ...incomingEdges]) {
+  if (edge.kind === 'affiliation') {
+    // For outgoing: target is institution, For incoming: source is institution
+    const instId = edge.source === id ? edge.target : edge.source;
+    const institution = allData.institutions.find(i => i.data.id === instId);
+    if (institution && !affiliations.some(a => a.entry.data.id === instId)) {
+      affiliations.push({ entry: institution, label: edge.label || 'affiliated with' });
+    }
+  }
+}
+
+// Build neighborhood graph data for mini graph
+const neighborhoodData = await buildNodeNeighborhoodData(id);
+const graphNodes = neighborhoodData.nodes.map(n => ({
+  id: n.id,
+  name: n.name,
+  kind: n.kind,
+}));
+const graphEdges = neighborhoodData.edges.map(e => ({
+  source: e.source,
+  target: e.target,
+  kind: e.kind,
+  label: e.label,
+}));
+
+// Check if there are any connections to show
+// Show Connections section if there are list items OR if there's a neighborhood graph with more than just the current node
+const hasConnections = influencedBy.length > 0 || influenced.length > 0 || affiliations.length > 0 || graphNodes.length > 1;
 
 // Build SEO description
 let description = '';
@@ -197,6 +262,83 @@ const ogType = kind === 'people' ? 'profile' : 'article';
         {institutionPeople.map(({ entry: person, label }) => (
           <NodeCard entry={person} kind="people" variant="compact" relationshipLabel={label} />
         ))}
+      </div>
+    </section>
+  )}
+
+  {/* Connections Section - shows network relationships with mini graph */}
+  {hasConnections && (
+    <section class="connections-section">
+      <h2>Connections</h2>
+
+      <div class={`connections-layout ${(influencedBy.length === 0 && influenced.length === 0 && affiliations.length === 0) ? 'graph-only' : ''}`}>
+        {/* Lists Column - only show if there are any list items */}
+        {(influencedBy.length > 0 || influenced.length > 0 || affiliations.length > 0) && (
+          <div class="connections-lists">
+            {influencedBy.length > 0 && (
+              <div class="connection-group">
+                <h3>Influenced by</h3>
+                <ul class="connection-list">
+                  {influencedBy.map(({ entry: item, label, kind: itemKind }) => (
+                    <li>
+                      <a href={`/node/${item.data.id}`} class={`connection-link ${itemKind}`}>
+                        {item.data.name}
+                      </a>
+                      <span class="connection-label">{label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {influenced.length > 0 && (
+              <div class="connection-group">
+                <h3>Influenced</h3>
+                <ul class="connection-list">
+                  {influenced.map(({ entry: item, label, kind: itemKind }) => (
+                    <li>
+                      <a href={`/node/${item.data.id}`} class={`connection-link ${itemKind}`}>
+                        {item.data.name}
+                      </a>
+                      <span class="connection-label">{label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {affiliations.length > 0 && (
+              <div class="connection-group">
+                <h3>Affiliations</h3>
+                <ul class="connection-list">
+                  {affiliations.map(({ entry: inst, label }) => (
+                    <li>
+                      <a href={`/node/${inst.data.id}`} class="connection-link institutions">
+                        {inst.data.name}
+                      </a>
+                      <span class="connection-label">{label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mini Graph Column */}
+        {graphNodes.length > 1 && (
+          <div class="connections-graph">
+            <MiniGraph
+              client:load
+              nodes={graphNodes}
+              edges={graphEdges}
+              focusNodeId={id}
+            />
+            <a href={`/graph`} class="view-full-graph">
+              View full graph →
+            </a>
+          </div>
+        )}
       </div>
     </section>
   )}
@@ -319,6 +461,120 @@ const ogType = kind === 'people' ? 'profile' : 'article';
     left: 0;
     color: var(--color-link);
     font-weight: bold;
+  }
+
+  /* Connections Section Styles */
+  .connections-section {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .connections-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: var(--color-text);
+  }
+
+  .connections-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .connections-layout.graph-only {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+
+  .connections-lists {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .connection-group h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .connection-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .connection-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .connection-list li:last-child {
+    border-bottom: none;
+  }
+
+  .connection-link {
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .connection-link:hover {
+    text-decoration: underline;
+  }
+
+  .connection-link.people {
+    color: #e74c3c;
+  }
+
+  .connection-link.works {
+    color: #3498db;
+  }
+
+  .connection-link.institutions {
+    color: #27ae60;
+  }
+
+  .connection-label {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .connections-graph {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .view-full-graph {
+    font-size: 0.85rem;
+    color: var(--color-link);
+    text-decoration: none;
+    text-align: right;
+  }
+
+  .view-full-graph:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 800px) {
+    .connections-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .connections-graph {
+      order: -1;
+    }
   }
 
   @media (max-width: 600px) {
