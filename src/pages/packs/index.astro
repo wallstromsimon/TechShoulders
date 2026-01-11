@@ -1,41 +1,92 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { loadAllPacks, getPackCards } from '../../lib/data';
+import { loadAllPacks, getPackStats } from '../../lib/data';
 
 const packs = await loadAllPacks();
 
-// Get card counts for each pack
-const packsWithCounts = await Promise.all(
+// Get stats for each pack
+const packsWithStats = await Promise.all(
   packs.map(async (pack) => {
-    const cards = await getPackCards(pack);
+    const stats = await getPackStats(pack);
     return {
       pack,
-      cardCount: cards.length,
+      stats,
     };
   })
 );
+
+// Difficulty config
+const difficultyConfig = {
+  beginner: { label: 'Beginner', color: '#27ae60' },
+  intermediate: { label: 'Intermediate', color: '#f39c12' },
+  advanced: { label: 'Advanced', color: '#e74c3c' },
+};
 ---
 
-<BaseLayout title="Packs">
+<BaseLayout
+  title="Learning Packs"
+  description="Collectible learning paths through tech history. Each pack contains curated cards about people, works, and institutions."
+>
   <div class="packs-header">
     <h1>Learning Packs</h1>
-    <p>Curated collections of people, works, and institutions organized by theme. Each pack provides a guided learning path through a topic.</p>
+    <p>Collect and explore curated paths through tech history. Track your progress as you learn about the pioneers, tools, and institutions that shaped computing.</p>
   </div>
 
   <div class="packs-grid">
-    {packsWithCounts.map(({ pack, cardCount }) => (
-      <a href={`/packs/${pack.data.id}`} class="pack-card">
-        <div class="pack-icon">{pack.data.icon || '📦'}</div>
-        <div class="pack-content">
-          <h2 class="pack-title">{pack.data.name}</h2>
-          <p class="pack-description">{pack.data.description}</p>
-          <div class="pack-meta">
-            <span class="card-count">{cardCount} cards</span>
-            <span class="pack-cta">Start learning →</span>
+    {packsWithStats.map(({ pack, stats }) => {
+      const difficulty = pack.data.difficulty || 'beginner';
+      const difficultyInfo = difficultyConfig[difficulty];
+      return (
+        <a href={`/packs/${pack.data.id}`} class="pack-card">
+          <div class="card-accent" style={`--accent-color: ${difficultyInfo.color}`} />
+          <div class="card-header">
+            <div class="card-icon">{pack.data.icon || '📦'}</div>
+            <div class="card-badge" style={`background: ${difficultyInfo.color}`}>
+              {difficultyInfo.label}
+            </div>
           </div>
-        </div>
-      </a>
-    ))}
+          <div class="card-content">
+            <h2 class="card-title">{pack.data.name}</h2>
+            <p class="card-description">{pack.data.description}</p>
+          </div>
+          <div class="card-footer">
+            <div class="card-stats">
+              {stats.people > 0 && (
+                <span class="stat" title="People">
+                  <span class="stat-icon">👤</span>
+                  <span class="stat-value">{stats.people}</span>
+                </span>
+              )}
+              {stats.works > 0 && (
+                <span class="stat" title="Works">
+                  <span class="stat-icon">📄</span>
+                  <span class="stat-value">{stats.works}</span>
+                </span>
+              )}
+              {stats.institutions > 0 && (
+                <span class="stat" title="Institutions">
+                  <span class="stat-icon">🏛️</span>
+                  <span class="stat-value">{stats.institutions}</span>
+                </span>
+              )}
+              {pack.data.estimatedTime && (
+                <span class="stat" title="Estimated time">
+                  <span class="stat-icon">⏱️</span>
+                  <span class="stat-value">{pack.data.estimatedTime}</span>
+                </span>
+              )}
+            </div>
+            <div class="card-total">
+              <span class="total-value">{stats.total}</span>
+              <span class="total-label">cards</span>
+            </div>
+          </div>
+          <div class="card-cta">
+            <span>Start collecting →</span>
+          </div>
+        </a>
+      );
+    })}
   </div>
 
   {packs.length === 0 && (
@@ -47,113 +98,185 @@ const packsWithCounts = await Promise.all(
 
 <style>
   .packs-header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
   }
 
   .packs-header h1 {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 2.25rem;
   }
 
   .packs-header p {
     color: var(--color-muted);
-    margin: 0;
+    margin: 0 auto;
     max-width: 600px;
+    font-size: 1.05rem;
   }
 
   .packs-grid {
     display: grid;
     gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   }
 
   .pack-card {
     display: flex;
-    gap: 1.25rem;
-    padding: 1.5rem;
-    background: var(--color-card-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
+    flex-direction: column;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid var(--color-border);
+    border-radius: 16px;
     text-decoration: none;
     color: inherit;
+    overflow: hidden;
+    position: relative;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
 
   .pack-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-link);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow:
+      0 12px 24px rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.05);
+    border-color: var(--accent-color, var(--color-link));
     text-decoration: none;
   }
 
-  .pack-icon {
-    font-size: 2.5rem;
-    flex-shrink: 0;
-    width: 64px;
-    height: 64px;
+  .card-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--accent-color);
+  }
+
+  .card-header {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-bg);
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.25rem 1.25rem 0;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
+  }
+
+  .card-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: white;
+    padding: 0.3rem 0.6rem;
     border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   }
 
-  .pack-content {
+  .card-content {
+    padding: 1rem 1.25rem;
     flex: 1;
-    min-width: 0;
   }
 
-  .pack-title {
+  .card-title {
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0 0 0.5rem 0;
     color: var(--color-text);
   }
 
-  .pack-description {
+  .card-description {
     font-size: 0.9rem;
     color: var(--color-muted);
-    margin: 0 0 1rem 0;
+    margin: 0;
     line-height: 1.5;
   }
 
-  .pack-meta {
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .card-stats {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .stat {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    font-size: 0.85rem;
-  }
-
-  .card-count {
+    gap: 0.25rem;
+    font-size: 0.8rem;
     color: var(--color-muted);
-    background: var(--color-bg);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
   }
 
-  .pack-cta {
+  .stat-icon {
+    font-size: 0.9rem;
+  }
+
+  .stat-value {
+    font-weight: 600;
+  }
+
+  .card-total {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+  }
+
+  .total-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .total-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.9;
+  }
+
+  .card-cta {
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
     color: var(--color-link);
-    font-weight: 500;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-card-bg);
+    transition: background 0.15s ease;
   }
 
-  .pack-card:hover .pack-cta {
-    text-decoration: underline;
+  .pack-card:hover .card-cta {
+    background: var(--color-link);
+    color: white;
   }
 
   .empty-state {
     text-align: center;
-    padding: 3rem;
+    padding: 4rem 2rem;
     color: var(--color-muted);
   }
 
-  @media (max-width: 500px) {
-    .pack-card {
-      flex-direction: column;
-      align-items: flex-start;
+  @media (max-width: 600px) {
+    .packs-grid {
+      grid-template-columns: 1fr;
     }
 
-    .pack-icon {
-      width: 48px;
-      height: 48px;
-      font-size: 1.75rem;
+    .card-stats {
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
   }
 </style>

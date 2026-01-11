@@ -80,6 +80,8 @@ const packs = defineCollection({
     description: z.string(),
     icon: z.string().optional(), // emoji or icon identifier
     cards: z.array(z.string()), // ordered array of node IDs - serves as learning path
+    difficulty: z.enum(['beginner', 'intermediate', 'advanced']).default('beginner'),
+    estimatedTime: z.string().optional(), // e.g., "30 min", "1 hour"
     image: z.object({
       file: image(),
       source: z.string(),
