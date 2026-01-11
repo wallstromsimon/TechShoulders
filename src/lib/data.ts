@@ -8,6 +8,7 @@ export interface Edge {
   target: string;
   kind: EdgeKind;
   label?: string;
+  year?: number;
 }
 
 export type PersonEntry = CollectionEntry<'people'>;
