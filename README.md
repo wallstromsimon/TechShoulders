@@ -163,21 +163,22 @@ All PRs are automatically validated for:
 - **JSON syntax:** Valid edge files
 
 ```bash
-# Run validation locally
-pnpm validate
-
-# Type checking
-pnpm lint
+# Run all CI checks locally
+pnpm ci
 ```
 
 ## Scripts
 
 ```bash
-pnpm dev       # Start development server
-pnpm build     # Build for production
-pnpm preview   # Preview production build
-pnpm validate  # Validate all content
-pnpm lint      # TypeScript type checking
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm preview      # Preview production build
+pnpm validate     # Validate content schemas and edges
+pnpm typecheck    # TypeScript type checking
+pnpm lint         # ESLint code quality
+pnpm format:check # Check code formatting
+pnpm check-links  # Validate internal links and sources
+pnpm ci           # Run all checks (typecheck, lint, format, validate, links, build)
 ```
 
 ## Analytics
