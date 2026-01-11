@@ -74,6 +74,22 @@ Create MDX files in `src/content/{people,works,institutions}/`. Required frontma
 
 Optional `image` object: `{ url, source, license, author }`
 
+### Citations
+
+For specific claims (statistics, dates), use Wikipedia-style inline citations:
+
+```html
+Powers 80% of web servers<sup><a href="#source-1">[1]</a></sup>
+```
+
+Add a Sources section at the end with anchor targets:
+
+```markdown
+## Sources
+
+1. <span id="source-1"></span>Org. ["Title."](https://url) Description.
+```
+
 ## Adding edges
 
 Add entries to JSON arrays in `src/content/edges/`:
