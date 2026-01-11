@@ -1,28 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import InfluenceGraph from '../components/InfluenceGraph';
-import { buildGraphData } from '../lib/data';
 
-const { nodes, edges } = await buildGraphData(true);
+// Load precomputed graph data generated at build time
+import graphData from '../../public/graph.json';
 
-// Transform to the format expected by the graph component
-const graphNodes = nodes.map(n => ({
-  id: n.id,
-  name: n.name,
-  kind: n.kind,
-  domains: n.domains,
-}));
+const graphNodes = graphData.nodes;
+const graphEdges = graphData.edges;
 
 // Get all unique domains for filter dropdown
-const allDomains = [...new Set(nodes.flatMap(n => n.domains))].sort();
-
-const graphEdges = edges.map(e => ({
-  source: e.source,
-  target: e.target,
-  kind: e.kind,
-  label: e.label,
-  year: e.year,
-}));
+const allDomains = [...new Set(graphNodes.flatMap(n => n.domains || []))].sort();
 ---
 
 <BaseLayout title="Influence Graph">
