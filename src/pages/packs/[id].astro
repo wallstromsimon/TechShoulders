@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import NodeCard from '../../components/NodeCard.astro';
+import PackProgress from '../../components/PackProgress';
 import InfluenceGraph from '../../components/InfluenceGraph';
-import { loadAllPacks, getPackById, getPackCards, buildPackGraphData, findNodeById } from '../../lib/data';
+import { loadAllPacks, getPackById, getPackCards, buildPackGraphData, findNodeById, getPackStats } from '../../lib/data';
 
 export async function getStaticPaths() {
   const packs = await loadAllPacks();
@@ -20,6 +21,9 @@ if (!pack) {
 
 // Get cards in learning path order
 const cards = await getPackCards(pack);
+
+// Get pack stats
+const stats = await getPackStats(pack);
 
 // Get full entries for card rendering
 const cardEntries = await Promise.all(
@@ -49,17 +53,25 @@ const graphEdgesFormatted = graphEdges.map(e => ({
 // Render the MDX content
 const { Content } = await pack.render();
 
-// Get OG image - use pack image if available, otherwise fall back to first card's image
-let ogImage: string | undefined = pack.data.image?.file.src;
-if (!ogImage && cardEntries.length > 0) {
-  // Try to use the first card's image as a fallback
-  for (const entry of cardEntries) {
-    if (entry?.entry.data.image?.file.src) {
-      ogImage = entry.entry.data.image.file.src;
-      break;
-    }
-  }
+// Get OG image - prefer generated pack OG image, then pack image, then first card's image
+let ogImage: string | undefined = `/og/pack-${pack.data.id}.png`;
+// Fall back to pack's custom image if set
+if (pack.data.image?.file.src) {
+  ogImage = pack.data.image.file.src;
 }
+
+// Prepare card data for progress component
+const cardIds = cards.map(c => c.id);
+const cardNames = cards.map(c => c.name);
+
+// Difficulty labels and colors
+const difficultyConfig = {
+  beginner: { label: 'Beginner', color: '#27ae60' },
+  intermediate: { label: 'Intermediate', color: '#f39c12' },
+  advanced: { label: 'Advanced', color: '#e74c3c' },
+};
+const difficulty = pack.data.difficulty || 'beginner';
+const difficultyInfo = difficultyConfig[difficulty];
 ---
 
 <BaseLayout
@@ -68,62 +80,114 @@ if (!ogImage && cardEntries.length > 0) {
   image={ogImage}
   type="article"
 >
-  <div class="pack-header">
+  <div class="pack-page">
     <a href="/packs" class="back-link">← All Packs</a>
-    <div class="pack-title-row">
-      {pack.data.icon && <span class="pack-icon">{pack.data.icon}</span>}
-      <h1>{pack.data.name}</h1>
-    </div>
-    <p class="pack-description">{pack.data.description}</p>
-    <div class="pack-stats">
-      <span class="stat">{cards.length} cards in this pack</span>
-    </div>
-  </div>
 
-  <section class="pack-section">
-    <div class="learning-path">
-      {cardEntries.map((nodeResult, index) => nodeResult && (
-        <div class="path-item">
-          <div class="path-row">
-            <div class="path-number">{index + 1}</div>
-            <div class="path-card">
-              <NodeCard entry={nodeResult.entry} kind={nodeResult.kind} variant="compact" />
+    <!-- Collectible Card Header -->
+    <div class="pack-card">
+      <div class="card-top">
+        <div class="card-icon">{pack.data.icon || '📦'}</div>
+        <div class="card-rarity" style={`--rarity-color: ${difficultyInfo.color}`}>
+          {difficultyInfo.label}
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h1 class="card-title">{pack.data.name}</h1>
+        <p class="card-description">{pack.data.description}</p>
+      </div>
+
+      <div class="card-stats">
+        <div class="stat-grid">
+          {stats.people > 0 && (
+            <div class="stat-item">
+              <span class="stat-value">{stats.people}</span>
+              <span class="stat-label">People</span>
             </div>
-          </div>
-          {index < cardEntries.length - 1 && (
-            <div class="path-connector">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M19 12l-7 7-7-7"/>
-              </svg>
+          )}
+          {stats.works > 0 && (
+            <div class="stat-item">
+              <span class="stat-value">{stats.works}</span>
+              <span class="stat-label">Works</span>
+            </div>
+          )}
+          {stats.institutions > 0 && (
+            <div class="stat-item">
+              <span class="stat-value">{stats.institutions}</span>
+              <span class="stat-label">Institutions</span>
+            </div>
+          )}
+          {pack.data.estimatedTime && (
+            <div class="stat-item">
+              <span class="stat-value stat-time">{pack.data.estimatedTime}</span>
+              <span class="stat-label">Est. Time</span>
             </div>
           )}
         </div>
-      ))}
+        <div class="card-total">
+          <span class="total-count">{stats.total}</span>
+          <span class="total-label">cards</span>
+        </div>
+      </div>
     </div>
-  </section>
 
-  {graphEdges.length > 0 && (
-    <section class="pack-section graph-section">
-      <h2>Connections</h2>
-      <p class="section-description">
-        See how the items in this pack are connected to each other.
-      </p>
-      <InfluenceGraph
+    <!-- Progress Tracker -->
+    <section class="progress-section">
+      <PackProgress
         client:load
-        nodes={graphNodesFormatted}
-        edges={graphEdgesFormatted}
+        packId={pack.data.id}
+        cardIds={cardIds}
+        cardNames={cardNames}
       />
     </section>
-  )}
 
-  <section class="pack-section pack-content">
-    <Content />
-  </section>
+    <!-- Learning Path -->
+    <section class="pack-section">
+      <h2>Learning Path</h2>
+      <div class="learning-path">
+        {cardEntries.map((nodeResult, index) => nodeResult && (
+          <div class="path-item" data-card-id={cards[index].id}>
+            <div class="path-row">
+              <div class="path-number">{index + 1}</div>
+              <div class="path-card">
+                <NodeCard entry={nodeResult.entry} kind={nodeResult.kind} variant="compact" />
+              </div>
+            </div>
+            {index < cardEntries.length - 1 && (
+              <div class="path-connector">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 5v14M19 12l-7 7-7-7"/>
+                </svg>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
 
-  <div class="pack-share">
-    <h3>Share this pack</h3>
-    <p>Help others discover this learning path.</p>
-    <button class="share-btn" id="copy-link">Copy link</button>
+    {graphEdges.length > 0 && (
+      <section class="pack-section graph-section">
+        <h2>Connections</h2>
+        <p class="section-description">
+          See how the items in this pack are connected to each other.
+        </p>
+        <InfluenceGraph
+          client:load
+          nodes={graphNodesFormatted}
+          edges={graphEdgesFormatted}
+        />
+      </section>
+    )}
+
+    <section class="pack-section pack-content">
+      <Content />
+    </section>
+
+    <div class="pack-share">
+      <h3>Share this pack</h3>
+      <p>Help others discover this learning path.</p>
+      <button class="share-btn" id="copy-link">Copy link</button>
+    </div>
   </div>
 </BaseLayout>
 
@@ -142,57 +206,268 @@ if (!ogImage && cardEntries.length > 0) {
 </script>
 
 <style>
-  .pack-header {
-    margin-bottom: 2.5rem;
+  .pack-page {
+    max-width: 100%;
   }
 
   .back-link {
     display: inline-block;
     font-size: 0.9rem;
     color: var(--color-muted);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .back-link:hover {
     color: var(--color-link);
   }
 
-  .pack-title-row {
+  /* Collectible Card Styling */
+  .pack-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid var(--color-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.05),
+      0 10px 20px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pack-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c, #f39c12);
+    opacity: 0.8;
+  }
+
+  .card-top {
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .card-icon {
+    font-size: 3rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .card-rarity {
+    background: var(--rarity-color);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-body {
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-description {
+    color: var(--color-muted);
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .card-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .stat-grid {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .stat-time {
+    font-size: 1rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+  }
+
+  .total-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .total-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.9;
+  }
+
+  /* Progress Section */
+  .progress-section {
+    margin-bottom: 2rem;
+  }
+
+  :global(.pack-progress) {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  :global(.progress-header) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 0.75rem;
   }
 
-  .pack-icon {
-    font-size: 2rem;
+  :global(.progress-label) {
+    font-weight: 600;
+    font-size: 0.9rem;
   }
 
-  .pack-header h1 {
-    margin: 0;
-  }
-
-  .pack-description {
-    font-size: 1.1rem;
-    color: var(--color-muted);
-    margin: 0 0 1rem 0;
-    max-width: 600px;
-  }
-
-  .pack-stats {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .stat {
+  :global(.progress-count) {
     font-size: 0.85rem;
     color: var(--color-muted);
-    background: var(--color-bg);
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
+  :global(.complete-badge) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #27ae60;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: bold;
+  }
+
+  :global(.progress-bar) {
+    height: 8px;
+    background: var(--color-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  :global(.progress-fill) {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #27ae60);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  :global(.progress-cards) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  :global(.progress-card-btn) {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    transition: all 0.15s ease;
+    position: relative;
+  }
+
+  :global(.progress-card-btn:hover) {
+    border-color: var(--color-link);
+    color: var(--color-link);
+  }
+
+  :global(.progress-card-btn.read) {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    border-color: #27ae60;
+    color: white;
+  }
+
+  :global(.progress-card-btn .card-number) {
+    line-height: 1;
+  }
+
+  :global(.progress-card-btn .check-icon) {
+    position: absolute;
+    font-size: 0.6rem;
+    bottom: 2px;
+    right: 2px;
+  }
+
+  :global(.progress-hint) {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    margin: 0;
+    text-align: center;
+  }
+
+  /* Learning Path */
   .pack-section {
     margin-bottom: 3rem;
   }
@@ -308,6 +583,34 @@ if (!ogImage && cardEntries.length > 0) {
   }
 
   @media (max-width: 500px) {
+    .pack-card {
+      padding: 1.25rem;
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+    }
+
+    .card-stats {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .stat-grid {
+      justify-content: space-around;
+    }
+
+    .card-total {
+      flex-direction: row;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
     .path-row {
       flex-direction: column;
       align-items: flex-start;

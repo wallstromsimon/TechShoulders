@@ -252,3 +252,21 @@ export async function buildPackGraphData(pack: PackEntry, includeAffiliations: b
 
   return { nodes, edges };
 }
+
+export interface PackStats {
+  total: number;
+  people: number;
+  works: number;
+  institutions: number;
+}
+
+export async function getPackStats(pack: PackEntry): Promise<PackStats> {
+  const cards = await getPackCards(pack);
+
+  return {
+    total: cards.length,
+    people: cards.filter(c => c.kind === 'people').length,
+    works: cards.filter(c => c.kind === 'works').length,
+    institutions: cards.filter(c => c.kind === 'institutions').length,
+  };
+}
