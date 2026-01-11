@@ -10,7 +10,11 @@ const graphNodes = nodes.map(n => ({
   id: n.id,
   name: n.name,
   kind: n.kind,
+  domains: n.domains,
 }));
+
+// Get all unique domains for filter dropdown
+const allDomains = [...new Set(nodes.flatMap(n => n.domains))].sort();
 
 const graphEdges = edges.map(e => ({
   source: e.source,
@@ -32,5 +36,6 @@ const graphEdges = edges.map(e => ({
     client:load
     nodes={graphNodes}
     edges={graphEdges}
+    allDomains={allDomains}
   />
 </BaseLayout>
