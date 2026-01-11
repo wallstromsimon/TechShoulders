@@ -1,0 +1,75 @@
+{
+  "nodes": [
+    {
+      "id": "linus-torvalds",
+      "name": "Linus Torvalds",
+      "kind": "people",
+      "domains": [
+        "Operating Systems",
+        "Version Control",
+        "Open Source"
+      ]
+    },
+    {
+      "id": "git",
+      "name": "Git",
+      "kind": "works",
+      "domains": [
+        "Version Control",
+        "Developer Tools",
+        "Open Source"
+      ]
+    },
+    {
+      "id": "linux-kernel",
+      "name": "Linux Kernel",
+      "kind": "works",
+      "domains": [
+        "Operating Systems",
+        "Open Source"
+      ]
+    },
+    {
+      "id": "open-source-development-labs",
+      "name": "Open Source Development Labs",
+      "kind": "institutions",
+      "domains": []
+    },
+    {
+      "id": "university-of-helsinki",
+      "name": "University of Helsinki",
+      "kind": "institutions",
+      "domains": []
+    }
+  ],
+  "edges": [
+    {
+      "source": "linus-torvalds",
+      "target": "university-of-helsinki",
+      "kind": "affiliation",
+      "label": "studied at",
+      "year": 1988
+    },
+    {
+      "source": "linus-torvalds",
+      "target": "open-source-development-labs",
+      "kind": "affiliation",
+      "label": "fellow at",
+      "year": 2003
+    },
+    {
+      "source": "linus-torvalds",
+      "target": "linux-kernel",
+      "kind": "influence",
+      "label": "created",
+      "year": 1991
+    },
+    {
+      "source": "linus-torvalds",
+      "target": "git",
+      "kind": "influence",
+      "label": "created",
+      "year": 2005
+    }
+  ]
+}
