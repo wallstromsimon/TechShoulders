@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import cytoscape, { type Core, type ElementDefinition } from 'cytoscape';
 
+type NodeKind = 'people' | 'works' | 'institutions';
+
 interface GraphNode {
   id: string;
   name: string;
-  kind: 'people' | 'works' | 'institutions';
+  kind: NodeKind;
+  domains: string[];
 }
 
 interface GraphEdge {
@@ -18,6 +21,60 @@ interface GraphEdge {
 interface InfluenceGraphProps {
   nodes: GraphNode[];
   edges: GraphEdge[];
+  allDomains: string[];
+}
+
+// URL parameter helpers
+function parseUrlParams(): {
+  focus: string | null;
+  affiliations: boolean;
+  depth: number;
+  types: NodeKind[];
+  domains: string[];
+} {
+  if (typeof window === 'undefined') {
+    return { focus: null, affiliations: false, depth: 1, types: [], domains: [] };
+  }
+  const params = new URLSearchParams(window.location.search);
+
+  const focus = params.get('focus');
+  const affiliations = params.get('affiliations') === '1';
+  const depthParam = params.get('depth');
+  const depth = depthParam ? Math.min(3, Math.max(1, parseInt(depthParam, 10) || 1)) : 1;
+
+  const typesParam = params.get('types');
+  const types = typesParam
+    ? typesParam.split(',').filter((t): t is NodeKind =>
+        ['people', 'works', 'institutions'].includes(t))
+    : [];
+
+  const domainsParam = params.get('domains');
+  const domains = domainsParam ? domainsParam.split(',').map(d => decodeURIComponent(d)) : [];
+
+  return { focus, affiliations, depth, types, domains };
+}
+
+function updateUrlParams(params: {
+  focus: string | null;
+  affiliations: boolean;
+  depth: number;
+  types: NodeKind[];
+  domains: string[];
+}) {
+  if (typeof window === 'undefined') return;
+
+  const urlParams = new URLSearchParams();
+
+  if (params.focus) urlParams.set('focus', params.focus);
+  if (params.affiliations) urlParams.set('affiliations', '1');
+  if (params.focus && params.depth !== 1) urlParams.set('depth', params.depth.toString());
+  if (params.types.length > 0) urlParams.set('types', params.types.join(','));
+  if (params.domains.length > 0) urlParams.set('domains', params.domains.map(d => encodeURIComponent(d)).join(','));
+
+  const queryString = urlParams.toString();
+  const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+
+  window.history.replaceState({}, '', newUrl);
 }
 
 const kindColors: Record<string, string> = {
@@ -31,9 +88,13 @@ const edgeColors: Record<string, string> = {
   affiliation: '#999999',
 };
 
-export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
+export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core | null>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
+
+  // Parse initial state from URL
   const [includeAffiliations, setIncludeAffiliations] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -48,7 +109,48 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
     label: string;
     year?: number;
   } | null>(null);
-  const searchRef = useRef<HTMLDivElement>(null);
+  const [selectedTypes, setSelectedTypes] = useState<NodeKind[]>([]);
+  const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Initialize state from URL on mount
+  useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    const params = parseUrlParams();
+
+    if (params.focus && nodes.some(n => n.id === params.focus)) {
+      setFocusedNode(params.focus);
+    }
+    setIncludeAffiliations(params.affiliations);
+    setFocusDepth(params.depth);
+    if (params.types.length > 0) {
+      setSelectedTypes(params.types);
+      setShowFilters(true);
+    }
+    if (params.domains.length > 0) {
+      // Validate domains exist
+      const validDomains = params.domains.filter(d => allDomains.includes(d));
+      if (validDomains.length > 0) {
+        setSelectedDomains(validDomains);
+        setShowFilters(true);
+      }
+    }
+  }, [nodes, allDomains]);
+
+  // Sync URL when state changes
+  useEffect(() => {
+    if (!initializedRef.current) return;
+
+    updateUrlParams({
+      focus: focusedNode,
+      affiliations: includeAffiliations,
+      depth: focusDepth,
+      types: selectedTypes,
+      domains: selectedDomains,
+    });
+  }, [focusedNode, includeAffiliations, focusDepth, selectedTypes, selectedDomains]);
 
   // Filter nodes for search dropdown
   const searchResults = useMemo(() => {
@@ -135,6 +237,18 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
 
     // Only include nodes that have connections
     let filteredNodes = nodes.filter(n => connectedNodeIds.has(n.id));
+
+    // Apply type filter
+    if (selectedTypes.length > 0) {
+      filteredNodes = filteredNodes.filter(n => selectedTypes.includes(n.kind));
+    }
+
+    // Apply domain filter
+    if (selectedDomains.length > 0) {
+      filteredNodes = filteredNodes.filter(n =>
+        n.domains.some(d => selectedDomains.includes(d))
+      );
+    }
 
     // If focus mode is active, filter to neighborhood
     let neighborhoodNodes: Set<string> | null = null;
@@ -294,12 +408,26 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
       if (clickTimeout) clearTimeout(clickTimeout);
       cy.destroy();
     };
-  }, [nodes, edges, includeAffiliations, focusedNode, focusDepth, getNeighborhood]);
+  }, [nodes, edges, includeAffiliations, focusedNode, focusDepth, selectedTypes, selectedDomains, getNeighborhood]);
 
   // Get the focused node's name for display
   const focusedNodeName = focusedNode
     ? nodes.find(n => n.id === focusedNode)?.name
     : null;
+
+  // Copy share link to clipboard
+  const [copied, setCopied] = useState(false);
+  const handleCopyLink = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    }
+  }, []);
+
+  // Check if there's anything worth sharing (any state set)
+  const hasShareableState = focusedNode || includeAffiliations || selectedTypes.length > 0 || selectedDomains.length > 0;
 
   return (
     <div style={{ width: '100%' }}>
@@ -415,7 +543,160 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
         >
           {showLegend ? 'Hide' : 'Show'} Legend
         </button>
+
+        {/* Filters Toggle */}
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          style={{
+            padding: '0.5rem 0.75rem',
+            border: '1px solid #ccc',
+            borderRadius: 6,
+            backgroundColor: showFilters ? '#f0f0f0' : '#fff',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+          }}
+        >
+          {showFilters ? 'Hide' : 'Show'} Filters
+          {(selectedTypes.length > 0 || selectedDomains.length > 0) && (
+            <span style={{
+              marginLeft: 6,
+              backgroundColor: '#3498db',
+              color: '#fff',
+              borderRadius: 10,
+              padding: '1px 6px',
+              fontSize: '0.75rem',
+            }}>
+              {selectedTypes.length + selectedDomains.length}
+            </span>
+          )}
+        </button>
+
+        {/* Share Link Button */}
+        {hasShareableState && (
+          <button
+            onClick={handleCopyLink}
+            style={{
+              padding: '0.5rem 0.75rem',
+              border: '1px solid #ccc',
+              borderRadius: 6,
+              backgroundColor: copied ? '#27ae60' : '#fff',
+              color: copied ? '#fff' : 'inherit',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              transition: 'background-color 0.2s, color 0.2s',
+            }}
+          >
+            {copied ? 'Copied!' : 'Copy Link'}
+          </button>
+        )}
       </div>
+
+      {/* Filters Panel */}
+      {showFilters && (
+        <div style={{
+          marginBottom: '1rem',
+          padding: '1rem',
+          backgroundColor: '#f8f9fa',
+          border: '1px solid #e0e0e0',
+          borderRadius: 8,
+        }}>
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+            {/* Type Filter */}
+            <div>
+              <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 }}>
+                Node Types
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem' }}>
+                {(['people', 'works', 'institutions'] as const).map(kind => (
+                  <label key={kind} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedTypes.includes(kind)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedTypes([...selectedTypes, kind]);
+                        } else {
+                          setSelectedTypes(selectedTypes.filter(t => t !== kind));
+                        }
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <span style={{
+                      display: 'inline-block',
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      backgroundColor: kindColors[kind],
+                    }} />
+                    {kind.charAt(0).toUpperCase() + kind.slice(1)}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Domain Filter */}
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 }}>
+                Domains
+              </h4>
+              <select
+                multiple
+                value={selectedDomains}
+                onChange={(e) => {
+                  const options = e.target.options;
+                  const selected: string[] = [];
+                  for (let i = 0; i < options.length; i++) {
+                    if (options[i].selected) {
+                      selected.push(options[i].value);
+                    }
+                  }
+                  setSelectedDomains(selected);
+                }}
+                style={{
+                  width: '100%',
+                  maxWidth: 300,
+                  height: 100,
+                  padding: '0.25rem',
+                  border: '1px solid #ccc',
+                  borderRadius: 4,
+                  fontSize: '0.85rem',
+                }}
+              >
+                {allDomains.map(domain => (
+                  <option key={domain} value={domain}>
+                    {domain}
+                  </option>
+                ))}
+              </select>
+              <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.75rem', color: '#666' }}>
+                Hold Ctrl/Cmd to select multiple
+              </p>
+            </div>
+
+            {/* Clear Filters Button */}
+            {(selectedTypes.length > 0 || selectedDomains.length > 0) && (
+              <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                <button
+                  onClick={() => {
+                    setSelectedTypes([]);
+                    setSelectedDomains([]);
+                  }}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    border: '1px solid #ccc',
+                    borderRadius: 4,
+                    backgroundColor: '#fff',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  Clear All Filters
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Focus Mode Controls */}
       {focusedNode && (
@@ -661,7 +942,8 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
         <strong>Click</strong> a node to focus on its neighborhood.{' '}
         <strong>Click</strong> an edge to see why it&apos;s connected.{' '}
         <strong>Double-click</strong> a node to view details.{' '}
-        Drag to pan, scroll to zoom.
+        Drag to pan, scroll to zoom.{' '}
+        Use <strong>Copy Link</strong> to share the current view.
       </p>
     </div>
   );
