@@ -16,7 +16,9 @@ const {
 } = Astro.props;
 
 const siteUrl = 'https://techshoulders.kihlbergwallstrom.com';
-const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+// Normalize pathname: remove trailing slash (except for root "/")
+const normalizedPath = Astro.url.pathname === '/' ? '/' : Astro.url.pathname.replace(/\/$/, '');
+const canonicalUrl = new URL(normalizedPath, siteUrl).toString();
 
 // Handle OG image - convert relative paths to absolute URLs
 let ogImage: string;
