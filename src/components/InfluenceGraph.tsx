@@ -347,7 +347,7 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
           )}
         </div>
 
-        {/* Affiliations Toggle */}
+        {/* Weak Edges Toggle */}
         <label style={{
           display: 'flex',
           alignItems: 'center',
@@ -362,7 +362,7 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
             onChange={(e) => setIncludeAffiliations(e.target.checked)}
             style={{ cursor: 'pointer' }}
           />
-          Include affiliations
+          Show weak edges (affiliations)
         </label>
 
         {/* Legend Toggle */}
@@ -496,7 +496,7 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
             {/* Edge Types */}
             <div>
               <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 }}>
-                Edge Types
+                Edge Types (Two Tiers)
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -506,7 +506,7 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
                     height: 2,
                     backgroundColor: edgeColors.influence,
                   }} />
-                  <strong>Influence</strong> – created, invented, inspired, built
+                  <strong>Strong</strong> (influence) – created, invented, inspired, built_on, popularized
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <span style={{
@@ -516,7 +516,7 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
                     backgroundColor: edgeColors.affiliation,
                     backgroundImage: 'repeating-linear-gradient(90deg, #999 0, #999 4px, transparent 4px, transparent 8px)',
                   }} />
-                  <strong>Affiliation</strong> – studied at, worked at, founded
+                  <strong>Weak</strong> (affiliation) – studied_at, worked_at, professor_at, founded
                 </span>
               </div>
             </div>

@@ -5,6 +5,19 @@ const linksSchema = z.array(z.object({
   url: z.string(),
 })).optional();
 
+/**
+ * Edge Classification (Two Tiers)
+ *
+ * Edges are classified to prevent graph clutter as content scales:
+ *
+ * STRONG edges (kind: 'influence') - shown by default:
+ *   created, invented, influenced, inspired, built_on, popularized, standardized
+ *
+ * WEAK edges (kind: 'affiliation') - hidden by default, toggled on:
+ *   studied at, worked at, professor at, fellow at, founded, funded_by
+ *
+ * See src/lib/edgeClassification.ts for the canonical list.
+ */
 const edgeSchema = z.object({
   source: z.string(),
   target: z.string(),
