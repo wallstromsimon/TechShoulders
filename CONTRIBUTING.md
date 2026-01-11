@@ -27,6 +27,32 @@ Thank you for your interest in contributing to TechShoulders! This project aims 
 - **Proper attribution**: Always credit image sources with license info
 - **No copyright violations**: Use images from Wikimedia Commons or public domain
 
+### Citations and Sources
+
+When making specific factual claims (statistics, dates, quotes), include inline citations that link to a Sources section. Use Wikipedia-style numbered references.
+
+**Inline citation format:**
+```html
+Powers the majority of web servers<sup><a href="#source-1">[1]</a></sup>
+```
+
+**Sources section format:**
+```markdown
+---
+
+## Sources
+
+1. <span id="source-1"></span>Author/Org. ["Article Title."](https://example.com) Brief description of what this source establishes.
+2. <span id="source-2"></span>Author/Org. ["Article Title."](https://example.com) Brief description.
+```
+
+**Guidelines:**
+- Use `<sup><a href="#source-N">[N]</a></sup>` for clickable superscript citations
+- Place `<span id="source-N"></span>` at the start of each source entry as the anchor target
+- Number citations sequentially as they appear in the text
+- Link to primary sources when possible (official reports, academic papers, reputable news)
+- Not every sentence needs a citation—focus on specific claims that readers might want to verify
+
 ### File Naming
 
 Use lowercase slugs with hyphens:

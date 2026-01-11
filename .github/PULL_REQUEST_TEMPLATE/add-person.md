@@ -43,6 +43,11 @@
 - [ ] Links point to reliable sources (Wikipedia, official sites)
 - [ ] No copyright violations
 
+### Citations (if specific claims made)
+- [ ] Inline citations use `<sup><a href="#source-N">[N]</a></sup>` format
+- [ ] Sources section added at end with `<span id="source-N"></span>` anchors
+- [ ] Citations link to reliable primary sources
+
 ## File Location
 
 ```
