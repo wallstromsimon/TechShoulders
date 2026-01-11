@@ -247,8 +247,9 @@ const allEntries = [
     const domainParam = urlParams.get('domain');
     if (domainParam) {
       filterDomain.value = domainParam;
-      applyFilters();
     }
+    // Always apply filters on initial load to sync visibility state
+    applyFilters();
 
     function clearAllFilters() {
       filterKind!.value = '';
