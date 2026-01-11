@@ -23,6 +23,7 @@ const edgeSchema = z.object({
   target: z.string(),
   kind: z.enum(['influence', 'affiliation']),
   label: z.string().optional(),
+  year: z.number().optional(),
 });
 
 const edges = defineCollection({

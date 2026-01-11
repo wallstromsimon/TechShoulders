@@ -12,6 +12,7 @@ interface GraphEdge {
   target: string;
   kind: 'influence' | 'affiliation';
   label?: string;
+  year?: number;
 }
 
 interface InfluenceGraphProps {
@@ -39,6 +40,14 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
   const [focusedNode, setFocusedNode] = useState<string | null>(null);
   const [focusDepth, setFocusDepth] = useState(1);
   const [showLegend, setShowLegend] = useState(false);
+  const [selectedEdge, setSelectedEdge] = useState<{
+    sourceId: string;
+    targetId: string;
+    sourceName: string;
+    targetName: string;
+    label: string;
+    year?: number;
+  } | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
 
   // Filter nodes for search dropdown
@@ -156,6 +165,7 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
           target: edge.target,
           kind: edge.kind,
           label: edge.label || '',
+          year: edge.year,
         },
       })),
     ];
@@ -237,6 +247,7 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
     let clickTimeout: ReturnType<typeof setTimeout> | null = null;
     cy.on('tap', 'node', (evt) => {
       const nodeId = evt.target.id();
+      setSelectedEdge(null); // Clear edge selection when clicking a node
 
       if (clickTimeout) {
         // Double click - navigate to node page
@@ -249,6 +260,31 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
           clickTimeout = null;
           setFocusedNode(nodeId);
         }, 250);
+      }
+    });
+
+    // Handle edge clicks - show explanation panel
+    cy.on('tap', 'edge', (evt) => {
+      const edgeData = evt.target.data();
+      const sourceNode = nodes.find(n => n.id === edgeData.source);
+      const targetNode = nodes.find(n => n.id === edgeData.target);
+
+      if (sourceNode && targetNode) {
+        setSelectedEdge({
+          sourceId: edgeData.source,
+          targetId: edgeData.target,
+          sourceName: sourceNode.name,
+          targetName: targetNode.name,
+          label: edgeData.label || '',
+          year: edgeData.year,
+        });
+      }
+    });
+
+    // Clear edge selection when clicking on background
+    cy.on('tap', (evt) => {
+      if (evt.target === cy) {
+        setSelectedEdge(null);
       }
     });
 
@@ -444,6 +480,44 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
         </div>
       )}
 
+      {/* Edge Explanation Panel */}
+      {selectedEdge && (
+        <div style={{
+          marginBottom: '1rem',
+          padding: '0.75rem 1rem',
+          backgroundColor: '#e8f4fc',
+          border: '1px solid #3498db',
+          borderRadius: 6,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          flexWrap: 'wrap',
+        }}>
+          <span style={{ fontSize: '0.95rem' }}>
+            <strong>{selectedEdge.sourceName}</strong>
+            <span style={{ margin: '0 0.5rem', color: '#666' }}>&rarr;</span>
+            <strong>{selectedEdge.targetName}</strong>
+            <span style={{ marginLeft: '0.5rem', color: '#555' }}>
+              ({selectedEdge.label}{selectedEdge.year ? `, ${selectedEdge.year}` : ''})
+            </span>
+          </span>
+          <button
+            onClick={() => setSelectedEdge(null)}
+            style={{
+              marginLeft: 'auto',
+              padding: '0.25rem 0.5rem',
+              border: '1px solid #ccc',
+              borderRadius: 4,
+              backgroundColor: '#fff',
+              cursor: 'pointer',
+              fontSize: '0.8rem',
+            }}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Expanded Legend */}
       {showLegend && (
         <div style={{
@@ -585,7 +659,8 @@ export default function InfluenceGraph({ nodes, edges }: InfluenceGraphProps) {
         color: '#666',
       }}>
         <strong>Click</strong> a node to focus on its neighborhood.{' '}
-        <strong>Double-click</strong> to view details.{' '}
+        <strong>Click</strong> an edge to see why it&apos;s connected.{' '}
+        <strong>Double-click</strong> a node to view details.{' '}
         Drag to pan, scroll to zoom.
       </p>
     </div>

@@ -3,12 +3,14 @@
     "source": "linus-torvalds",
     "target": "linux-kernel",
     "kind": "influence",
-    "label": "created"
+    "label": "created",
+    "year": 1991
   },
   {
     "source": "linus-torvalds",
     "target": "git",
     "kind": "influence",
-    "label": "created"
+    "label": "created",
+    "year": 2005
   }
 ]
