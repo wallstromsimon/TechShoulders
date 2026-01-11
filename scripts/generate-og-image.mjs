@@ -15,7 +15,6 @@ const width = 1200;
 const height = 630;
 
 // Colors matching the site's design
-const bgColor = '#fafafa';
 const primaryColor = '#0066cc';
 const textColor = '#1a1a1a';
 const mutedColor = '#666666';
@@ -71,9 +70,7 @@ const svg = `
 
 async function generateOgImage() {
   try {
-    await sharp(Buffer.from(svg))
-      .png()
-      .toFile(outputPath);
+    await sharp(Buffer.from(svg)).png().toFile(outputPath);
 
     console.log(`✓ Generated OG image: ${outputPath}`);
   } catch (error) {

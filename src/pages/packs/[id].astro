@@ -3,11 +3,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import NodeCard from '../../components/NodeCard.astro';
 import PackProgress from '../../components/PackProgress';
 import InfluenceGraph from '../../components/InfluenceGraph';
-import { loadAllPacks, getPackById, getPackCards, buildPackGraphData, findNodeById, getPackStats } from '../../lib/data';
+import {
+  loadAllPacks,
+  getPackById,
+  getPackCards,
+  buildPackGraphData,
+  findNodeById,
+  getPackStats,
+} from '../../lib/data';
 
 export async function getStaticPaths() {
   const packs = await loadAllPacks();
-  return packs.map(pack => ({
+  return packs.map((pack) => ({
     params: { id: pack.data.id },
   }));
 }
@@ -37,14 +44,14 @@ const cardEntries = await Promise.all(
 const { nodes: graphNodes, edges: graphEdges } = await buildPackGraphData(pack, true);
 
 // Transform for graph component
-const graphNodesFormatted = graphNodes.map(n => ({
+const graphNodesFormatted = graphNodes.map((n) => ({
   id: n.id,
   name: n.name,
   kind: n.kind,
   domains: n.domains,
 }));
 
-const graphEdgesFormatted = graphEdges.map(e => ({
+const graphEdgesFormatted = graphEdges.map((e) => ({
   source: e.source,
   target: e.target,
   kind: e.kind,
@@ -62,8 +69,8 @@ if (pack.data.image?.file.src) {
 }
 
 // Prepare card data for progress component
-const cardIds = cards.map(c => c.id);
-const cardNames = cards.map(c => c.name);
+const cardIds = cards.map((c) => c.id);
+const cardNames = cards.map((c) => c.name);
 
 // Difficulty labels and colors
 const difficultyConfig = {
@@ -100,30 +107,38 @@ const difficultyInfo = difficultyConfig[difficulty];
 
       <div class="card-stats">
         <div class="stat-grid">
-          {stats.people > 0 && (
-            <div class="stat-item">
-              <span class="stat-value">{stats.people}</span>
-              <span class="stat-label">People</span>
-            </div>
-          )}
-          {stats.works > 0 && (
-            <div class="stat-item">
-              <span class="stat-value">{stats.works}</span>
-              <span class="stat-label">Works</span>
-            </div>
-          )}
-          {stats.institutions > 0 && (
-            <div class="stat-item">
-              <span class="stat-value">{stats.institutions}</span>
-              <span class="stat-label">Institutions</span>
-            </div>
-          )}
-          {pack.data.estimatedTime && (
-            <div class="stat-item">
-              <span class="stat-value stat-time">{pack.data.estimatedTime}</span>
-              <span class="stat-label">Est. Time</span>
-            </div>
-          )}
+          {
+            stats.people > 0 && (
+              <div class="stat-item">
+                <span class="stat-value">{stats.people}</span>
+                <span class="stat-label">People</span>
+              </div>
+            )
+          }
+          {
+            stats.works > 0 && (
+              <div class="stat-item">
+                <span class="stat-value">{stats.works}</span>
+                <span class="stat-label">Works</span>
+              </div>
+            )
+          }
+          {
+            stats.institutions > 0 && (
+              <div class="stat-item">
+                <span class="stat-value">{stats.institutions}</span>
+                <span class="stat-label">Institutions</span>
+              </div>
+            )
+          }
+          {
+            pack.data.estimatedTime && (
+              <div class="stat-item">
+                <span class="stat-value stat-time">{pack.data.estimatedTime}</span>
+                <span class="stat-label">Est. Time</span>
+              </div>
+            )
+          }
         </div>
         <div class="card-total">
           <span class="total-count">{stats.total}</span>
@@ -134,52 +149,61 @@ const difficultyInfo = difficultyConfig[difficulty];
 
     <!-- Progress Tracker -->
     <section class="progress-section">
-      <PackProgress
-        client:load
-        packId={pack.data.id}
-        cardIds={cardIds}
-        cardNames={cardNames}
-      />
+      <PackProgress client:load packId={pack.data.id} cardIds={cardIds} cardNames={cardNames} />
     </section>
 
     <!-- Learning Path -->
     <section class="pack-section">
       <h2>Learning Path</h2>
       <div class="learning-path">
-        {cardEntries.map((nodeResult, index) => nodeResult && (
-          <div class="path-item" data-card-id={cards[index].id}>
-            <div class="path-row">
-              <div class="path-number">{index + 1}</div>
-              <div class="path-card">
-                <NodeCard entry={nodeResult.entry} kind={nodeResult.kind} variant="compact" />
-              </div>
-            </div>
-            {index < cardEntries.length - 1 && (
-              <div class="path-connector">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 5v14M19 12l-7 7-7-7"/>
-                </svg>
-              </div>
-            )}
-          </div>
-        ))}
+        {
+          cardEntries.map(
+            (nodeResult, index) =>
+              nodeResult && (
+                <div class="path-item" data-card-id={cards[index].id}>
+                  <div class="path-row">
+                    <div class="path-number">{index + 1}</div>
+                    <div class="path-card">
+                      <NodeCard entry={nodeResult.entry} kind={nodeResult.kind} variant="compact" />
+                    </div>
+                  </div>
+                  {index < cardEntries.length - 1 && (
+                    <div class="path-connector">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M12 5v14M19 12l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              )
+          )
+        }
       </div>
     </section>
 
-    {graphEdges.length > 0 && (
-      <section class="pack-section graph-section">
-        <h2>Connections</h2>
-        <p class="section-description">
-          See how the items in this pack are connected to each other.
-        </p>
-        <InfluenceGraph
-          client:load
-          nodes={graphNodesFormatted}
-          edges={graphEdgesFormatted}
-          allDomains={[...new Set(graphNodesFormatted.flatMap(n => n.domains))].sort()}
-        />
-      </section>
-    )}
+    {
+      graphEdges.length > 0 && (
+        <section class="pack-section graph-section">
+          <h2>Connections</h2>
+          <p class="section-description">
+            See how the items in this pack are connected to each other.
+          </p>
+          <InfluenceGraph
+            client:load
+            nodes={graphNodesFormatted}
+            edges={graphEdgesFormatted}
+            allDomains={[...new Set(graphNodesFormatted.flatMap((n) => n.domains))].sort()}
+          />
+        </section>
+      )
+    }
 
     <section class="pack-section pack-content">
       <Content />

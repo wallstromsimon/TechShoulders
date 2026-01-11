@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # 1. Type checking (astro check)
+      - name: Type check
+        run: pnpm typecheck
+
+      # 2. Lint (ESLint)
+      - name: Lint
+        run: pnpm lint
+
+      # 3. Format check (Prettier)
+      - name: Format check
+        run: pnpm format:check
+
+      # 4. Content schema validation + dangling edges check
+      - name: Validate content schemas
+        run: pnpm validate
+
+      # 5. Link checker (internal links + source anchors)
+      - name: Check links
+        run: pnpm check-links
+
+      # 6. Build (ensures everything compiles)
+      - name: Build site
+        run: pnpm build

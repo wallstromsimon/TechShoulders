@@ -10,9 +10,9 @@ const { people, works, institutions } = await loadAll();
 
 // Combine all entries with their kind
 const allEntries = [
-  ...people.map(e => ({ entry: e, kind: 'people' as NodeKind })),
-  ...works.map(e => ({ entry: e, kind: 'works' as NodeKind })),
-  ...institutions.map(e => ({ entry: e, kind: 'institutions' as NodeKind })),
+  ...people.map((e) => ({ entry: e, kind: 'people' as NodeKind })),
+  ...works.map((e) => ({ entry: e, kind: 'works' as NodeKind })),
+  ...institutions.map((e) => ({ entry: e, kind: 'institutions' as NodeKind })),
 ].sort((a, b) => a.entry.data.name.localeCompare(b.entry.data.name));
 ---
 
@@ -49,9 +49,7 @@ const allEntries = [
       <label for="filter-domain">Domain</label>
       <select id="filter-domain">
         <option value="">All Domains</option>
-        {allDomains.map(domain => (
-          <option value={domain}>{domain}</option>
-        ))}
+        {allDomains.map((domain) => <option value={domain}>{domain}</option>)}
       </select>
     </div>
 
@@ -59,9 +57,7 @@ const allEntries = [
       <label for="filter-era">Era</label>
       <select id="filter-era">
         <option value="">All Eras</option>
-        {allEras.map(era => (
-          <option value={era}>{era}</option>
-        ))}
+        {allEras.map((era) => <option value={era}>{era}</option>)}
       </select>
     </div>
 
@@ -73,23 +69,25 @@ const allEntries = [
   </div>
 
   <div class="card-grid" id="card-grid">
-    {allEntries.map(({ entry, kind }) => (
-      <div
-        class="grid-item"
-        data-id={entry.data.id}
-        data-kind={kind}
-        data-domains={JSON.stringify(
-          kind === 'people'
-            ? (entry.data as any).domains || []
-            : kind === 'works'
-            ? (entry.data as any).domains || []
-            : []
-        )}
-        data-era={kind === 'people' ? (entry.data as any).era : ''}
-      >
-        <NodeCard entry={entry} kind={kind} />
-      </div>
-    ))}
+    {
+      allEntries.map(({ entry, kind }) => (
+        <div
+          class="grid-item"
+          data-id={entry.data.id}
+          data-kind={kind}
+          data-domains={JSON.stringify(
+            kind === 'people'
+              ? (entry.data as any).domains || []
+              : kind === 'works'
+                ? (entry.data as any).domains || []
+                : []
+          )}
+          data-era={kind === 'people' ? (entry.data as any).era : ''}
+        >
+          <NodeCard entry={entry} kind={kind} />
+        </div>
+      ))
+    }
   </div>
 
   <div id="no-results" class="no-results" hidden>
@@ -101,9 +99,9 @@ const allEntries = [
 <script>
   // Fetch search index and initialize Fuse.js
   Promise.all([
-    fetch('/search-index.json').then(r => r.json()),
-    // @ts-ignore - CDN import
-    import('https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.mjs')
+    fetch('/search-index.json').then((r) => r.json()),
+    // @ts-expect-error - CDN import
+    import('https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.mjs'),
   ]).then(([searchIndex, { default: Fuse }]: [any, { default: any }]) => {
     const fuse = new Fuse(searchIndex, {
       keys: [
@@ -128,7 +126,18 @@ const allEntries = [
     const noResults = document.getElementById('no-results');
     const resetBtn = document.getElementById('reset-filters');
 
-    if (!searchInput || !searchResults || !cardGrid || !filterKind || !filterDomain || !filterEra || !clearBtn || !resultCount || !noResults || !resetBtn) {
+    if (
+      !searchInput ||
+      !searchResults ||
+      !cardGrid ||
+      !filterKind ||
+      !filterDomain ||
+      !filterEra ||
+      !clearBtn ||
+      !resultCount ||
+      !noResults ||
+      !resetBtn
+    ) {
       return;
     }
 
@@ -153,18 +162,21 @@ const allEntries = [
         return;
       }
 
-      searchResults.innerHTML = results.map((result: any) => {
-        const item = result.item;
-        const kindClass = `kind-${item.kind}`;
-        const kindLabel = item.kind === 'people' ? 'Person' : item.kind === 'works' ? 'Work' : 'Institution';
-        return `
+      searchResults.innerHTML = results
+        .map((result: any) => {
+          const item = result.item;
+          const kindClass = `kind-${item.kind}`;
+          const kindLabel =
+            item.kind === 'people' ? 'Person' : item.kind === 'works' ? 'Work' : 'Institution';
+          return `
           <a href="/node/${item.id}" class="search-result-item ${kindClass}">
             <span class="result-badge">${kindLabel}</span>
             <span class="result-name">${item.name}</span>
             ${item.subtitle ? `<span class="result-subtitle">${item.subtitle}</span>` : ''}
           </a>
         `;
-      }).join('');
+        })
+        .join('');
 
       searchResults.hidden = false;
       applyFilters();
@@ -201,7 +213,7 @@ const allEntries = [
         searchMatchIds = new Set(results.map((r: any) => r.item.id));
       }
 
-      gridItems.forEach(item => {
+      gridItems.forEach((item) => {
         const kind = item.dataset.kind;
         const domains = JSON.parse(item.dataset.domains || '[]');
         const era = item.dataset.era;
@@ -295,7 +307,9 @@ const allEntries = [
     border: 2px solid var(--color-border);
     border-radius: 8px;
     background: var(--color-card-bg);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   #search-input:focus {

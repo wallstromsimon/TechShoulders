@@ -42,7 +42,8 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: 'TechShoulders',
-    description: 'Standing on the shoulders of tech giants - a knowledge graph of influential people, works, and institutions in computing history',
+    description:
+      'Standing on the shoulders of tech giants - a knowledge graph of influential people, works, and institutions in computing history',
     site: context.site?.toString() || 'https://techshoulders.kihlbergwallstrom.com',
     items,
     customData: `<language>en-us</language>`,

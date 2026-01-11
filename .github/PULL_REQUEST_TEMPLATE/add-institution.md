@@ -10,15 +10,18 @@
 ## Pre-submission Checklist
 
 ### Required Fields
+
 - [ ] `id` - Unique identifier (lowercase, hyphens)
 - [ ] `name` - Full name of the institution
 - [ ] `kind` - Type (lab, university, company, organization)
 
 ### Recommended Fields
+
 - [ ] `location` - Geographic location
 - [ ] `links` - Array of {label, url} for external resources
 
 ### Image (Required if image provided)
+
 - [ ] Image file saved to `src/assets/images/entities/<id>.jpg`
 - [ ] `image.file` - Relative path to local image
 - [ ] `image.source` - Source page URL (e.g., Wikimedia Commons)
@@ -26,6 +29,7 @@
 - [ ] `image.author` - Attribution to creator
 
 ## Content Quality
+
 - [ ] Description covers the institution's tech significance
 - [ ] Notable contributions/inventions mentioned
 - [ ] Key people associated are referenced
@@ -61,7 +65,6 @@ image:
   license: CC BY-SA 3.0
   author: Photographer Name
 ---
-
 Bell Labs (formerly Bell Telephone Laboratories) is an American industrial
 research and scientific development company...
 ```
@@ -69,6 +72,7 @@ research and scientific development company...
 ## Related Changes
 
 <!-- List any edges or related content being added -->
+
 - [ ] Adding affiliation edges (person → institution)
 - [ ] Adding people who worked/studied there
 - [ ] Adding works created at this institution

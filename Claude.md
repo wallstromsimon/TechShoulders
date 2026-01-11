@@ -30,6 +30,7 @@ Three node types (MDX files in `src/content/`):
 3. **Institutions** — universities, companies, labs, standards bodies
 
 Edges are stored as JSON arrays in `src/content/edges/`:
+
 - `influence.json` — "created", "invented", "built on" relationships
 - `affiliation.json` — "studied at", "worked at", "fellow at" relationships
 

@@ -81,11 +81,11 @@ pnpm preview
 
 Configure your Cloudflare Pages project with:
 
-| Setting | Value |
-|---------|-------|
-| Build command | `pnpm build` |
-| Output directory | `dist` |
-| Install command | `pnpm install` |
+| Setting          | Value          |
+| ---------------- | -------------- |
+| Build command    | `pnpm build`   |
+| Output directory | `dist`         |
+| Install command  | `pnpm install` |
 
 The site is fully static and requires no server-side runtime.
 
@@ -147,6 +147,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines 
 ### PR Templates
 
 When creating a pull request, use the appropriate template:
+
 - **Add Person:** For new tech pioneer profiles
 - **Add Work:** For projects, tools, papers
 - **Add Institution:** For universities, labs, companies
@@ -155,6 +156,7 @@ When creating a pull request, use the appropriate template:
 ### CI Validation
 
 All PRs are automatically validated for:
+
 - **Schema compliance:** Required fields present, correct types
 - **Edge integrity:** Referenced nodes must exist
 - **Image attribution:** Complete source/license/author when images present
@@ -184,10 +186,12 @@ To enable analytics, uncomment your preferred provider in `src/layouts/BaseLayou
 
 ```html
 <!-- Cloudflare Web Analytics -->
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
-        data-cf-beacon='{"token": "YOUR_TOKEN"}'></script>
+<script
+  defer
+  src="https://static.cloudflareinsights.com/beacon.min.js"
+  data-cf-beacon='{"token": "YOUR_TOKEN"}'
+></script>
 
 <!-- Or Plausible Analytics -->
-<script defer data-domain="techshoulders.com"
-        src="https://plausible.io/js/script.js"></script>
+<script defer data-domain="techshoulders.com" src="https://plausible.io/js/script.js"></script>
 ```

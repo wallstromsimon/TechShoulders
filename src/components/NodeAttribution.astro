@@ -13,9 +13,12 @@ const { image } = Astro.props;
 <aside class="attribution">
   <h4>Image Attribution</h4>
   <p>
-    <strong>Author:</strong> {image.author}<br />
-    <strong>License:</strong> {image.license}<br />
-    <strong>Source:</strong> <a href={image.source} target="_blank" rel="noopener noreferrer">{image.source}</a>
+    <strong>Author:</strong>
+    {image.author}<br />
+    <strong>License:</strong>
+    {image.license}<br />
+    <strong>Source:</strong>
+    <a href={image.source} target="_blank" rel="noopener noreferrer">{image.source}</a>
   </p>
 </aside>
 

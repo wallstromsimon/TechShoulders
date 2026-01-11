@@ -12,15 +12,17 @@ const institutions = await listNodes('institutions');
     <p>Universities, labs, and organizations where innovation happened.</p>
   </div>
 
-  {institutions.length === 0 ? (
-    <p class="empty">No institutions added yet.</p>
-  ) : (
-    <div class="card-grid">
-      {institutions.map(institution => (
-        <NodeCard entry={institution} kind="institutions" />
-      ))}
-    </div>
-  )}
+  {
+    institutions.length === 0 ? (
+      <p class="empty">No institutions added yet.</p>
+    ) : (
+      <div class="card-grid">
+        {institutions.map((institution) => (
+          <NodeCard entry={institution} kind="institutions" />
+        ))}
+      </div>
+    )
+  }
 </BaseLayout>
 
 <style>

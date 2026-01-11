@@ -39,39 +39,41 @@ const hasImage = !!data.image?.file;
 
 <a href={`/node/${data.id}`} class={`node-card ${variant} kind-${kind}`}>
   <div class="card-inner">
-    {hasImage && variant !== 'compact' && (
-      <div class="card-image">
-        <Image src={data.image!.file} alt={data.name} width={400} height={160} loading="lazy" />
-      </div>
-    )}
+    {
+      hasImage && variant !== 'compact' && (
+        <div class="card-image">
+          <Image src={data.image!.file} alt={data.name} width={400} height={160} loading="lazy" />
+        </div>
+      )
+    }
 
     <div class="card-content">
       <div class="card-header">
         <span class={`badge badge-${kind}`}>{kindLabel}</span>
-        {kind === 'works' && (
-          <span class="year">{(data as WorkEntry['data']).year}</span>
-        )}
+        {kind === 'works' && <span class="year">{(data as WorkEntry['data']).year}</span>}
       </div>
 
       <h3 class="card-title">{data.name}</h3>
 
-      {relationshipLabel && (
-        <p class="relationship-label">— {relationshipLabel}</p>
-      )}
+      {relationshipLabel && <p class="relationship-label">— {relationshipLabel}</p>}
 
-      {kind === 'people' && (data as PersonEntry['data']).title && (
-        <p class="card-subtitle">{(data as PersonEntry['data']).title}</p>
-      )}
+      {
+        kind === 'people' && (data as PersonEntry['data']).title && (
+          <p class="card-subtitle">{(data as PersonEntry['data']).title}</p>
+        )
+      }
 
       <p class="card-meta">{subtitle}</p>
 
-      {domains.length > 0 && variant !== 'compact' && (
-        <div class="card-domains">
-          {domains.slice(0, 3).map(domain => (
-            <span class="domain-tag">{domain}</span>
-          ))}
-        </div>
-      )}
+      {
+        domains.length > 0 && variant !== 'compact' && (
+          <div class="card-domains">
+            {domains.slice(0, 3).map((domain) => (
+              <span class="domain-tag">{domain}</span>
+            ))}
+          </div>
+        )
+      }
     </div>
   </div>
 </a>
@@ -85,7 +87,10 @@ const hasImage = !!data.image?.file;
     border: 1px solid var(--color-border);
     border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .node-card:hover {

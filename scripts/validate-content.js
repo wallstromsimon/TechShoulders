@@ -19,10 +19,12 @@ import { z } from 'zod';
 const CONTENT_DIR = 'src/content';
 
 // Slug validation: lowercase letters, numbers, hyphens only
-const slugSchema = z.string().regex(
-  /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-  'Slug must be lowercase with hyphens (e.g., "linus-torvalds")'
-);
+const slugSchema = z
+  .string()
+  .regex(
+    /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+    'Slug must be lowercase with hyphens (e.g., "linus-torvalds")'
+  );
 
 // Edge types for relationships between nodes
 const edgeKindSchema = z.enum(['influence', 'affiliation']);
@@ -37,16 +39,18 @@ const inlineEdgeSchema = z.object({
 
 // Schema definitions (matching src/content/config.ts)
 const imageSchema = z.object({
-  file: z.string(),      // Local path to image in src/assets/
+  file: z.string(), // Local path to image in src/assets/
   source: z.string(), // URL for attribution
   license: z.string(),
   author: z.string(),
 });
 
-const linksSchema = z.array(z.object({
-  label: z.string(),
-  url: z.string(),
-}));
+const linksSchema = z.array(
+  z.object({
+    label: z.string(),
+    url: z.string(),
+  })
+);
 
 const personSchema = z.object({
   id: slugSchema,
@@ -111,7 +115,10 @@ function parseValue(value) {
   if (/^\d+$/.test(value)) return parseInt(value, 10);
   if (/^\d+\.\d+$/.test(value)) return parseFloat(value);
   // Remove quotes if present
-  if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
     return value.slice(1, -1);
   }
   return value;
@@ -215,7 +222,7 @@ function error(file, message) {
   errors.push(`ERROR [${file}]: ${message}`);
 }
 
-function warn(file, message) {
+function _warn(file, message) {
   warnings.push(`WARNING [${file}]: ${message}`);
 }
 
@@ -229,7 +236,7 @@ function collectNodeIds() {
     const dir = join(CONTENT_DIR, collection);
     if (!existsSync(dir)) continue;
 
-    const files = readdirSync(dir).filter(f => f.endsWith('.mdx'));
+    const files = readdirSync(dir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
       const content = readFileSync(join(dir, file), 'utf-8');
       const data = parseYamlFrontmatter(content);
@@ -243,7 +250,7 @@ function collectNodeIds() {
 }
 
 // Validate a single MDX file
-function validateMdxFile(filePath, schema, collection) {
+function validateMdxFile(filePath, schema, _collection) {
   const content = readFileSync(filePath, 'utf-8');
   const data = parseYamlFrontmatter(content);
   const filename = basename(filePath, '.mdx');
@@ -327,7 +334,7 @@ function validate() {
   const peopleDir = join(CONTENT_DIR, 'people');
   if (existsSync(peopleDir)) {
     console.log('Validating people...');
-    const files = readdirSync(peopleDir).filter(f => f.endsWith('.mdx'));
+    const files = readdirSync(peopleDir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
       const filePath = join(peopleDir, file);
       const data = validateMdxFile(filePath, personSchema, 'people');
@@ -343,7 +350,7 @@ function validate() {
   const worksDir = join(CONTENT_DIR, 'works');
   if (existsSync(worksDir)) {
     console.log('Validating works...');
-    const files = readdirSync(worksDir).filter(f => f.endsWith('.mdx'));
+    const files = readdirSync(worksDir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
       const filePath = join(worksDir, file);
       const data = validateMdxFile(filePath, workSchema, 'works');
@@ -358,7 +365,7 @@ function validate() {
   const institutionsDir = join(CONTENT_DIR, 'institutions');
   if (existsSync(institutionsDir)) {
     console.log('Validating institutions...');
-    const files = readdirSync(institutionsDir).filter(f => f.endsWith('.mdx'));
+    const files = readdirSync(institutionsDir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
       const filePath = join(institutionsDir, file);
       const data = validateMdxFile(filePath, institutionSchema, 'institutions');
@@ -373,7 +380,7 @@ function validate() {
   const packsDir = join(CONTENT_DIR, 'packs');
   if (existsSync(packsDir)) {
     console.log('Validating packs...');
-    const files = readdirSync(packsDir).filter(f => f.endsWith('.mdx'));
+    const files = readdirSync(packsDir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
       const filePath = join(packsDir, file);
       const data = validateMdxFile(filePath, packSchema, 'packs');

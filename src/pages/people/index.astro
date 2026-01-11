@@ -12,15 +12,17 @@ const people = await listNodes('people');
     <p>The visionaries and engineers who created foundational technologies.</p>
   </div>
 
-  {people.length === 0 ? (
-    <p class="empty">No people added yet.</p>
-  ) : (
-    <div class="card-grid">
-      {people.map(person => (
-        <NodeCard entry={person} kind="people" />
-      ))}
-    </div>
-  )}
+  {
+    people.length === 0 ? (
+      <p class="empty">No people added yet.</p>
+    ) : (
+      <div class="card-grid">
+        {people.map((person) => (
+          <NodeCard entry={person} kind="people" />
+        ))}
+      </div>
+    )
+  }
 </BaseLayout>
 
 <style>
