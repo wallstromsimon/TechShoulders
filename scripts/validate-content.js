@@ -5,7 +5,7 @@
  *
  * Validates:
  * 1. Schema compliance for all content types
- * 2. Edge endpoints exist (source and target)
+ * 2. Inline edge endpoints exist (target references)
  * 3. Image attribution completeness
  * 4. ID matches filename
  * 5. signatureWorks references exist
@@ -18,10 +18,27 @@ import { z } from 'zod';
 
 const CONTENT_DIR = 'src/content';
 
+// Slug validation: lowercase letters, numbers, hyphens only
+const slugSchema = z.string().regex(
+  /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+  'Slug must be lowercase with hyphens (e.g., "linus-torvalds")'
+);
+
+// Edge types for relationships between nodes
+const edgeKindSchema = z.enum(['influence', 'affiliation']);
+
+// Inline edge schema - each node declares its outgoing edges
+const inlineEdgeSchema = z.object({
+  target: slugSchema,
+  kind: edgeKindSchema,
+  label: z.string().optional(),
+  year: z.number().optional(),
+});
+
 // Schema definitions (matching src/content/config.ts)
 const imageSchema = z.object({
-  file: z.string(),   // Local path to image in src/assets/
-  source: z.string(), // Wikimedia Commons page URL for attribution
+  file: z.string(),      // Local path to image in src/assets/
+  sourceUrl: z.string(), // URL for attribution
   license: z.string(),
   author: z.string(),
 });
@@ -32,144 +49,60 @@ const linksSchema = z.array(z.object({
 }));
 
 const personSchema = z.object({
-  id: z.string(),
-  name: z.string(),
+  id: slugSchema,
+  type: z.literal('person'),
+  name: z.string().min(1),
+  domains: z.array(z.string()).min(1),
+  era: z.string().min(1),
+  edges: z.array(inlineEdgeSchema).default([]),
   title: z.string().optional(),
-  era: z.string(),
-  domains: z.array(z.string()).optional(),
-  signatureWorks: z.array(z.string()).optional(),
+  signatureWorks: z.array(slugSchema).optional(),
   whyYouCare: z.array(z.string()).optional(),
   links: linksSchema.optional(),
   image: imageSchema.optional(),
 });
 
 const workSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  kind: z.string(),
-  year: z.number(),
-  domains: z.array(z.string()).optional(),
+  id: slugSchema,
+  type: z.literal('work'),
+  name: z.string().min(1),
+  kind: z.string().min(1),
+  domains: z.array(z.string()).min(1),
+  era: z.string().min(1),
+  edges: z.array(inlineEdgeSchema).default([]),
+  year: z.number().optional(),
   links: linksSchema.optional(),
   image: imageSchema.optional(),
 });
 
 const institutionSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  kind: z.string(),
+  id: slugSchema,
+  type: z.literal('institution'),
+  name: z.string().min(1),
+  kind: z.string().min(1),
+  domains: z.array(z.string()).min(1),
+  era: z.string().min(1),
+  edges: z.array(inlineEdgeSchema).default([]),
   location: z.string().optional(),
   links: linksSchema.optional(),
   image: imageSchema.optional(),
 });
 
 const packSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
+  id: slugSchema,
+  type: z.literal('pack'),
+  name: z.string().min(1),
+  description: z.string().min(1),
+  domains: z.array(z.string()).min(1),
+  era: z.string().min(1),
+  cards: z.array(slugSchema).min(1),
+  edges: z.array(inlineEdgeSchema).default([]),
   icon: z.string().optional(),
-  cards: z.array(z.string()),
+  difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+  estimatedTime: z.string().optional(),
+  links: linksSchema.optional(),
   image: imageSchema.optional(),
 });
-
-const edgeSchema = z.object({
-  source: z.string(),
-  target: z.string(),
-  kind: z.enum(['influence', 'affiliation']),
-  label: z.string().optional(),
-});
-
-const edgesArraySchema = z.array(edgeSchema);
-
-// Helper to parse YAML frontmatter from MDX
-function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
-
-  const yamlContent = match[1];
-  const data = {};
-  let currentKey = null;
-  let currentArray = null;
-  let inArray = false;
-  let arrayIndent = 0;
-
-  const lines = yamlContent.split('\n');
-
-  for (const line of lines) {
-    // Skip empty lines
-    if (line.trim() === '') continue;
-
-    // Check for array item
-    const arrayMatch = line.match(/^(\s*)- (.*)$/);
-    if (arrayMatch && inArray) {
-      const indent = arrayMatch[1].length;
-      const value = arrayMatch[2].trim();
-
-      if (indent >= arrayIndent) {
-        // Handle object in array
-        if (value.includes(':')) {
-          const [k, v] = value.split(':').map(s => s.trim());
-          if (currentArray.length === 0 || typeof currentArray[currentArray.length - 1] !== 'object') {
-            currentArray.push({});
-          }
-          const lastObj = currentArray[currentArray.length - 1];
-          if (typeof lastObj === 'object' && !Array.isArray(lastObj)) {
-            lastObj[k] = v;
-          }
-        } else {
-          currentArray.push(value);
-        }
-        continue;
-      }
-    }
-
-    // Check for new array start
-    const newArrayMatch = line.match(/^(\s*)- (.*)$/);
-    if (newArrayMatch && !inArray) {
-      const value = newArrayMatch[2].trim();
-      if (value.includes(':')) {
-        const [k, v] = value.split(':').map(s => s.trim());
-        currentArray.push({ [k]: v });
-      } else {
-        currentArray.push(value);
-      }
-      continue;
-    }
-
-    // Check for key-value pair
-    const kvMatch = line.match(/^(\s*)([^:]+):\s*(.*)$/);
-    if (kvMatch) {
-      const indent = kvMatch[1].length;
-      const key = kvMatch[2].trim();
-      const value = kvMatch[3].trim();
-
-      if (indent === 0) {
-        // Top-level key
-        if (value === '' || value === '|' || value === '>') {
-          // Start of array or nested object
-          data[key] = [];
-          currentKey = key;
-          currentArray = data[key];
-          inArray = true;
-          arrayIndent = 2;
-        } else {
-          data[key] = parseValue(value);
-          inArray = false;
-        }
-      } else if (indent === 2 && currentKey && typeof data[currentKey] === 'object' && !Array.isArray(data[currentKey])) {
-        // Nested object property
-        data[currentKey][key] = parseValue(value);
-      } else if (inArray && indent === 4) {
-        // Object property inside array
-        if (currentArray.length === 0 || typeof currentArray[currentArray.length - 1] !== 'object') {
-          currentArray.push({});
-        }
-        currentArray[currentArray.length - 1][key] = parseValue(value);
-      }
-    }
-  }
-
-  return data;
-}
 
 function parseValue(value) {
   if (value === 'true') return true;
@@ -177,10 +110,14 @@ function parseValue(value) {
   if (value === 'null') return null;
   if (/^\d+$/.test(value)) return parseInt(value, 10);
   if (/^\d+\.\d+$/.test(value)) return parseFloat(value);
+  // Remove quotes if present
+  if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    return value.slice(1, -1);
+  }
   return value;
 }
 
-// Better YAML parser for our specific format
+// YAML parser for our specific format
 function parseYamlFrontmatter(content) {
   const match = content.match(/^---\n([\s\S]*?)\n---/);
   if (!match) return null;
@@ -205,7 +142,11 @@ function parseYamlFrontmatter(content) {
       const key = topMatch[1];
       const value = topMatch[2].trim();
 
-      if (value === '') {
+      if (value === '[]') {
+        // Empty array on same line
+        result[key] = [];
+        i++;
+      } else if (value === '') {
         // Could be array or object - check next line
         i++;
         if (i < lines.length) {
@@ -218,22 +159,24 @@ function parseYamlFrontmatter(content) {
               if (itemMatch) {
                 const itemValue = itemMatch[1].trim();
                 if (itemValue.includes(':')) {
-                  // Object in array (like links)
+                  // Object in array (like links or edges)
                   const obj = {};
-                  const [k, v] = itemValue.split(':').map(s => s.trim());
-                  obj[k] = v;
+                  const colonIndex = itemValue.indexOf(':');
+                  const k = itemValue.slice(0, colonIndex).trim();
+                  const v = itemValue.slice(colonIndex + 1).trim();
+                  obj[k] = parseValue(v);
                   i++;
                   // Check for more properties in this object
-                  while (i < lines.length && lines[i].match(/^\s{4}[a-zA-Z]/)) {
+                  while (i < lines.length && lines[i].match(/^\s{4,}[a-zA-Z]/)) {
                     const propMatch = lines[i].match(/^\s+([a-zA-Z_][a-zA-Z0-9_]*):\s*(.*)$/);
                     if (propMatch) {
-                      obj[propMatch[1]] = propMatch[2].trim();
+                      obj[propMatch[1]] = parseValue(propMatch[2].trim());
                     }
                     i++;
                   }
                   result[key].push(obj);
                 } else {
-                  result[key].push(itemValue);
+                  result[key].push(parseValue(itemValue));
                   i++;
                 }
               } else {
@@ -326,7 +269,7 @@ function validateMdxFile(filePath, schema, collection) {
 
   // Validate image attribution completeness
   if (data.image) {
-    const imageFields = ['file', 'source', 'license', 'author'];
+    const imageFields = ['file', 'sourceUrl', 'license', 'author'];
     for (const field of imageFields) {
       if (!data.image[field]) {
         error(filePath, `Image is present but missing required field: image.${field}`);
@@ -337,33 +280,12 @@ function validateMdxFile(filePath, schema, collection) {
   return data;
 }
 
-// Validate edges file
-function validateEdgesFile(filePath, nodeIds) {
-  const content = readFileSync(filePath, 'utf-8');
-  let data;
+// Validate inline edges
+function validateInlineEdges(data, nodeIds, filePath) {
+  if (!data?.edges) return;
 
-  try {
-    data = JSON.parse(content);
-  } catch (e) {
-    error(filePath, `Invalid JSON: ${e.message}`);
-    return;
-  }
-
-  const result = edgesArraySchema.safeParse(data);
-  if (!result.success) {
-    for (const issue of result.error.issues) {
-      error(filePath, `Schema validation failed at index ${issue.path[0]}: ${issue.message}`);
-    }
-    return;
-  }
-
-  // Validate edge endpoints exist
-  for (let i = 0; i < data.length; i++) {
-    const edge = data[i];
-
-    if (!nodeIds.has(edge.source)) {
-      error(filePath, `Edge ${i}: source "${edge.source}" does not exist`);
-    }
+  for (let i = 0; i < data.edges.length; i++) {
+    const edge = data.edges[i];
 
     if (!nodeIds.has(edge.target)) {
       error(filePath, `Edge ${i}: target "${edge.target}" does not exist`);
@@ -411,6 +333,7 @@ function validate() {
       const data = validateMdxFile(filePath, personSchema, 'people');
       if (data) {
         validateSignatureWorks(data, nodeIds, filePath);
+        validateInlineEdges(data, nodeIds, filePath);
       }
     }
     console.log(`  Checked ${files.length} files`);
@@ -422,7 +345,11 @@ function validate() {
     console.log('Validating works...');
     const files = readdirSync(worksDir).filter(f => f.endsWith('.mdx'));
     for (const file of files) {
-      validateMdxFile(join(worksDir, file), workSchema, 'works');
+      const filePath = join(worksDir, file);
+      const data = validateMdxFile(filePath, workSchema, 'works');
+      if (data) {
+        validateInlineEdges(data, nodeIds, filePath);
+      }
     }
     console.log(`  Checked ${files.length} files`);
   }
@@ -433,7 +360,11 @@ function validate() {
     console.log('Validating institutions...');
     const files = readdirSync(institutionsDir).filter(f => f.endsWith('.mdx'));
     for (const file of files) {
-      validateMdxFile(join(institutionsDir, file), institutionSchema, 'institutions');
+      const filePath = join(institutionsDir, file);
+      const data = validateMdxFile(filePath, institutionSchema, 'institutions');
+      if (data) {
+        validateInlineEdges(data, nodeIds, filePath);
+      }
     }
     console.log(`  Checked ${files.length} files`);
   }
@@ -448,18 +379,8 @@ function validate() {
       const data = validateMdxFile(filePath, packSchema, 'packs');
       if (data) {
         validatePackCards(data, nodeIds, filePath);
+        validateInlineEdges(data, nodeIds, filePath);
       }
-    }
-    console.log(`  Checked ${files.length} files`);
-  }
-
-  // Validate edges
-  const edgesDir = join(CONTENT_DIR, 'edges');
-  if (existsSync(edgesDir)) {
-    console.log('Validating edges...');
-    const files = readdirSync(edgesDir).filter(f => f.endsWith('.json'));
-    for (const file of files) {
-      validateEdgesFile(join(edgesDir, file), nodeIds);
     }
     console.log(`  Checked ${files.length} files`);
   }
