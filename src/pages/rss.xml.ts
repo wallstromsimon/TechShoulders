@@ -21,7 +21,7 @@ export async function GET(context: APIContext) {
       title: work.data.name,
       description: `${work.data.kind} (${work.data.year})`,
       link: `/node/${work.data.id}`,
-      pubDate: new Date(work.data.year, 0, 1),
+      pubDate: work.data.year ? new Date(work.data.year, 0, 1) : new Date(),
       categories: work.data.domains || [],
     })),
     ...institutions.map((inst) => ({

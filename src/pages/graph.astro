@@ -1,12 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import InfluenceGraph from '../components/InfluenceGraph';
+import type { NodeKind, EdgeKind } from '../lib/data';
 
 // Load precomputed graph data generated at build time
 import graphData from '../../public/graph.json';
 
-const graphNodes = graphData.nodes;
-const graphEdges = graphData.edges;
+// Type the precomputed data properly
+const graphNodes = graphData.nodes as { id: string; name: string; kind: NodeKind; domains: string[] }[];
+const graphEdges = graphData.edges as { source: string; target: string; kind: EdgeKind; label?: string; year?: number }[];
 
 // Get all unique domains for filter dropdown
 const allDomains = [...new Set(graphNodes.flatMap(n => n.domains || []))].sort();

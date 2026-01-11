@@ -103,7 +103,7 @@ export async function buildSearchIndex(): Promise<SearchableNode[]> {
       name: person.data.name,
       kind: 'people',
       subtitle: person.data.title,
-      domains: person.data.domains || [],
+      domains: person.data.domains,
       era: person.data.era,
       imageUrl: person.data.image?.file.src,
     });
@@ -115,7 +115,8 @@ export async function buildSearchIndex(): Promise<SearchableNode[]> {
       name: work.data.name,
       kind: 'works',
       subtitle: work.data.kind,
-      domains: work.data.domains || [],
+      domains: work.data.domains,
+      era: work.data.era,
       year: work.data.year,
     });
   }
@@ -126,7 +127,8 @@ export async function buildSearchIndex(): Promise<SearchableNode[]> {
       name: institution.data.name,
       kind: 'institutions',
       subtitle: institution.data.kind,
-      domains: [],
+      domains: institution.data.domains,
+      era: institution.data.era,
       location: institution.data.location,
     });
   }
@@ -154,12 +156,60 @@ export function getAllEras(nodes: SearchableNode[]): string[] {
   return Array.from(eras).sort();
 }
 
+// Extract edges from inline frontmatter of all content entries
 export async function loadAllEdges(): Promise<Edge[]> {
-  const edgesCollection = await getCollection('edges');
+  const [people, works, institutions, packs] = await Promise.all([
+    getCollection('people'),
+    getCollection('works'),
+    getCollection('institutions'),
+    getCollection('packs'),
+  ]);
+
   const allEdges: Edge[] = [];
 
-  for (const entry of edgesCollection) {
-    allEdges.push(...entry.data);
+  // Extract edges from each content type
+  for (const person of people) {
+    for (const edge of person.data.edges) {
+      allEdges.push({
+        source: person.data.id,
+        target: edge.target,
+        kind: edge.kind,
+        label: edge.label,
+      });
+    }
+  }
+
+  for (const work of works) {
+    for (const edge of work.data.edges) {
+      allEdges.push({
+        source: work.data.id,
+        target: edge.target,
+        kind: edge.kind,
+        label: edge.label,
+      });
+    }
+  }
+
+  for (const institution of institutions) {
+    for (const edge of institution.data.edges) {
+      allEdges.push({
+        source: institution.data.id,
+        target: edge.target,
+        kind: edge.kind,
+        label: edge.label,
+      });
+    }
+  }
+
+  for (const pack of packs) {
+    for (const edge of pack.data.edges) {
+      allEdges.push({
+        source: pack.data.id,
+        target: edge.target,
+        kind: edge.kind,
+        label: edge.label,
+      });
+    }
   }
 
   return allEdges;

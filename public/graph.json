@@ -42,34 +42,5 @@
       "domains": []
     }
   ],
-  "edges": [
-    {
-      "source": "linus-torvalds",
-      "target": "university-of-helsinki",
-      "kind": "affiliation",
-      "label": "studied at",
-      "year": 1988
-    },
-    {
-      "source": "linus-torvalds",
-      "target": "open-source-development-labs",
-      "kind": "affiliation",
-      "label": "fellow at",
-      "year": 2003
-    },
-    {
-      "source": "linus-torvalds",
-      "target": "linux-kernel",
-      "kind": "influence",
-      "label": "created",
-      "year": 1991
-    },
-    {
-      "source": "linus-torvalds",
-      "target": "git",
-      "kind": "influence",
-      "label": "created",
-      "year": 2005
-    }
-  ]
+  "edges": []
 }

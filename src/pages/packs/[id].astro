@@ -41,6 +41,7 @@ const graphNodesFormatted = graphNodes.map(n => ({
   id: n.id,
   name: n.name,
   kind: n.kind,
+  domains: n.domains,
 }));
 
 const graphEdgesFormatted = graphEdges.map(e => ({
@@ -175,6 +176,7 @@ const difficultyInfo = difficultyConfig[difficulty];
           client:load
           nodes={graphNodesFormatted}
           edges={graphEdgesFormatted}
+          allDomains={[...new Set(graphNodesFormatted.flatMap(n => n.domains))].sort()}
         />
       </section>
     )}
