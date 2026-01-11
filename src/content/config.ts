@@ -1,4 +1,4 @@
-import { z, defineCollection } from 'astro:content';
+import { z, defineCollection, type SchemaContext } from 'astro:content';
 
 // Slug validation: lowercase letters, numbers, hyphens only
 const slugSchema = z.string().regex(
@@ -42,10 +42,10 @@ const linksSchema = z.array(z.object({
 
 // Image schema with required attribution fields
 // When image is provided, all metadata is required for proper attribution
-const imageSchema = (image: ReturnType<Parameters<Parameters<typeof defineCollection>[0]['schema']>[0]['image']>) =>
+const createImageSchema = (image: SchemaContext['image']) =>
   z.object({
     file: image(),
-    sourceUrl: z.string().url(),
+    source: z.string().url(),
     author: z.string(),
     license: z.string(),
   }).optional();
@@ -75,7 +75,7 @@ const people = defineCollection({
     signatureWorks: z.array(slugSchema).optional(),
     whyYouCare: z.array(z.string()).optional(),
     links: linksSchema,
-    image: imageSchema(image),
+    image: createImageSchema(image),
   }),
 });
 
@@ -98,7 +98,7 @@ const works = defineCollection({
     // Optional metadata
     year: z.number().optional(), // Specific year if known
     links: linksSchema,
-    image: imageSchema(image),
+    image: createImageSchema(image),
   }),
 });
 
@@ -121,7 +121,7 @@ const institutions = defineCollection({
     // Optional metadata
     location: z.string().optional(),
     links: linksSchema,
-    image: imageSchema(image),
+    image: createImageSchema(image),
   }),
 });
 
@@ -149,7 +149,7 @@ const packs = defineCollection({
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']).default('beginner'),
     estimatedTime: z.string().optional(), // e.g., "30 min", "1 hour"
     links: linksSchema,
-    image: imageSchema(image),
+    image: createImageSchema(image),
   }),
 });
 

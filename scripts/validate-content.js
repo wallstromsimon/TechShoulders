@@ -38,7 +38,7 @@ const inlineEdgeSchema = z.object({
 // Schema definitions (matching src/content/config.ts)
 const imageSchema = z.object({
   file: z.string(),      // Local path to image in src/assets/
-  sourceUrl: z.string(), // URL for attribution
+  source: z.string(), // URL for attribution
   license: z.string(),
   author: z.string(),
 });
@@ -269,7 +269,7 @@ function validateMdxFile(filePath, schema, collection) {
 
   // Validate image attribution completeness
   if (data.image) {
-    const imageFields = ['file', 'sourceUrl', 'license', 'author'];
+    const imageFields = ['file', 'source', 'license', 'author'];
     for (const field of imageFields) {
       if (!data.image[field]) {
         error(filePath, `Image is present but missing required field: image.${field}`);
