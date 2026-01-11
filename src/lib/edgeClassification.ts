@@ -16,12 +16,12 @@
  * Always shown by default.
  */
 export const STRONG_EDGE_LABELS = [
-  'created',      // Built/wrote the thing
-  'invented',     // Original inventor
-  'influenced',   // Direct intellectual influence
-  'inspired',     // Served as inspiration for
-  'built_on',     // Extended or built upon prior work
-  'popularized',  // Brought to mainstream adoption
+  'created', // Built/wrote the thing
+  'invented', // Original inventor
+  'influenced', // Direct intellectual influence
+  'inspired', // Served as inspiration for
+  'built_on', // Extended or built upon prior work
+  'popularized', // Brought to mainstream adoption
   'standardized', // Formalized into a standard
 ] as const;
 
@@ -31,16 +31,16 @@ export const STRONG_EDGE_LABELS = [
  * Hidden by default, can be toggled on.
  */
 export const WEAK_EDGE_LABELS = [
-  'studied at',   // Attended as student
-  'worked at',    // Employee/contractor
+  'studied at', // Attended as student
+  'worked at', // Employee/contractor
   'professor at', // Faculty position
-  'fellow at',    // Fellowship/research position
-  'founded',      // Started the organization
-  'funded_by',    // Received funding from
+  'fellow at', // Fellowship/research position
+  'founded', // Started the organization
+  'funded_by', // Received funding from
 ] as const;
 
-export type StrongEdgeLabel = typeof STRONG_EDGE_LABELS[number];
-export type WeakEdgeLabel = typeof WEAK_EDGE_LABELS[number];
+export type StrongEdgeLabel = (typeof STRONG_EDGE_LABELS)[number];
+export type WeakEdgeLabel = (typeof WEAK_EDGE_LABELS)[number];
 export type EdgeLabel = StrongEdgeLabel | WeakEdgeLabel;
 
 /**

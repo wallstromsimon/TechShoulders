@@ -114,7 +114,7 @@ function loadNodes() {
   // Load people
   const peopleDir = join(CONTENT_DIR, 'people');
   if (existsSync(peopleDir)) {
-    const files = readdirSync(peopleDir).filter(f => f.endsWith('.mdx'));
+    const files = readdirSync(peopleDir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
       const content = readFileSync(join(peopleDir, file), 'utf-8');
       const data = parseYamlFrontmatter(content);
@@ -134,7 +134,7 @@ function loadNodes() {
   // Load works
   const worksDir = join(CONTENT_DIR, 'works');
   if (existsSync(worksDir)) {
-    const files = readdirSync(worksDir).filter(f => f.endsWith('.mdx'));
+    const files = readdirSync(worksDir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
       const content = readFileSync(join(worksDir, file), 'utf-8');
       const data = parseYamlFrontmatter(content);
@@ -154,7 +154,7 @@ function loadNodes() {
   // Load institutions
   const institutionsDir = join(CONTENT_DIR, 'institutions');
   if (existsSync(institutionsDir)) {
-    const files = readdirSync(institutionsDir).filter(f => f.endsWith('.mdx'));
+    const files = readdirSync(institutionsDir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
       const content = readFileSync(join(institutionsDir, file), 'utf-8');
       const data = parseYamlFrontmatter(content);
@@ -182,7 +182,7 @@ function loadEdges() {
   const edgesDir = join(CONTENT_DIR, 'edges');
 
   if (existsSync(edgesDir)) {
-    const files = readdirSync(edgesDir).filter(f => f.endsWith('.json'));
+    const files = readdirSync(edgesDir).filter((f) => f.endsWith('.json'));
     for (const file of files) {
       const content = readFileSync(join(edgesDir, file), 'utf-8');
       try {
@@ -211,13 +211,13 @@ function generate() {
 
   // Build graph.json (minimal data for visualization)
   const graphData = {
-    nodes: nodes.map(n => ({
+    nodes: nodes.map((n) => ({
       id: n.id,
       name: n.name,
       kind: n.kind,
       domains: n.domains || [],
     })),
-    edges: edges.map(e => ({
+    edges: edges.map((e) => ({
       source: e.source,
       target: e.target,
       kind: e.kind,

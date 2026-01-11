@@ -32,11 +32,13 @@ Thank you for your interest in contributing to TechShoulders! This project aims 
 When making specific factual claims (statistics, dates, quotes), include inline citations that link to a Sources section. Use Wikipedia-style numbered references.
 
 **Inline citation format:**
+
 ```html
 Powers the majority of web servers<sup><a href="#source-1">[1]</a></sup>
 ```
 
 **Sources section format:**
+
 ```markdown
 ---
 
@@ -47,6 +49,7 @@ Powers the majority of web servers<sup><a href="#source-1">[1]</a></sup>
 ```
 
 **Guidelines:**
+
 - Use `<sup><a href="#source-N">[N]</a></sup>` for clickable superscript citations
 - Place `<span id="source-N"></span>` at the start of each source entry as the anchor target
 - Number citations sequentially as they appear in the text

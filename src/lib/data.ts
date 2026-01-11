@@ -311,21 +311,18 @@ export async function getPackStats(pack: PackEntry): Promise<PackStats> {
 
   return {
     total: cards.length,
-    people: cards.filter(c => c.kind === 'people').length,
-    works: cards.filter(c => c.kind === 'works').length,
-    institutions: cards.filter(c => c.kind === 'institutions').length,
+    people: cards.filter((c) => c.kind === 'people').length,
+    works: cards.filter((c) => c.kind === 'works').length,
+    institutions: cards.filter((c) => c.kind === 'institutions').length,
   };
 }
 
 export async function buildNodeNeighborhoodData(nodeId: string): Promise<GraphData> {
-  const [allNodes, allEdges] = await Promise.all([
-    buildSearchIndex(),
-    loadAllEdges(),
-  ]);
+  const [allNodes, allEdges] = await Promise.all([buildSearchIndex(), loadAllEdges()]);
 
   // Get all edges connected to this node
   const connectedEdges = allEdges.filter(
-    edge => edge.source === nodeId || edge.target === nodeId
+    (edge) => edge.source === nodeId || edge.target === nodeId
   );
 
   // Get all connected node IDs (1-hop neighborhood)
@@ -336,11 +333,11 @@ export async function buildNodeNeighborhoodData(nodeId: string): Promise<GraphDa
   }
 
   // Filter nodes to neighborhood
-  const nodes = allNodes.filter(n => neighborIds.has(n.id));
+  const nodes = allNodes.filter((n) => neighborIds.has(n.id));
 
   // Include all edges that connect neighborhood nodes
   const edges = allEdges.filter(
-    edge => neighborIds.has(edge.source) && neighborIds.has(edge.target)
+    (edge) => neighborIds.has(edge.source) && neighborIds.has(edge.target)
   );
 
   return { nodes, edges };

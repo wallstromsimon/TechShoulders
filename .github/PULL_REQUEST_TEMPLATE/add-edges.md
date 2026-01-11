@@ -90,4 +90,4 @@
 - [ ] Wikipedia sources
 - [ ] Official biographies
 - [ ] Academic papers
-- [ ] Other: ******\_******
+- [ ] Other: **\*\***\_**\*\***

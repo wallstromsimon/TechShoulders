@@ -18,7 +18,7 @@
 - [ ] Databases
 - [ ] Version Control
 - [ ] Developer Tools
-- [ ] Other: ******\_******
+- [ ] Other: **\*\***\_**\*\***
 
 ## Pre-submission Checklist
 
@@ -50,6 +50,7 @@
 - [ ] Links point to reliable sources
 
 ### Citations (if specific claims made)
+
 - [ ] Inline citations use `<sup><a href="#source-N">[N]</a></sup>` format
 - [ ] Sources section added at end with `<span id="source-N"></span>` anchors
 - [ ] Citations link to reliable primary sources
