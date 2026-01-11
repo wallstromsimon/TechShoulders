@@ -30,6 +30,7 @@ Three node types (MDX files in `src/content/`):
 3. **Institutions** — universities, companies, labs, standards bodies
 
 Edges are stored as JSON arrays in `src/content/edges/`:
+
 - `influence.json` — "created", "invented", "built on" relationships
 - `affiliation.json` — "studied at", "worked at", "fellow at" relationships
 
@@ -49,10 +50,16 @@ Two edge categories:
 ## Development commands
 
 ```bash
-pnpm install    # Install dependencies
-pnpm dev        # Start dev server
-pnpm build      # Build for production
-pnpm preview    # Preview production build
+pnpm install      # Install dependencies
+pnpm dev          # Start dev server
+pnpm build        # Build for production
+pnpm preview      # Preview production build
+pnpm ci           # Run all CI checks locally
+pnpm validate     # Validate content schemas and edges
+pnpm typecheck    # TypeScript type checking
+pnpm lint         # ESLint code quality
+pnpm format:check # Check code formatting
+pnpm check-links  # Validate internal links and sources
 ```
 
 ## Key files

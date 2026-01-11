@@ -58,15 +58,15 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
     const neighborhoodIds = getNeighborhood(focusNodeId, edges);
 
     // Filter nodes to neighborhood
-    const filteredNodes = nodes.filter(n => neighborhoodIds.has(n.id));
+    const filteredNodes = nodes.filter((n) => neighborhoodIds.has(n.id));
 
     // Filter edges to only those connecting neighborhood nodes
     const filteredEdges = edges.filter(
-      e => neighborhoodIds.has(e.source) && neighborhoodIds.has(e.target)
+      (e) => neighborhoodIds.has(e.source) && neighborhoodIds.has(e.target)
     );
 
     const elements: ElementDefinition[] = [
-      ...filteredNodes.map(node => ({
+      ...filteredNodes.map((node) => ({
         data: {
           id: node.id,
           label: node.name,
@@ -92,15 +92,15 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
         {
           selector: 'node',
           style: {
-            'label': 'data(label)',
+            label: 'data(label)',
             'text-valign': 'bottom',
             'text-halign': 'center',
             'text-margin-y': 6,
             'font-size': 10,
             'font-weight': 500,
             'background-color': (ele) => kindColors[ele.data('kind')] || '#888',
-            'width': 30,
-            'height': 30,
+            width: 30,
+            height: 30,
             'border-width': 2,
             'border-color': '#fff',
           } as cytoscape.Css.Node,
@@ -108,8 +108,8 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
         {
           selector: 'node[?focused]',
           style: {
-            'width': 40,
-            'height': 40,
+            width: 40,
+            height: 40,
             'border-width': 3,
             'border-color': '#ffd700',
             'font-weight': 700,
@@ -119,16 +119,16 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
         {
           selector: 'edge',
           style: {
-            'width': 1.5,
+            width: 1.5,
             'line-color': (ele) => edgeColors[ele.data('kind')] || '#888',
             'target-arrow-color': (ele) => edgeColors[ele.data('kind')] || '#888',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            'label': 'data(label)',
+            label: 'data(label)',
             'font-size': 8,
             'text-rotation': 'autorotate',
             'text-margin-y': -8,
-            'color': '#666',
+            color: '#666',
           },
         },
         {
@@ -178,42 +178,50 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
   return (
     <div style={{ width: '100%' }}>
       {/* Compact Legend */}
-      <div style={{
-        marginBottom: '0.5rem',
-        display: 'flex',
-        gap: '0.75rem',
-        fontSize: '0.75rem',
-        color: '#666',
-        flexWrap: 'wrap',
-      }}>
+      <div
+        style={{
+          marginBottom: '0.5rem',
+          display: 'flex',
+          gap: '0.75rem',
+          fontSize: '0.75rem',
+          color: '#666',
+          flexWrap: 'wrap',
+        }}
+      >
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-          <span style={{
-            display: 'inline-block',
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            backgroundColor: kindColors.people,
-          }} />
+          <span
+            style={{
+              display: 'inline-block',
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: kindColors.people,
+            }}
+          />
           People
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-          <span style={{
-            display: 'inline-block',
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            backgroundColor: kindColors.works,
-          }} />
+          <span
+            style={{
+              display: 'inline-block',
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: kindColors.works,
+            }}
+          />
           Works
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-          <span style={{
-            display: 'inline-block',
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            backgroundColor: kindColors.institutions,
-          }} />
+          <span
+            style={{
+              display: 'inline-block',
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: kindColors.institutions,
+            }}
+          />
           Institutions
         </span>
       </div>
@@ -231,11 +239,13 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
       />
 
       {/* Help Text */}
-      <p style={{
-        marginTop: '0.5rem',
-        fontSize: '0.75rem',
-        color: '#888',
-      }}>
+      <p
+        style={{
+          marginTop: '0.5rem',
+          fontSize: '0.75rem',
+          color: '#888',
+        }}
+      >
         <strong>Double-click</strong> a node to view details. Drag to pan.
       </p>
     </div>

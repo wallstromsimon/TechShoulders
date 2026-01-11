@@ -4,11 +4,7 @@
     "name": "Linus Torvalds",
     "kind": "people",
     "subtitle": "Creator of Linux and Git",
-    "domains": [
-      "Operating Systems",
-      "Version Control",
-      "Open Source"
-    ],
+    "domains": ["Operating Systems", "Version Control", "Open Source"],
     "era": "1990s–present"
   },
   {
@@ -16,11 +12,7 @@
     "name": "Git",
     "kind": "works",
     "subtitle": "project",
-    "domains": [
-      "Version Control",
-      "Developer Tools",
-      "Open Source"
-    ],
+    "domains": ["Version Control", "Developer Tools", "Open Source"],
     "year": 2005
   },
   {
@@ -28,10 +20,7 @@
     "name": "Linux Kernel",
     "kind": "works",
     "subtitle": "project",
-    "domains": [
-      "Operating Systems",
-      "Open Source"
-    ],
+    "domains": ["Operating Systems", "Open Source"],
     "year": 1991
   },
   {

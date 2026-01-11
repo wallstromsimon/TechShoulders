@@ -25,11 +25,13 @@ const kindLabel = getKindLabel(kind);
   <h1>{name}</h1>
   {meta && <p class="meta">{meta}</p>}
 
-  {image && (
-    <figure class="node-image">
-      <Image src={image.file} alt={name} width={800} loading="lazy" />
-    </figure>
-  )}
+  {
+    image && (
+      <figure class="node-image">
+        <Image src={image.file} alt={name} width={800} loading="lazy" />
+      </figure>
+    )
+  }
 </header>
 
 <style>

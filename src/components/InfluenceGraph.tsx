@@ -44,12 +44,13 @@ function parseUrlParams(): {
 
   const typesParam = params.get('types');
   const types = typesParam
-    ? typesParam.split(',').filter((t): t is NodeKind =>
-        ['people', 'works', 'institutions'].includes(t))
+    ? typesParam
+        .split(',')
+        .filter((t): t is NodeKind => ['people', 'works', 'institutions'].includes(t))
     : [];
 
   const domainsParam = params.get('domains');
-  const domains = domainsParam ? domainsParam.split(',').map(d => decodeURIComponent(d)) : [];
+  const domains = domainsParam ? domainsParam.split(',').map((d) => decodeURIComponent(d)) : [];
 
   return { focus, affiliations, depth, types, domains };
 }
@@ -69,10 +70,13 @@ function updateUrlParams(params: {
   if (params.affiliations) urlParams.set('affiliations', '1');
   if (params.focus && params.depth !== 1) urlParams.set('depth', params.depth.toString());
   if (params.types.length > 0) urlParams.set('types', params.types.join(','));
-  if (params.domains.length > 0) urlParams.set('domains', params.domains.map(d => encodeURIComponent(d)).join(','));
+  if (params.domains.length > 0)
+    urlParams.set('domains', params.domains.map((d) => encodeURIComponent(d)).join(','));
 
   const queryString = urlParams.toString();
-  const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+  const newUrl = queryString
+    ? `${window.location.pathname}?${queryString}`
+    : window.location.pathname;
 
   window.history.replaceState({}, '', newUrl);
 }
@@ -120,7 +124,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
 
     const params = parseUrlParams();
 
-    if (params.focus && nodes.some(n => n.id === params.focus)) {
+    if (params.focus && nodes.some((n) => n.id === params.focus)) {
       setFocusedNode(params.focus);
     }
     setIncludeAffiliations(params.affiliations);
@@ -131,7 +135,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     }
     if (params.domains.length > 0) {
       // Validate domains exist
-      const validDomains = params.domains.filter(d => allDomains.includes(d));
+      const validDomains = params.domains.filter((d) => allDomains.includes(d));
       if (validDomains.length > 0) {
         setSelectedDomains(validDomains);
         setShowFilters(true);
@@ -156,9 +160,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const query = searchQuery.toLowerCase();
-    return nodes
-      .filter(n => n.name.toLowerCase().includes(query))
-      .slice(0, 8);
+    return nodes.filter((n) => n.name.toLowerCase().includes(query)).slice(0, 8);
   }, [nodes, searchQuery]);
 
   // Close dropdown when clicking outside
@@ -205,10 +207,13 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     if (cyRef.current) {
       const node = cyRef.current.$(`#${nodeId}`);
       if (node.length > 0) {
-        cyRef.current.animate({
-          center: { eles: node },
-          zoom: 1.5,
-        }, { duration: 300 });
+        cyRef.current.animate(
+          {
+            center: { eles: node },
+            zoom: 1.5,
+          },
+          { duration: 300 }
+        );
       }
     }
   }, []);
@@ -225,9 +230,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     if (!containerRef.current) return;
 
     // Build node IDs that are connected
-    const filteredEdges = includeAffiliations
-      ? edges
-      : edges.filter(e => e.kind === 'influence');
+    const filteredEdges = includeAffiliations ? edges : edges.filter((e) => e.kind === 'influence');
 
     const connectedNodeIds = new Set<string>();
     for (const edge of filteredEdges) {
@@ -236,17 +239,17 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     }
 
     // Only include nodes that have connections
-    let filteredNodes = nodes.filter(n => connectedNodeIds.has(n.id));
+    let filteredNodes = nodes.filter((n) => connectedNodeIds.has(n.id));
 
     // Apply type filter
     if (selectedTypes.length > 0) {
-      filteredNodes = filteredNodes.filter(n => selectedTypes.includes(n.kind));
+      filteredNodes = filteredNodes.filter((n) => selectedTypes.includes(n.kind));
     }
 
     // Apply domain filter
     if (selectedDomains.length > 0) {
-      filteredNodes = filteredNodes.filter(n =>
-        n.domains.some(d => selectedDomains.includes(d))
+      filteredNodes = filteredNodes.filter((n) =>
+        n.domains.some((d) => selectedDomains.includes(d))
       );
     }
 
@@ -254,17 +257,17 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     let neighborhoodNodes: Set<string> | null = null;
     if (focusedNode && connectedNodeIds.has(focusedNode)) {
       neighborhoodNodes = getNeighborhood(focusedNode, focusDepth, filteredEdges);
-      filteredNodes = filteredNodes.filter(n => neighborhoodNodes!.has(n.id));
+      filteredNodes = filteredNodes.filter((n) => neighborhoodNodes!.has(n.id));
     }
 
     // Filter edges to only include those between visible nodes
-    const visibleNodeIds = new Set(filteredNodes.map(n => n.id));
+    const visibleNodeIds = new Set(filteredNodes.map((n) => n.id));
     const visibleEdges = filteredEdges.filter(
-      e => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target)
+      (e) => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target)
     );
 
     const elements: ElementDefinition[] = [
-      ...filteredNodes.map(node => ({
+      ...filteredNodes.map((node) => ({
         data: {
           id: node.id,
           label: node.name,
@@ -291,15 +294,15 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
         {
           selector: 'node',
           style: {
-            'label': 'data(label)',
+            label: 'data(label)',
             'text-valign': 'bottom',
             'text-halign': 'center',
             'text-margin-y': 8,
             'font-size': 12,
             'font-weight': 500,
             'background-color': (ele) => kindColors[ele.data('kind')] || '#888',
-            'width': 40,
-            'height': 40,
+            width: 40,
+            height: 40,
             'border-width': 2,
             'border-color': '#fff',
           } as cytoscape.Css.Node,
@@ -307,8 +310,8 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
         {
           selector: 'node[?focused]',
           style: {
-            'width': 50,
-            'height': 50,
+            width: 50,
+            height: 50,
             'border-width': 4,
             'border-color': '#ffd700',
             'font-weight': 700,
@@ -317,16 +320,16 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
         {
           selector: 'edge',
           style: {
-            'width': 2,
+            width: 2,
             'line-color': (ele) => edgeColors[ele.data('kind')] || '#888',
             'target-arrow-color': (ele) => edgeColors[ele.data('kind')] || '#888',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            'label': 'data(label)',
+            label: 'data(label)',
             'font-size': 10,
             'text-rotation': 'autorotate',
             'text-margin-y': -10,
-            'color': '#666',
+            color: '#666',
           },
         },
         {
@@ -380,8 +383,8 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     // Handle edge clicks - show explanation panel
     cy.on('tap', 'edge', (evt) => {
       const edgeData = evt.target.data();
-      const sourceNode = nodes.find(n => n.id === edgeData.source);
-      const targetNode = nodes.find(n => n.id === edgeData.target);
+      const sourceNode = nodes.find((n) => n.id === edgeData.source);
+      const targetNode = nodes.find((n) => n.id === edgeData.target);
 
       if (sourceNode && targetNode) {
         setSelectedEdge({
@@ -408,12 +411,19 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
       if (clickTimeout) clearTimeout(clickTimeout);
       cy.destroy();
     };
-  }, [nodes, edges, includeAffiliations, focusedNode, focusDepth, selectedTypes, selectedDomains, getNeighborhood]);
+  }, [
+    nodes,
+    edges,
+    includeAffiliations,
+    focusedNode,
+    focusDepth,
+    selectedTypes,
+    selectedDomains,
+    getNeighborhood,
+  ]);
 
   // Get the focused node's name for display
-  const focusedNodeName = focusedNode
-    ? nodes.find(n => n.id === focusedNode)?.name
-    : null;
+  const focusedNodeName = focusedNode ? nodes.find((n) => n.id === focusedNode)?.name : null;
 
   // Copy share link to clipboard
   const [copied, setCopied] = useState(false);
@@ -427,18 +437,21 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
   }, []);
 
   // Check if there's anything worth sharing (any state set)
-  const hasShareableState = focusedNode || includeAffiliations || selectedTypes.length > 0 || selectedDomains.length > 0;
+  const hasShareableState =
+    focusedNode || includeAffiliations || selectedTypes.length > 0 || selectedDomains.length > 0;
 
   return (
     <div style={{ width: '100%' }}>
       {/* Controls Row */}
-      <div style={{
-        marginBottom: '1rem',
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '1rem',
-        flexWrap: 'wrap',
-      }}>
+      <div
+        style={{
+          marginBottom: '1rem',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '1rem',
+          flexWrap: 'wrap',
+        }}
+      >
         {/* Search Box */}
         <div ref={searchRef} style={{ position: 'relative', minWidth: 200 }}>
           <input
@@ -460,21 +473,23 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
             }}
           />
           {showDropdown && searchResults.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              right: 0,
-              backgroundColor: '#fff',
-              border: '1px solid #ccc',
-              borderRadius: 6,
-              marginTop: 4,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              zIndex: 100,
-              maxHeight: 240,
-              overflowY: 'auto',
-            }}>
-              {searchResults.map(node => (
+            <div
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                backgroundColor: '#fff',
+                border: '1px solid #ccc',
+                borderRadius: 6,
+                marginTop: 4,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 100,
+                maxHeight: 240,
+                overflowY: 'auto',
+              }}
+            >
+              {searchResults.map((node) => (
                 <button
                   key={node.id}
                   onClick={() => handleSelectNode(node.id)}
@@ -490,17 +505,19 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                     textAlign: 'left',
                     fontSize: '0.9rem',
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
-                  <span style={{
-                    display: 'inline-block',
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    backgroundColor: kindColors[node.kind],
-                    flexShrink: 0,
-                  }} />
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      backgroundColor: kindColors[node.kind],
+                      flexShrink: 0,
+                    }}
+                  />
                   <span>{node.name}</span>
                   <span style={{ color: '#999', fontSize: '0.8rem', marginLeft: 'auto' }}>
                     {node.kind}
@@ -512,14 +529,16 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
         </div>
 
         {/* Weak Edges Toggle */}
-        <label style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          cursor: 'pointer',
-          userSelect: 'none',
-          padding: '0.5rem 0',
-        }}>
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            cursor: 'pointer',
+            userSelect: 'none',
+            padding: '0.5rem 0',
+          }}
+        >
           <input
             type="checkbox"
             checked={includeAffiliations}
@@ -558,14 +577,16 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
         >
           {showFilters ? 'Hide' : 'Show'} Filters
           {(selectedTypes.length > 0 || selectedDomains.length > 0) && (
-            <span style={{
-              marginLeft: 6,
-              backgroundColor: '#3498db',
-              color: '#fff',
-              borderRadius: 10,
-              padding: '1px 6px',
-              fontSize: '0.75rem',
-            }}>
+            <span
+              style={{
+                marginLeft: 6,
+                backgroundColor: '#3498db',
+                color: '#fff',
+                borderRadius: 10,
+                padding: '1px 6px',
+                fontSize: '0.75rem',
+              }}
+            >
               {selectedTypes.length + selectedDomains.length}
             </span>
           )}
@@ -593,22 +614,39 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
 
       {/* Filters Panel */}
       {showFilters && (
-        <div style={{
-          marginBottom: '1rem',
-          padding: '1rem',
-          backgroundColor: '#f8f9fa',
-          border: '1px solid #e0e0e0',
-          borderRadius: 8,
-        }}>
+        <div
+          style={{
+            marginBottom: '1rem',
+            padding: '1rem',
+            backgroundColor: '#f8f9fa',
+            border: '1px solid #e0e0e0',
+            borderRadius: 8,
+          }}
+        >
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             {/* Type Filter */}
             <div>
               <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 }}>
                 Node Types
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem' }}>
-                {(['people', 'works', 'institutions'] as const).map(kind => (
-                  <label key={kind} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.35rem',
+                  fontSize: '0.85rem',
+                }}
+              >
+                {(['people', 'works', 'institutions'] as const).map((kind) => (
+                  <label
+                    key={kind}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      cursor: 'pointer',
+                    }}
+                  >
                     <input
                       type="checkbox"
                       checked={selectedTypes.includes(kind)}
@@ -616,18 +654,20 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                         if (e.target.checked) {
                           setSelectedTypes([...selectedTypes, kind]);
                         } else {
-                          setSelectedTypes(selectedTypes.filter(t => t !== kind));
+                          setSelectedTypes(selectedTypes.filter((t) => t !== kind));
                         }
                       }}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{
-                      display: 'inline-block',
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                      backgroundColor: kindColors[kind],
-                    }} />
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        backgroundColor: kindColors[kind],
+                      }}
+                    />
                     {kind.charAt(0).toUpperCase() + kind.slice(1)}
                   </label>
                 ))}
@@ -662,7 +702,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                   fontSize: '0.85rem',
                 }}
               >
-                {allDomains.map(domain => (
+                {allDomains.map((domain) => (
                   <option key={domain} value={domain}>
                     {domain}
                   </option>
@@ -700,26 +740,30 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
 
       {/* Focus Mode Controls */}
       {focusedNode && (
-        <div style={{
-          marginBottom: '1rem',
-          padding: '0.75rem 1rem',
-          backgroundColor: '#fffbe6',
-          border: '1px solid #ffd700',
-          borderRadius: 6,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          flexWrap: 'wrap',
-        }}>
+        <div
+          style={{
+            marginBottom: '1rem',
+            padding: '0.75rem 1rem',
+            backgroundColor: '#fffbe6',
+            border: '1px solid #ffd700',
+            borderRadius: 6,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            flexWrap: 'wrap',
+          }}
+        >
           <span style={{ fontWeight: 500 }}>
             Focus: <strong>{focusedNodeName}</strong>
           </span>
-          <label style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.9rem',
-          }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.9rem',
+            }}
+          >
             Depth:
             <select
               value={focusDepth}
@@ -763,23 +807,26 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
 
       {/* Edge Explanation Panel */}
       {selectedEdge && (
-        <div style={{
-          marginBottom: '1rem',
-          padding: '0.75rem 1rem',
-          backgroundColor: '#e8f4fc',
-          border: '1px solid #3498db',
-          borderRadius: 6,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          flexWrap: 'wrap',
-        }}>
+        <div
+          style={{
+            marginBottom: '1rem',
+            padding: '0.75rem 1rem',
+            backgroundColor: '#e8f4fc',
+            border: '1px solid #3498db',
+            borderRadius: 6,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            flexWrap: 'wrap',
+          }}
+        >
           <span style={{ fontSize: '0.95rem' }}>
             <strong>{selectedEdge.sourceName}</strong>
             <span style={{ margin: '0 0.5rem', color: '#666' }}>&rarr;</span>
             <strong>{selectedEdge.targetName}</strong>
             <span style={{ marginLeft: '0.5rem', color: '#555' }}>
-              ({selectedEdge.label}{selectedEdge.year ? `, ${selectedEdge.year}` : ''})
+              ({selectedEdge.label}
+              {selectedEdge.year ? `, ${selectedEdge.year}` : ''})
             </span>
           </span>
           <button
@@ -801,48 +848,63 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
 
       {/* Expanded Legend */}
       {showLegend && (
-        <div style={{
-          marginBottom: '1rem',
-          padding: '1rem',
-          backgroundColor: '#f8f9fa',
-          border: '1px solid #e0e0e0',
-          borderRadius: 8,
-        }}>
+        <div
+          style={{
+            marginBottom: '1rem',
+            padding: '1rem',
+            backgroundColor: '#f8f9fa',
+            border: '1px solid #e0e0e0',
+            borderRadius: 8,
+          }}
+        >
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             {/* Node Types */}
             <div>
               <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 }}>
                 Node Types
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.35rem',
+                  fontSize: '0.85rem',
+                }}
+              >
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: 14,
-                    height: 14,
-                    borderRadius: '50%',
-                    backgroundColor: kindColors.people,
-                  }} />
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 14,
+                      height: 14,
+                      borderRadius: '50%',
+                      backgroundColor: kindColors.people,
+                    }}
+                  />
                   <strong>People</strong> – innovators, founders, researchers
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: 14,
-                    height: 14,
-                    borderRadius: '50%',
-                    backgroundColor: kindColors.works,
-                  }} />
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 14,
+                      height: 14,
+                      borderRadius: '50%',
+                      backgroundColor: kindColors.works,
+                    }}
+                  />
                   <strong>Works</strong> – projects, inventions, papers
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: 14,
-                    height: 14,
-                    borderRadius: '50%',
-                    backgroundColor: kindColors.institutions,
-                  }} />
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 14,
+                      height: 14,
+                      borderRadius: '50%',
+                      backgroundColor: kindColors.institutions,
+                    }}
+                  />
                   <strong>Institutions</strong> – universities, companies, labs
                 </span>
               </div>
@@ -853,24 +915,37 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
               <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 }}>
                 Edge Types (Two Tiers)
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.35rem',
+                  fontSize: '0.85rem',
+                }}
+              >
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: 24,
-                    height: 2,
-                    backgroundColor: edgeColors.influence,
-                  }} />
-                  <strong>Strong</strong> (influence) – created, invented, inspired, built_on, popularized
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 24,
+                      height: 2,
+                      backgroundColor: edgeColors.influence,
+                    }}
+                  />
+                  <strong>Strong</strong> (influence) – created, invented, inspired, built_on,
+                  popularized
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: 24,
-                    height: 2,
-                    backgroundColor: edgeColors.affiliation,
-                    backgroundImage: 'repeating-linear-gradient(90deg, #999 0, #999 4px, transparent 4px, transparent 8px)',
-                  }} />
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 24,
+                      height: 2,
+                      backgroundColor: edgeColors.affiliation,
+                      backgroundImage:
+                        'repeating-linear-gradient(90deg, #999 0, #999 4px, transparent 4px, transparent 8px)',
+                    }}
+                  />
                   <strong>Weak</strong> (affiliation) – studied_at, worked_at, professor_at, founded
                 </span>
               </div>
@@ -881,41 +956,49 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
 
       {/* Compact Legend (when expanded legend is hidden) */}
       {!showLegend && (
-        <div style={{
-          marginBottom: '0.75rem',
-          display: 'flex',
-          gap: '1rem',
-          fontSize: '0.85rem',
-          color: '#666',
-        }}>
+        <div
+          style={{
+            marginBottom: '0.75rem',
+            display: 'flex',
+            gap: '1rem',
+            fontSize: '0.85rem',
+            color: '#666',
+          }}
+        >
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-            <span style={{
-              display: 'inline-block',
-              width: 12,
-              height: 12,
-              borderRadius: '50%',
-              backgroundColor: kindColors.people,
-            }} />
+            <span
+              style={{
+                display: 'inline-block',
+                width: 12,
+                height: 12,
+                borderRadius: '50%',
+                backgroundColor: kindColors.people,
+              }}
+            />
             People
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-            <span style={{
-              display: 'inline-block',
-              width: 12,
-              height: 12,
-              borderRadius: '50%',
-              backgroundColor: kindColors.works,
-            }} />
+            <span
+              style={{
+                display: 'inline-block',
+                width: 12,
+                height: 12,
+                borderRadius: '50%',
+                backgroundColor: kindColors.works,
+              }}
+            />
             Works
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-            <span style={{
-              display: 'inline-block',
-              width: 12,
-              height: 12,
-              borderRadius: '50%',
-              backgroundColor: kindColors.institutions,
-            }} />
+            <span
+              style={{
+                display: 'inline-block',
+                width: 12,
+                height: 12,
+                borderRadius: '50%',
+                backgroundColor: kindColors.institutions,
+              }}
+            />
             Institutions
           </span>
         </div>
@@ -934,16 +1017,16 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
       />
 
       {/* Help Text */}
-      <p style={{
-        marginTop: '0.75rem',
-        fontSize: '0.85rem',
-        color: '#666',
-      }}>
-        <strong>Click</strong> a node to focus on its neighborhood.{' '}
-        <strong>Click</strong> an edge to see why it&apos;s connected.{' '}
-        <strong>Double-click</strong> a node to view details.{' '}
-        Drag to pan, scroll to zoom.{' '}
-        Use <strong>Copy Link</strong> to share the current view.
+      <p
+        style={{
+          marginTop: '0.75rem',
+          fontSize: '0.85rem',
+          color: '#666',
+        }}
+      >
+        <strong>Click</strong> a node to focus on its neighborhood. <strong>Click</strong> an edge
+        to see why it&apos;s connected. <strong>Double-click</strong> a node to view details. Drag
+        to pan, scroll to zoom. Use <strong>Copy Link</strong> to share the current view.
       </p>
     </div>
   );

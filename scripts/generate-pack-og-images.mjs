@@ -66,8 +66,10 @@ function parseFrontmatter(content) {
       let value = line.slice(colonIndex + 1).trim();
 
       // Remove quotes
-      if ((value.startsWith('"') && value.endsWith('"')) ||
-          (value.startsWith("'") && value.endsWith("'"))) {
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
         value = value.slice(1, -1);
       }
 
@@ -104,7 +106,9 @@ function generatePackSvg(pack) {
   const difficultyLabel = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
 
   const escapedName = escapeXml(name);
-  const escapedDescription = escapeXml(description.length > 80 ? description.slice(0, 77) + '...' : description);
+  const escapedDescription = escapeXml(
+    description.length > 80 ? description.slice(0, 77) + '...' : description
+  );
 
   return `
 <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
@@ -173,8 +177,10 @@ function generatePackSvg(pack) {
     <text x="655" y="435" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="white" text-anchor="middle" opacity="0.9">CARDS</text>
 
     <!-- Card indicators -->
-    ${Array.from({ length: Math.min(cardCount, 8) }, (_, i) =>
-      `<rect x="${120 + i * 50}" y="440" width="40" height="50" rx="6" fill="#f1f5f9" stroke="#e0e0e0" stroke-width="1"/>
+    ${Array.from(
+      { length: Math.min(cardCount, 8) },
+      (_, i) =>
+        `<rect x="${120 + i * 50}" y="440" width="40" height="50" rx="6" fill="#f1f5f9" stroke="#e0e0e0" stroke-width="1"/>
        <text x="${140 + i * 50}" y="472" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#666666" text-anchor="middle">${i + 1}</text>`
     ).join('')}
     ${cardCount > 8 ? `<text x="${120 + 8 * 50 + 15}" y="472" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#666666">+${cardCount - 8}</text>` : ''}
@@ -201,7 +207,7 @@ async function generatePackOgImages() {
 
   // Read all pack files
   const files = await readdir(packsDir);
-  const mdxFiles = files.filter(f => f.endsWith('.mdx'));
+  const mdxFiles = files.filter((f) => f.endsWith('.mdx'));
 
   console.log(`Found ${mdxFiles.length} pack(s) to generate OG images for...\n`);
 
@@ -220,9 +226,7 @@ async function generatePackOgImages() {
 
     try {
       const svg = generatePackSvg(frontmatter);
-      await sharp(Buffer.from(svg))
-        .png()
-        .toFile(outputPath);
+      await sharp(Buffer.from(svg)).png().toFile(outputPath);
 
       console.log(`  ✓ Generated: og/pack-${packId}.png`);
     } catch (error) {

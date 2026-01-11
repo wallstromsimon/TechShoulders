@@ -32,11 +32,13 @@ Thank you for your interest in contributing to TechShoulders! This project aims 
 When making specific factual claims (statistics, dates, quotes), include inline citations that link to a Sources section. Use Wikipedia-style numbered references.
 
 **Inline citation format:**
+
 ```html
 Powers the majority of web servers<sup><a href="#source-1">[1]</a></sup>
 ```
 
 **Sources section format:**
+
 ```markdown
 ---
 
@@ -47,6 +49,7 @@ Powers the majority of web servers<sup><a href="#source-1">[1]</a></sup>
 ```
 
 **Guidelines:**
+
 - Use `<sup><a href="#source-N">[N]</a></sup>` for clickable superscript citations
 - Place `<span id="source-N"></span>` at the start of each source entry as the anchor target
 - Number citations sequentially as they appear in the text
@@ -56,15 +59,17 @@ Powers the majority of web servers<sup><a href="#source-1">[1]</a></sup>
 ### File Naming
 
 Use lowercase slugs with hyphens:
+
 - `linus-torvalds.mdx` (not `Linus_Torvalds.mdx`)
 - `linux-kernel.mdx` (not `LinuxKernel.mdx`)
 
 ### ID Format
 
 The `id` field must match the filename (without `.mdx`):
+
 ```yaml
 # File: src/content/people/ada-lovelace.mdx
-id: ada-lovelace  # Must match filename
+id: ada-lovelace # Must match filename
 ```
 
 ## Content Schemas
@@ -73,28 +78,27 @@ id: ada-lovelace  # Must match filename
 
 ```yaml
 ---
-id: person-id           # Required: lowercase, hyphens
-name: Full Name         # Required
-title: Brief Title      # Optional: "Creator of X"
-era: 1990s–present      # Required: time period active
-domains:                # Optional
+id: person-id # Required: lowercase, hyphens
+name: Full Name # Required
+title: Brief Title # Optional: "Creator of X"
+era: 1990s–present # Required: time period active
+domains: # Optional
   - Operating Systems
   - Programming Languages
-signatureWorks:         # Optional: array of work IDs
+signatureWorks: # Optional: array of work IDs
   - work-id-1
   - work-id-2
-whyYouCare:            # Optional: importance bullets
+whyYouCare: # Optional: importance bullets
   - Point about relevance
-links:                  # Optional
+links: # Optional
   - label: Wikipedia
     url: https://...
-image:                  # Optional (but recommended)
-  file: ../../assets/images/entities/person-id.jpg  # Local image path
-  source: https://...   # Source page URL (for attribution)
-  license: CC BY 2.0    # License type
-  author: Author Name   # Attribution
+image: # Optional (but recommended)
+  file: ../../assets/images/entities/person-id.jpg # Local image path
+  source: https://... # Source page URL (for attribution)
+  license: CC BY 2.0 # License type
+  author: Author Name # Attribution
 ---
-
 Biography content in MDX...
 ```
 
@@ -102,22 +106,21 @@ Biography content in MDX...
 
 ```yaml
 ---
-id: work-id             # Required
-name: Work Name         # Required
-kind: project           # Required: project, paper, tool, etc.
-year: 1991              # Required: year created
-domains:                # Optional
+id: work-id # Required
+name: Work Name # Required
+kind: project # Required: project, paper, tool, etc.
+year: 1991 # Required: year created
+domains: # Optional
   - Domain 1
-links:                  # Optional
+links: # Optional
   - label: Official Site
     url: https://...
-image:                  # Optional
+image: # Optional
   file: ../../assets/images/entities/work-id.jpg
   source: https://...
   license: License Type
   author: Author Name
 ---
-
 Description of the work in MDX...
 ```
 
@@ -125,20 +128,19 @@ Description of the work in MDX...
 
 ```yaml
 ---
-id: institution-id      # Required
-name: Institution Name  # Required
-kind: university        # Required: university, lab, company, org
+id: institution-id # Required
+name: Institution Name # Required
+kind: university # Required: university, lab, company, org
 location: City, Country # Optional
-links:                  # Optional
+links: # Optional
   - label: Official Site
     url: https://...
-image:                  # Optional
+image: # Optional
   file: ../../assets/images/entities/institution-id.jpg
   source: https://...
   license: License Type
   author: Author Name
 ---
-
 Description of the institution in MDX...
 ```
 
@@ -147,6 +149,7 @@ Description of the institution in MDX...
 Edges are stored in JSON files:
 
 **Influence edges** (`src/content/edges/influence.json`):
+
 ```json
 [
   {
@@ -159,6 +162,7 @@ Edges are stored in JSON files:
 ```
 
 **Affiliation edges** (`src/content/edges/affiliation.json`):
+
 ```json
 [
   {
@@ -188,10 +192,10 @@ When including an image, ALL fields are required:
 
 ```yaml
 image:
-  file: ../../assets/images/entities/person-id.jpg  # Relative path to local image
+  file: ../../assets/images/entities/person-id.jpg # Relative path to local image
   source: https://commons.wikimedia.org/wiki/File:... # Source page for attribution
-  license: CC BY 2.0                                  # Exact license
-  author: Photographer Name                           # Creator attribution
+  license: CC BY 2.0 # Exact license
+  author: Photographer Name # Creator attribution
 ```
 
 ### Preferred Sources
@@ -203,6 +207,7 @@ image:
 ### License Types
 
 Common acceptable licenses:
+
 - `Public Domain`
 - `CC0` (Public Domain Dedication)
 - `CC BY 2.0`, `CC BY 3.0`, `CC BY 4.0`
@@ -214,6 +219,7 @@ Common acceptable licenses:
 ### When to Use Influence
 
 Use `influence` edges for direct, strong relationships:
+
 - Person **created** a work
 - Person **invented** something
 - Person **designed** a system
@@ -222,6 +228,7 @@ Use `influence` edges for direct, strong relationships:
 ### When to Use Affiliation
 
 Use `affiliation` edges for context/association:
+
 - Person **worked at** an institution
 - Person **studied at** a university
 - Person **founded** a company
@@ -230,6 +237,7 @@ Use `affiliation` edges for context/association:
 ### Edge Validation
 
 CI will verify:
+
 1. Both `source` and `target` node IDs exist
 2. `kind` is either "influence" or "affiliation"
 3. JSON format is valid
@@ -260,6 +268,7 @@ pnpm preview
 ### CI Checks
 
 Your PR will be automatically validated for:
+
 - Schema compliance (all required fields present)
 - Edge integrity (referenced nodes exist)
 - Image attribution (all fields present when image exists)

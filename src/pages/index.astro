@@ -1,24 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { loadAll, buildSearchIndex, loadAllPacks } from '../lib/data';
+import NodeCard from '../components/NodeCard.astro';
+import { loadAll } from '../lib/data';
 
 const { people, works, institutions } = await loadAll();
-const allNodes = await buildSearchIndex();
-const packs = await loadAllPacks();
 const totalCount = people.length + works.length + institutions.length;
 
-// Pass nodes data to client for featured selection and search
-const nodesForClient = allNodes.map(n => ({
-  id: n.id,
-  name: n.name,
-  kind: n.kind,
-  subtitle: n.subtitle || '',
-  domains: n.domains,
-  era: n.era,
-  year: n.year,
-  location: n.location,
-  imageUrl: n.imageUrl,
-}));
+// Get featured items (first of each)
+const featuredPerson = people[0];
+const featuredWorks = works.slice(0, 2);
 ---
 
 <BaseLayout
@@ -28,367 +18,241 @@ const nodesForClient = allNodes.map(n => ({
   <div class="hero">
     <h1>TechShoulders</h1>
     <p class="tagline">Standing on the shoulders of tech giants.</p>
-
-    <div class="hero-search">
-      <input
-        type="text"
-        id="hero-search-input"
-        placeholder="Search people, works, institutions..."
-        autocomplete="off"
-      />
-      <div id="hero-search-results" class="hero-search-results" hidden></div>
+    <p class="description">
+      Explore the people, works, and institutions that shaped modern technology. A collectible
+      directory of the pioneers who built the digital world.
+    </p>
+    <div class="hero-actions">
+      <a href="/browse" class="btn-primary">Browse Collection</a>
+      <span class="stat">{totalCount} items to discover</span>
     </div>
   </div>
 
-  <section class="entry-points">
-    <a href="/packs" class="entry-card">
-      <div class="entry-icon">{packs[0]?.data.icon || '📦'}</div>
-      <h3>Start with a Pack</h3>
-      <p>Curated learning paths to explore connected ideas</p>
+  <section class="category-overview">
+    <a href="/people" class="category-card people">
+      <div class="category-icon">P</div>
+      <div class="category-info">
+        <h3>People</h3>
+        <span class="count">{people.length}</span>
+      </div>
+      <p>Visionaries and engineers who created foundational technologies</p>
     </a>
 
-    <a href="/graph" class="entry-card">
-      <div class="entry-icon">🔗</div>
-      <h3>Explore the Graph</h3>
-      <p>Visualize connections between people, works, and institutions</p>
+    <a href="/works" class="category-card works">
+      <div class="category-icon">W</div>
+      <div class="category-info">
+        <h3>Works</h3>
+        <span class="count">{works.length}</span>
+      </div>
+      <p>Projects, tools, and systems that changed software</p>
     </a>
 
-    <a href="/browse" class="entry-card">
-      <div class="entry-icon">📚</div>
-      <h3>Browse All</h3>
-      <p>{totalCount} items to discover</p>
+    <a href="/institutions" class="category-card institutions">
+      <div class="category-icon">I</div>
+      <div class="category-info">
+        <h3>Institutions</h3>
+        <span class="count">{institutions.length}</span>
+      </div>
+      <p>Universities, labs, and organizations where innovation happened</p>
     </a>
   </section>
 
-  <section class="featured-section">
-    <h2>Featured Today</h2>
-    <div id="featured-container" class="featured-container">
-      <div class="featured-loading">Loading...</div>
-    </div>
-  </section>
-</BaseLayout>
-
-<script define:vars={{ nodesForClient }}>
-  // Simple hash function for deterministic daily selection
-  function hashString(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash);
-  }
-
-  // Get today's date in UTC (YYYY-MM-DD)
-  function getTodayUTC() {
-    const now = new Date();
-    return now.toISOString().split('T')[0];
-  }
-
-  // Select featured node deterministically based on date
-  function getFeaturedNode(nodes) {
-    const dateHash = hashString(getTodayUTC());
-    const index = dateHash % nodes.length;
-    return nodes[index];
-  }
-
-  // Get kind label
-  function getKindLabel(kind) {
-    const labels = { people: 'Person', works: 'Work', institutions: 'Institution' };
-    return labels[kind] || kind;
-  }
-
-  // Get meta text based on kind
-  function getMetaText(node) {
-    if (node.kind === 'people') {
-      return node.era || '';
-    } else if (node.kind === 'works') {
-      return `${node.subtitle}${node.year ? ` · ${node.year}` : ''}`;
-    } else if (node.kind === 'institutions') {
-      let meta = node.subtitle || '';
-      if (node.location) meta += ` · ${node.location}`;
-      return meta;
-    }
-    return '';
-  }
-
-  // Render featured card
-  function renderFeaturedCard(node) {
-    const container = document.getElementById('featured-container');
-    if (!container || !node) return;
-
-    const kindLabel = getKindLabel(node.kind);
-    const meta = getMetaText(node);
-    const domains = node.domains || [];
-
-    const imageHtml = node.imageUrl
-      ? `<div class="featured-image"><img src="${node.imageUrl}" alt="${node.name}" loading="lazy" /></div>`
-      : '';
-
-    const domainsHtml = domains.length > 0
-      ? `<div class="featured-domains">${domains.slice(0, 3).map(d => `<span class="domain-tag">${d}</span>`).join('')}</div>`
-      : '';
-
-    container.innerHTML = `
-      <a href="/node/${node.id}" class="featured-card kind-${node.kind}">
-        ${imageHtml}
-        <div class="featured-content">
-          <div class="featured-header">
-            <span class="badge badge-${node.kind}">${kindLabel}</span>
-          </div>
-          <h3 class="featured-title">${node.name}</h3>
-          ${node.subtitle && node.kind === 'people' ? `<p class="featured-subtitle">${node.subtitle}</p>` : ''}
-          <p class="featured-meta">${meta}</p>
-          ${domainsHtml}
+  {
+    featuredPerson && (
+      <section class="featured-section">
+        <h2>Featured Pioneer</h2>
+        <div class="featured-grid">
+          <NodeCard entry={featuredPerson} kind="people" variant="featured" />
         </div>
-      </a>
-    `;
+      </section>
+    )
   }
 
-  // Initialize featured card
-  const featuredNode = getFeaturedNode(nodesForClient);
-  renderFeaturedCard(featuredNode);
-
-  // Initialize search with Fuse.js
-  Promise.all([
-    Promise.resolve(nodesForClient),
-    // @ts-ignore - CDN import
-    import('https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.mjs')
-  ]).then(([nodes, { default: Fuse }]) => {
-    const fuse = new Fuse(nodes, {
-      keys: [
-        { name: 'name', weight: 2 },
-        { name: 'subtitle', weight: 1 },
-        { name: 'domains', weight: 1.5 },
-        { name: 'era', weight: 0.5 },
-        { name: 'location', weight: 0.5 },
-      ],
-      threshold: 0.3,
-    });
-
-    const searchInput = document.getElementById('hero-search-input');
-    const searchResults = document.getElementById('hero-search-results');
-
-    if (!searchInput || !searchResults) return;
-
-    searchInput.addEventListener('input', () => {
-      const query = searchInput.value.trim();
-
-      if (query.length < 2) {
-        searchResults.hidden = true;
-        return;
-      }
-
-      const results = fuse.search(query).slice(0, 6);
-
-      if (results.length === 0) {
-        searchResults.innerHTML = '<div class="search-result-item empty">No results found</div>';
-        searchResults.hidden = false;
-        return;
-      }
-
-      searchResults.innerHTML = results.map(result => {
-        const item = result.item;
-        const kindClass = `kind-${item.kind}`;
-        const kindLabel = getKindLabel(item.kind);
-        return `
-          <a href="/node/${item.id}" class="search-result-item ${kindClass}">
-            <span class="result-badge">${kindLabel}</span>
-            <span class="result-name">${item.name}</span>
-            ${item.subtitle ? `<span class="result-subtitle">${item.subtitle}</span>` : ''}
-          </a>
-        `;
-      }).join('');
-
-      searchResults.hidden = false;
-    });
-
-    // Close results when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-        searchResults.hidden = true;
-      }
-    });
-
-    // Re-show results on focus
-    searchInput.addEventListener('focus', () => {
-      if (searchInput.value.trim().length >= 2) {
-        searchResults.hidden = false;
-      }
-    });
-  });
-</script>
+  {
+    featuredWorks.length > 0 && (
+      <section class="featured-section">
+        <h2>Notable Works</h2>
+        <div class="featured-grid wide">
+          {featuredWorks.map((work) => (
+            <NodeCard entry={work} kind="works" />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
 
 <style>
   .hero {
     text-align: center;
-    padding: 3rem 0;
+    padding: 2rem 0 3rem;
     margin-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .hero h1 {
-    font-size: 2.75rem;
+    font-size: 2.5rem;
     margin-bottom: 0.25rem;
   }
 
   .tagline {
     font-size: 1.25rem;
     color: var(--color-muted);
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
-  .hero-search {
-    position: relative;
+  .description {
     max-width: 500px;
-    margin: 0 auto;
+    margin: 0 auto 1.5rem;
+    color: var(--color-text);
+    line-height: 1.6;
   }
 
-  #hero-search-input {
-    width: 100%;
-    padding: 1rem 1.25rem;
-    font-size: 1.1rem;
-    border: 2px solid var(--color-border);
-    border-radius: 12px;
-    background: var(--color-card-bg);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
   }
 
-  #hero-search-input:focus {
-    outline: none;
-    border-color: var(--color-link);
-    box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+  .btn-primary {
+    display: inline-block;
+    background: var(--color-link);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background 0.15s ease,
+      transform 0.15s ease;
   }
 
-  #hero-search-input::placeholder {
+  .btn-primary:hover {
+    background: #0052a3;
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+
+  .stat {
     color: var(--color-muted);
+    font-size: 0.9rem;
   }
 
-  .hero-search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+  .category-overview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .category-card {
+    display: block;
+    padding: 1.25rem;
     background: var(--color-card-bg);
     border: 1px solid var(--color-border);
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    margin-top: 8px;
-    z-index: 100;
-    overflow: hidden;
-  }
-
-  .search-result-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.875rem 1rem;
     text-decoration: none;
     color: inherit;
-    border-bottom: 1px solid var(--color-border);
-    transition: background 0.15s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
   }
 
-  .search-result-item:last-child {
-    border-bottom: none;
+  .category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
   }
 
-  .search-result-item:hover {
-    background: var(--color-bg);
+  .category-card.people {
+    border-top: 3px solid #e74c3c;
   }
 
-  .search-result-item.empty {
-    color: var(--color-muted);
-    font-style: italic;
-    cursor: default;
+  .category-card.people:hover {
+    border-color: #e74c3c;
   }
 
-  .result-badge {
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    padding: 0.125rem 0.375rem;
-    border-radius: 3px;
-    flex-shrink: 0;
+  .category-card.works {
+    border-top: 3px solid #3498db;
   }
 
-  .kind-people .result-badge {
+  .category-card.works:hover {
+    border-color: #3498db;
+  }
+
+  .category-card.institutions {
+    border-top: 3px solid #27ae60;
+  }
+
+  .category-card.institutions:hover {
+    border-color: #27ae60;
+  }
+
+  .category-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .category-card.people .category-icon {
     background: #fce4e4;
     color: #c0392b;
   }
 
-  .kind-works .result-badge {
+  .category-card.works .category-icon {
     background: #e3f2fd;
     color: #1565c0;
   }
 
-  .kind-institutions .result-badge {
+  .category-card.institutions .category-icon {
     background: #e8f5e9;
     color: #2e7d32;
   }
 
-  .result-name {
-    font-weight: 500;
+  .category-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
   }
 
-  .result-subtitle {
-    color: var(--color-muted);
-    font-size: 0.85rem;
-    margin-left: auto;
-  }
-
-  /* Entry Points */
-  .entry-points {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-    margin-bottom: 3rem;
-  }
-
-  .entry-card {
-    display: block;
-    padding: 1.5rem;
-    background: var(--color-card-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    text-decoration: none;
-    color: inherit;
-    text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-
-  .entry-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-link);
-    text-decoration: none;
-  }
-
-  .entry-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .entry-card h3 {
-    font-size: 1.1rem;
-    margin: 0 0 0.5rem 0;
+  .category-info h3 {
+    margin: 0;
+    font-size: 1rem;
     font-weight: 600;
   }
 
-  .entry-card p {
+  .count {
+    background: var(--color-bg);
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+
+  .category-card p {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--color-muted);
     line-height: 1.4;
   }
 
-  /* Featured Section */
   .featured-section {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
   }
 
   .featured-section h2 {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 1rem;
     color: var(--color-muted);
@@ -396,172 +260,28 @@ const nodesForClient = allNodes.map(n => ({
     letter-spacing: 0.05em;
   }
 
-  .featured-container {
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
     max-width: 400px;
   }
 
-  .featured-loading {
-    padding: 2rem;
-    text-align: center;
-    color: var(--color-muted);
-  }
-
-  .featured-card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    background: var(--color-card-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-
-  .featured-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-    text-decoration: none;
-  }
-
-  .featured-card.kind-people {
-    border-left: 4px solid #e74c3c;
-  }
-
-  .featured-card.kind-people:hover {
-    border-color: #e74c3c;
-  }
-
-  .featured-card.kind-works {
-    border-left: 4px solid #3498db;
-  }
-
-  .featured-card.kind-works:hover {
-    border-color: #3498db;
-  }
-
-  .featured-card.kind-institutions {
-    border-left: 4px solid #27ae60;
-  }
-
-  .featured-card.kind-institutions:hover {
-    border-color: #27ae60;
-  }
-
-  .featured-image {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-  }
-
-  .featured-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  .featured-card:hover .featured-image img {
-    transform: scale(1.05);
-  }
-
-  .featured-content {
-    padding: 1.25rem;
-  }
-
-  .featured-header {
-    margin-bottom: 0.5rem;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 0.125rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .badge-people {
-    background: #fce4e4;
-    color: #c0392b;
-  }
-
-  .badge-works {
-    background: #e3f2fd;
-    color: #1565c0;
-  }
-
-  .badge-institutions {
-    background: #e8f5e9;
-    color: #2e7d32;
-  }
-
-  .featured-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 0.25rem 0;
-    line-height: 1.3;
-  }
-
-  .featured-subtitle {
-    font-size: 0.9rem;
-    color: var(--color-muted);
-    margin: 0 0 0.25rem 0;
-    font-style: italic;
-  }
-
-  .featured-meta {
-    font-size: 0.85rem;
-    color: var(--color-muted);
-    margin: 0;
-  }
-
-  .featured-domains {
-    margin-top: 0.75rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-
-  .domain-tag {
-    display: inline-block;
-    padding: 0.125rem 0.375rem;
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 3px;
-    font-size: 0.7rem;
-    color: var(--color-muted);
+  .featured-grid.wide {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    max-width: none;
   }
 
   @media (max-width: 700px) {
+    .category-overview {
+      grid-template-columns: 1fr;
+    }
+
     .hero h1 {
       font-size: 2rem;
     }
 
-    .entry-points {
-      grid-template-columns: 1fr;
-    }
-
-    .entry-card {
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem 1.25rem;
-    }
-
-    .entry-icon {
-      font-size: 1.75rem;
-      margin-bottom: 0;
-    }
-
-    .entry-card h3 {
-      margin-bottom: 0.25rem;
-    }
-
-    .featured-container {
+    .featured-grid {
       max-width: none;
     }
   }

@@ -9,21 +9,24 @@
 ## Domains
 
 <!-- List the primary domains this person contributed to -->
+
 - [ ] Operating Systems
 - [ ] Programming Languages
 - [ ] Artificial Intelligence
 - [ ] Networking
 - [ ] Databases
-- [ ] Other: _____________
+- [ ] Other: **\*\***\_**\*\***
 
 ## Pre-submission Checklist
 
 ### Required Fields
+
 - [ ] `id` - Unique identifier (lowercase, hyphens)
 - [ ] `name` - Full name
 - [ ] `era` - Time period active
 
 ### Recommended Fields
+
 - [ ] `title` - Brief description (e.g., "Creator of Linux and Git")
 - [ ] `domains` - Array of domain tags
 - [ ] `signatureWorks` - Array of work IDs (must exist!)
@@ -31,6 +34,7 @@
 - [ ] `links` - Array of {label, url} for external resources
 
 ### Image (Required if image provided)
+
 - [ ] Image file saved to `src/assets/images/entities/<id>.jpg`
 - [ ] `image.file` - Relative path to local image
 - [ ] `image.source` - Source page URL (e.g., Wikimedia Commons)
@@ -38,12 +42,14 @@
 - [ ] `image.author` - Attribution to creator
 
 ## Content Quality
+
 - [ ] Biography is factual and well-sourced
 - [ ] "Why You Care" bullets explain relevance to modern tech
 - [ ] Links point to reliable sources (Wikipedia, official sites)
 - [ ] No copyright violations
 
 ### Citations (if specific claims made)
+
 - [ ] Inline citations use `<sup><a href="#source-N">[N]</a></sup>` format
 - [ ] Sources section added at end with `<span id="source-N"></span>` anchors
 - [ ] Citations link to reliable primary sources
@@ -84,6 +90,7 @@ image:
 ## Related Changes
 
 <!-- List any edges or related content being added -->
+
 - [ ] Adding edges in `src/content/edges/influence.json`
 - [ ] Adding edges in `src/content/edges/affiliation.json`
 - [ ] Adding related works

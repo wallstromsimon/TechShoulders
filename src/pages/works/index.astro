@@ -12,15 +12,17 @@ const works = await listNodes('works');
     <p>Projects, tools, and systems that changed how we build software.</p>
   </div>
 
-  {works.length === 0 ? (
-    <p class="empty">No works added yet.</p>
-  ) : (
-    <div class="card-grid">
-      {works.map(work => (
-        <NodeCard entry={work} kind="works" />
-      ))}
-    </div>
-  )}
+  {
+    works.length === 0 ? (
+      <p class="empty">No works added yet.</p>
+    ) : (
+      <div class="card-grid">
+        {works.map((work) => (
+          <NodeCard entry={work} kind="works" />
+        ))}
+      </div>
+    )
+  }
 </BaseLayout>
 
 <style>

@@ -37,7 +37,7 @@ export default function PackProgress({ packId, cardIds, cardNames }: PackProgres
     setMounted(true);
     const progress = getProgress();
     const packProgress = progress[packId] || {};
-    setReadCards(new Set(Object.keys(packProgress).filter(id => packProgress[id])));
+    setReadCards(new Set(Object.keys(packProgress).filter((id) => packProgress[id])));
   }, [packId]);
 
   const toggleCard = (cardId: string) => {
@@ -87,15 +87,14 @@ export default function PackProgress({ packId, cardIds, cardNames }: PackProgres
         <span className="progress-count">
           {completedCount} / {totalCount} cards
           {completedCount === totalCount && totalCount > 0 && (
-            <span className="complete-badge" title="Pack completed!">✓</span>
+            <span className="complete-badge" title="Pack completed!">
+              ✓
+            </span>
           )}
         </span>
       </div>
       <div className="progress-bar">
-        <div
-          className="progress-fill"
-          style={{ width: `${progressPercent}%` }}
-        />
+        <div className="progress-fill" style={{ width: `${progressPercent}%` }} />
       </div>
       <div className="progress-cards">
         {cardIds.map((cardId, index) => {

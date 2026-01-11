@@ -10,6 +10,7 @@
 ## Domains
 
 <!-- List the primary domains this work belongs to -->
+
 - [ ] Operating Systems
 - [ ] Programming Languages
 - [ ] Artificial Intelligence
@@ -17,21 +18,24 @@
 - [ ] Databases
 - [ ] Version Control
 - [ ] Developer Tools
-- [ ] Other: _____________
+- [ ] Other: **\*\***\_**\*\***
 
 ## Pre-submission Checklist
 
 ### Required Fields
+
 - [ ] `id` - Unique identifier (lowercase, hyphens)
 - [ ] `name` - Full name of the work
 - [ ] `kind` - Type of work (project, paper, tool, etc.)
 - [ ] `year` - Year created/published
 
 ### Recommended Fields
+
 - [ ] `domains` - Array of domain tags
 - [ ] `links` - Array of {label, url} for external resources
 
 ### Image (Required if image provided)
+
 - [ ] Image file saved to `src/assets/images/entities/<id>.jpg`
 - [ ] `image.file` - Relative path to local image
 - [ ] `image.source` - Source page URL (e.g., Wikimedia Commons)
@@ -39,12 +43,14 @@
 - [ ] `image.author` - Attribution to creator
 
 ## Content Quality
+
 - [ ] Description accurately represents the work
 - [ ] Historical context is provided
 - [ ] Impact and significance explained
 - [ ] Links point to reliable sources
 
 ### Citations (if specific claims made)
+
 - [ ] Inline citations use `<sup><a href="#source-N">[N]</a></sup>` format
 - [ ] Sources section added at end with `<span id="source-N"></span>` anchors
 - [ ] Citations link to reliable primary sources
@@ -77,13 +83,13 @@ image:
   license: Public Domain
   author: Bell Labs
 ---
-
 UNIX is a family of multitasking, multi-user computer operating systems...
 ```
 
 ## Related Changes
 
 <!-- List any edges or related content being added -->
+
 - [ ] Adding influence edges (creator → work)
 - [ ] Adding related people who created/contributed
 - [ ] Adding institution affiliations

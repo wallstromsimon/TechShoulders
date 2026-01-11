@@ -36,13 +36,13 @@ export async function loadAll() {
 export async function findNodeById(id: string): Promise<NodeResult | null> {
   const { people, works, institutions } = await loadAll();
 
-  const person = people.find(p => p.data.id === id);
+  const person = people.find((p) => p.data.id === id);
   if (person) return { kind: 'people', entry: person };
 
-  const work = works.find(w => w.data.id === id);
+  const work = works.find((w) => w.data.id === id);
   if (work) return { kind: 'works', entry: work };
 
-  const institution = institutions.find(i => i.data.id === id);
+  const institution = institutions.find((i) => i.data.id === id);
   if (institution) return { kind: 'institutions', entry: institution };
 
   return null;
@@ -56,9 +56,9 @@ export async function listNodes(kind: NodeKind): Promise<AnyEntry[]> {
 export async function getAllNodeIds(): Promise<string[]> {
   const { people, works, institutions } = await loadAll();
   return [
-    ...people.map(p => p.data.id),
-    ...works.map(w => w.data.id),
-    ...institutions.map(i => i.data.id),
+    ...people.map((p) => p.data.id),
+    ...works.map((w) => w.data.id),
+    ...institutions.map((i) => i.data.id),
   ];
 }
 
@@ -217,17 +217,17 @@ export async function loadAllEdges(): Promise<Edge[]> {
 
 export async function loadEdgesByKind(kind: EdgeKind): Promise<Edge[]> {
   const allEdges = await loadAllEdges();
-  return allEdges.filter(edge => edge.kind === kind);
+  return allEdges.filter((edge) => edge.kind === kind);
 }
 
 export async function getOutgoingEdges(nodeId: string): Promise<Edge[]> {
   const allEdges = await loadAllEdges();
-  return allEdges.filter(edge => edge.source === nodeId);
+  return allEdges.filter((edge) => edge.source === nodeId);
 }
 
 export async function getIncomingEdges(nodeId: string): Promise<Edge[]> {
   const allEdges = await loadAllEdges();
-  return allEdges.filter(edge => edge.target === nodeId);
+  return allEdges.filter((edge) => edge.target === nodeId);
 }
 
 export interface GraphData {
@@ -236,14 +236,9 @@ export interface GraphData {
 }
 
 export async function buildGraphData(includeAffiliations: boolean = true): Promise<GraphData> {
-  const [nodes, allEdges] = await Promise.all([
-    buildSearchIndex(),
-    loadAllEdges(),
-  ]);
+  const [nodes, allEdges] = await Promise.all([buildSearchIndex(), loadAllEdges()]);
 
-  const edges = includeAffiliations
-    ? allEdges
-    : allEdges.filter(e => e.kind === 'influence');
+  const edges = includeAffiliations ? allEdges : allEdges.filter((e) => e.kind === 'influence');
 
   return { nodes, edges };
 }
@@ -257,7 +252,7 @@ export async function loadAllPacks(): Promise<PackEntry[]> {
 
 export async function getPackById(id: string): Promise<PackEntry | undefined> {
   const packs = await getCollection('packs');
-  return packs.find(p => p.data.id === id);
+  return packs.find((p) => p.data.id === id);
 }
 
 export async function getPackCards(pack: PackEntry): Promise<SearchableNode[]> {
@@ -267,7 +262,7 @@ export async function getPackCards(pack: PackEntry): Promise<SearchableNode[]> {
   // Return nodes in the order specified by the pack's cards array (learning path order)
   const orderedNodes: SearchableNode[] = [];
   for (const cardId of cardIds) {
-    const node = allNodes.find(n => n.id === cardId);
+    const node = allNodes.find((n) => n.id === cardId);
     if (node) {
       orderedNodes.push(node);
     }
@@ -276,19 +271,19 @@ export async function getPackCards(pack: PackEntry): Promise<SearchableNode[]> {
   return orderedNodes;
 }
 
-export async function buildPackGraphData(pack: PackEntry, includeAffiliations: boolean = true): Promise<GraphData> {
-  const [allNodes, allEdges] = await Promise.all([
-    buildSearchIndex(),
-    loadAllEdges(),
-  ]);
+export async function buildPackGraphData(
+  pack: PackEntry,
+  includeAffiliations: boolean = true
+): Promise<GraphData> {
+  const [allNodes, allEdges] = await Promise.all([buildSearchIndex(), loadAllEdges()]);
 
   const cardIds = new Set(pack.data.cards);
 
   // Filter nodes to only those in the pack
-  const nodes = allNodes.filter(n => cardIds.has(n.id));
+  const nodes = allNodes.filter((n) => cardIds.has(n.id));
 
   // Filter edges to only those connecting pack nodes
-  const edges = allEdges.filter(edge => {
+  const edges = allEdges.filter((edge) => {
     const sourceInPack = cardIds.has(edge.source);
     const targetInPack = cardIds.has(edge.target);
 
@@ -316,21 +311,18 @@ export async function getPackStats(pack: PackEntry): Promise<PackStats> {
 
   return {
     total: cards.length,
-    people: cards.filter(c => c.kind === 'people').length,
-    works: cards.filter(c => c.kind === 'works').length,
-    institutions: cards.filter(c => c.kind === 'institutions').length,
+    people: cards.filter((c) => c.kind === 'people').length,
+    works: cards.filter((c) => c.kind === 'works').length,
+    institutions: cards.filter((c) => c.kind === 'institutions').length,
   };
 }
 
 export async function buildNodeNeighborhoodData(nodeId: string): Promise<GraphData> {
-  const [allNodes, allEdges] = await Promise.all([
-    buildSearchIndex(),
-    loadAllEdges(),
-  ]);
+  const [allNodes, allEdges] = await Promise.all([buildSearchIndex(), loadAllEdges()]);
 
   // Get all edges connected to this node
   const connectedEdges = allEdges.filter(
-    edge => edge.source === nodeId || edge.target === nodeId
+    (edge) => edge.source === nodeId || edge.target === nodeId
   );
 
   // Get all connected node IDs (1-hop neighborhood)
@@ -341,11 +333,11 @@ export async function buildNodeNeighborhoodData(nodeId: string): Promise<GraphDa
   }
 
   // Filter nodes to neighborhood
-  const nodes = allNodes.filter(n => neighborIds.has(n.id));
+  const nodes = allNodes.filter((n) => neighborIds.has(n.id));
 
   // Include all edges that connect neighborhood nodes
   const edges = allEdges.filter(
-    edge => neighborIds.has(edge.source) && neighborIds.has(edge.target)
+    (edge) => neighborIds.has(edge.source) && neighborIds.has(edge.target)
   );
 
   return { nodes, edges };
