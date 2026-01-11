@@ -13,28 +13,28 @@ export async function GET(context: APIContext) {
     ...people.map((person) => ({
       title: person.data.name,
       description: person.data.title || `Tech pioneer: ${person.data.name}`,
-      link: `/node/${person.data.id}/`,
+      link: `/node/${person.data.id}`,
       pubDate: new Date(), // Content doesn't have dates, use current
       categories: person.data.domains || [],
     })),
     ...works.map((work) => ({
       title: work.data.name,
       description: `${work.data.kind} (${work.data.year})`,
-      link: `/node/${work.data.id}/`,
+      link: `/node/${work.data.id}`,
       pubDate: new Date(work.data.year, 0, 1),
       categories: work.data.domains || [],
     })),
     ...institutions.map((inst) => ({
       title: inst.data.name,
       description: `${inst.data.kind}${inst.data.location ? ` - ${inst.data.location}` : ''}`,
-      link: `/node/${inst.data.id}/`,
+      link: `/node/${inst.data.id}`,
       pubDate: new Date(),
       categories: [],
     })),
     ...packs.map((pack) => ({
       title: `Pack: ${pack.data.name}`,
       description: pack.data.description,
-      link: `/packs/${pack.data.id}/`,
+      link: `/packs/${pack.data.id}`,
       pubDate: new Date(),
       categories: [],
     })),
