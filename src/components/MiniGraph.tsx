@@ -1,17 +1,13 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import cytoscape, { type Core, type ElementDefinition } from 'cytoscape';
+import { NODE_COLORS, EDGE_COLORS, type NodeKind } from '../lib/constants';
+import { getDirectNeighbors, type GraphEdge } from '../lib/graph';
+import { MINI_GRAPH_CONFIG } from '../lib/config';
 
 interface GraphNode {
   id: string;
   name: string;
-  kind: 'people' | 'works' | 'institutions';
-}
-
-interface GraphEdge {
-  source: string;
-  target: string;
-  kind: 'influence' | 'affiliation';
-  label?: string;
+  kind: NodeKind;
 }
 
 interface MiniGraphProps {
@@ -20,42 +16,15 @@ interface MiniGraphProps {
   focusNodeId: string;
 }
 
-const kindColors: Record<string, string> = {
-  people: '#e74c3c',
-  works: '#3498db',
-  institutions: '#27ae60',
-};
-
-const edgeColors: Record<string, string> = {
-  influence: '#333333',
-  affiliation: '#999999',
-};
-
 export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core | null>(null);
-
-  // Get neighbors within 1 hop
-  const getNeighborhood = useCallback((nodeId: string, edgeList: GraphEdge[]) => {
-    const visited = new Set<string>([nodeId]);
-
-    for (const edge of edgeList) {
-      if (edge.source === nodeId) {
-        visited.add(edge.target);
-      }
-      if (edge.target === nodeId) {
-        visited.add(edge.source);
-      }
-    }
-
-    return visited;
-  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     // Get 1-hop neighborhood of the focus node
-    const neighborhoodIds = getNeighborhood(focusNodeId, edges);
+    const neighborhoodIds = getDirectNeighbors(focusNodeId, edges);
 
     // Filter nodes to neighborhood
     const filteredNodes = nodes.filter((n) => neighborhoodIds.has(n.id));
@@ -98,7 +67,7 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
             'text-margin-y': 6,
             'font-size': 10,
             'font-weight': 500,
-            'background-color': (ele) => kindColors[ele.data('kind')] || '#888',
+            'background-color': (ele) => NODE_COLORS[ele.data('kind')] || '#888',
             width: 30,
             height: 30,
             'border-width': 2,
@@ -120,8 +89,8 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
           selector: 'edge',
           style: {
             width: 1.5,
-            'line-color': (ele) => edgeColors[ele.data('kind')] || '#888',
-            'target-arrow-color': (ele) => edgeColors[ele.data('kind')] || '#888',
+            'line-color': (ele) => EDGE_COLORS[ele.data('kind')] || '#888',
+            'target-arrow-color': (ele) => EDGE_COLORS[ele.data('kind')] || '#888',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             label: 'data(label)',
@@ -148,15 +117,15 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
         name: 'cose',
         animate: false,
         nodeDimensionsIncludeLabels: true,
-        nodeRepulsion: () => 4000,
-        idealEdgeLength: () => 80,
-        edgeElasticity: () => 100,
-        gravity: 0.5,
-        padding: 30,
+        nodeRepulsion: () => MINI_GRAPH_CONFIG.LAYOUT.NODE_REPULSION,
+        idealEdgeLength: () => MINI_GRAPH_CONFIG.LAYOUT.IDEAL_EDGE_LENGTH,
+        edgeElasticity: () => MINI_GRAPH_CONFIG.LAYOUT.EDGE_ELASTICITY,
+        gravity: MINI_GRAPH_CONFIG.LAYOUT.GRAVITY,
+        padding: MINI_GRAPH_CONFIG.LAYOUT.PADDING,
       },
-      minZoom: 0.5,
-      maxZoom: 2,
-      wheelSensitivity: 0.3,
+      minZoom: MINI_GRAPH_CONFIG.ZOOM.MIN,
+      maxZoom: MINI_GRAPH_CONFIG.ZOOM.MAX,
+      wheelSensitivity: MINI_GRAPH_CONFIG.ZOOM.WHEEL_SENSITIVITY,
       userPanningEnabled: true,
       userZoomingEnabled: true,
       boxSelectionEnabled: false,
@@ -173,7 +142,7 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
     return () => {
       cy.destroy();
     };
-  }, [nodes, edges, focusNodeId, getNeighborhood]);
+  }, [nodes, edges, focusNodeId]);
 
   return (
     <div style={{ width: '100%' }}>
@@ -195,7 +164,7 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
               width: 10,
               height: 10,
               borderRadius: '50%',
-              backgroundColor: kindColors.people,
+              backgroundColor: NODE_COLORS.people,
             }}
           />
           People
@@ -207,7 +176,7 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
               width: 10,
               height: 10,
               borderRadius: '50%',
-              backgroundColor: kindColors.works,
+              backgroundColor: NODE_COLORS.works,
             }}
           />
           Works
@@ -219,7 +188,7 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
               width: 10,
               height: 10,
               borderRadius: '50%',
-              backgroundColor: kindColors.institutions,
+              backgroundColor: NODE_COLORS.institutions,
             }}
           />
           Institutions
@@ -231,7 +200,7 @@ export default function MiniGraph({ nodes, edges, focusNodeId }: MiniGraphProps)
         ref={containerRef}
         style={{
           width: '100%',
-          height: 280,
+          height: MINI_GRAPH_CONFIG.HEIGHT,
           border: '1px solid #e0e0e0',
           borderRadius: 8,
           backgroundColor: '#fafafa',

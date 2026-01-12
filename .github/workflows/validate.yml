@@ -39,14 +39,18 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
-      # 4. Content schema validation + dangling edges check
+      # 4. Unit tests (Vitest)
+      - name: Run tests
+        run: pnpm test
+
+      # 5. Content schema validation + dangling edges check
       - name: Validate content schemas
         run: pnpm validate
 
-      # 5. Link checker (internal links + source anchors)
+      # 6. Link checker (internal links + source anchors)
       - name: Check links
         run: pnpm check-links
 
-      # 6. Build (ensures everything compiles)
+      # 7. Build (ensures everything compiles)
       - name: Build site
         run: pnpm build

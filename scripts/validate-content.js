@@ -11,6 +11,22 @@
  * 5. signatureWorks references exist
  * 6. Pack cards references exist
  * 7. Orphaned nodes (nodes with no edges)
+ *
+ * IMPORTANT: Schema Sync Requirement
+ * ----------------------------------
+ * The Zod schemas defined below MUST be kept in sync with src/content/config.ts.
+ * The schemas here are a simplified version (no Astro image() helper) for
+ * standalone Node.js validation.
+ *
+ * When updating content schemas:
+ * 1. Update src/content/config.ts (canonical source)
+ * 2. Mirror the changes here (without Astro-specific types)
+ * 3. Run `pnpm validate` to verify
+ *
+ * Key differences from config.ts:
+ * - imageSchema.file uses z.string() instead of Astro's image()
+ * - linksSchema.url uses z.string() instead of z.string().url()
+ *   (simpler validation for standalone script)
  */
 
 import { readFileSync, readdirSync, existsSync } from 'fs';
