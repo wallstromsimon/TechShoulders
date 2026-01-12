@@ -25,7 +25,8 @@
     "generate:graph": "node scripts/generate-graph-data.mjs",
     "new:person": "node scripts/new-person.js",
     "new:work": "node scripts/new-work.js",
-    "new:institution": "node scripts/new-institution.js"
+    "new:institution": "node scripts/new-institution.js",
+    "optimize:images": "node scripts/optimize-images.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",

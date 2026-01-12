@@ -101,15 +101,16 @@ Add a Sources section at the end with anchor targets:
 ## Images
 
 - Source from Wikimedia Commons (preferred) or public domain
-- Store locally in `src/assets/images/entities/<node-id>.jpg`
+- Download full resolution: `wget -O src/assets/images/entities/<slug>.jpg "https://upload.wikimedia.org/wikipedia/commons/..."`
+- **Optimize after download**: `pnpm optimize:images` (resizes to 440px width, 85% JPEG quality)
 - Include ALL attribution fields in frontmatter:
 
 ```yaml
 image:
   file: ../../assets/images/entities/person-id.jpg
   source: https://commons.wikimedia.org/wiki/File:...
-  license: CC BY 2.0
-  author: Photographer Name
+  license: Public Domain  # or CC BY 2.0, etc.
+  author: Photographer Name (Year)
 ```
 
 ## Development commands
@@ -128,6 +129,7 @@ pnpm check-links      # Validate internal links and sources
 pnpm new:person       # Create person template
 pnpm new:work         # Create work template
 pnpm new:institution  # Create institution template
+pnpm optimize:images  # Resize images to 440px width for web
 ```
 
 ## Key files

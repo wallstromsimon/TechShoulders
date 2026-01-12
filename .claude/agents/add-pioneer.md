@@ -37,6 +37,10 @@ When given a person's name, research and add them to the TechShoulders content s
    - Add Wikimedia Commons link to `links` array
    - Write comprehensive biography with Sources section
 
+5. **Optimize the image**: Run `pnpm optimize:images`
+   - Resizes to 440px width, 85% JPEG quality
+   - Ensures consistent format across all entity images
+
 6. **Create institutions if needed** (in `src/content/institutions/`):
    - Only if they don't already exist
    - Add affiliation edges from person to institution
@@ -111,8 +115,7 @@ You would:
 2. Search for Wikimedia Commons portrait: `site:commons.wikimedia.org Claude Shannon portrait`
 3. Create `src/content/works/mathematical-theory-of-communication.mdx`
 4. Download image: `wget -O src/assets/images/entities/claude-shannon.jpg "https://upload.wikimedia.org/wikipedia/commons/..."`
-5. Create `src/content/people/claude-shannon.mdx` with:
-   - Edges to his work
-   - Image block with Wikimedia attribution
-6. Run `pnpm validate`
-7. Report the new nodes and connections
+5. Create `src/content/people/claude-shannon.mdx` with edges and image attribution
+6. Run `pnpm optimize:images` to resize to 440px width
+7. Run `pnpm validate` to check content
+8. Report the new nodes and connections
