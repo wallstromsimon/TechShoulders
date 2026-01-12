@@ -60,6 +60,7 @@ When given a person's name, research and add them to the TechShoulders content s
 ## Schema Reference
 
 ### Person frontmatter
+
 ```yaml
 id: person-slug
 type: person
@@ -91,6 +92,7 @@ image:
 ```
 
 ### Work frontmatter
+
 ```yaml
 id: work-slug
 type: work
@@ -111,6 +113,7 @@ links:
 User: "Add Claude Shannon"
 
 You would:
+
 1. Research Claude Shannon (father of information theory)
 2. Search for Wikimedia Commons portrait: `site:commons.wikimedia.org Claude Shannon portrait`
 3. Create `src/content/works/mathematical-theory-of-communication.mdx`

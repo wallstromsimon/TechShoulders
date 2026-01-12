@@ -22,9 +22,9 @@ async function optimizeImages() {
     return;
   }
 
-  const files = fs.readdirSync(IMAGES_DIR).filter(f =>
-    f.endsWith('.jpg') || f.endsWith('.jpeg') || f.endsWith('.png')
-  );
+  const files = fs
+    .readdirSync(IMAGES_DIR)
+    .filter((f) => f.endsWith('.jpg') || f.endsWith('.jpeg') || f.endsWith('.png'));
 
   if (files.length === 0) {
     console.log('No images found to optimize');
@@ -42,7 +42,7 @@ async function optimizeImages() {
 
     // Skip if already small
     if (stats.size < SIZE_THRESHOLD) {
-      console.log(`✓ ${file}: already optimized (${Math.round(stats.size/1024)}KB)`);
+      console.log(`✓ ${file}: already optimized (${Math.round(stats.size / 1024)}KB)`);
       skipped++;
       continue;
     }

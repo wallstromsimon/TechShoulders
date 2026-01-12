@@ -109,7 +109,7 @@ Add a Sources section at the end with anchor targets:
 image:
   file: ../../assets/images/entities/person-id.jpg
   source: https://commons.wikimedia.org/wiki/File:...
-  license: Public Domain  # or CC BY 2.0, etc.
+  license: Public Domain # or CC BY 2.0, etc.
   author: Photographer Name (Year)
 ```
 
