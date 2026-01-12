@@ -5,6 +5,10 @@ package-lock.json
 # Build output
 dist/
 
+# Generated files (created by prebuild scripts)
+public/graph.json
+public/search-index.json
+
 # Astro
 .astro/
 

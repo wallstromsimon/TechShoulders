@@ -61,7 +61,9 @@ export function getEdgeKind(label: string): EdgeKind {
     return 'affiliation';
   }
   // Default to influence for unknown labels (conservative)
-  console.warn(`Unknown edge label "${label}", defaulting to influence`);
+  if (import.meta.env.DEV) {
+    console.warn(`Unknown edge label "${label}", defaulting to influence`);
+  }
   return 'influence';
 }
 

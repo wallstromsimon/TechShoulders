@@ -1,21 +1,14 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import cytoscape, { type Core, type ElementDefinition } from 'cytoscape';
-
-type NodeKind = 'people' | 'works' | 'institutions';
+import { NODE_COLORS, EDGE_COLORS, type NodeKind } from '../lib/constants';
+import { getNeighborhood, type GraphEdge } from '../lib/graph';
+import { GRAPH_CONFIG, URL_PARAMS } from '../lib/config';
 
 interface GraphNode {
   id: string;
   name: string;
   kind: NodeKind;
   domains: string[];
-}
-
-interface GraphEdge {
-  source: string;
-  target: string;
-  kind: 'influence' | 'affiliation';
-  label?: string;
-  year?: number;
 }
 
 interface InfluenceGraphProps {
@@ -40,7 +33,9 @@ function parseUrlParams(): {
   const focus = params.get('focus');
   const affiliations = params.get('affiliations') === '1';
   const depthParam = params.get('depth');
-  const depth = depthParam ? Math.min(3, Math.max(1, parseInt(depthParam, 10) || 1)) : 1;
+  const depth = depthParam
+    ? Math.min(URL_PARAMS.MAX_DEPTH, Math.max(URL_PARAMS.MIN_DEPTH, parseInt(depthParam, 10) || 1))
+    : URL_PARAMS.MIN_DEPTH;
 
   const typesParam = params.get('types');
   const types = typesParam
@@ -80,17 +75,6 @@ function updateUrlParams(params: {
 
   window.history.replaceState({}, '', newUrl);
 }
-
-const kindColors: Record<string, string> = {
-  people: '#e74c3c',
-  works: '#3498db',
-  institutions: '#27ae60',
-};
-
-const edgeColors: Record<string, string> = {
-  influence: '#333333',
-  affiliation: '#999999',
-};
 
 export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -160,7 +144,9 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const query = searchQuery.toLowerCase();
-    return nodes.filter((n) => n.name.toLowerCase().includes(query)).slice(0, 8);
+    return nodes
+      .filter((n) => n.name.toLowerCase().includes(query))
+      .slice(0, GRAPH_CONFIG.SEARCH_MAX_RESULTS);
   }, [nodes, searchQuery]);
 
   // Close dropdown when clicking outside
@@ -172,29 +158,6 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Get neighbors within N hops
-  const getNeighborhood = useCallback((nodeId: string, depth: number, edgeList: GraphEdge[]) => {
-    const visited = new Set<string>([nodeId]);
-    const queue = [{ id: nodeId, d: 0 }];
-
-    while (queue.length > 0) {
-      const { id, d } = queue.shift()!;
-      if (d >= depth) continue;
-
-      for (const edge of edgeList) {
-        if (edge.source === id && !visited.has(edge.target)) {
-          visited.add(edge.target);
-          queue.push({ id: edge.target, d: d + 1 });
-        }
-        if (edge.target === id && !visited.has(edge.source)) {
-          visited.add(edge.source);
-          queue.push({ id: edge.source, d: d + 1 });
-        }
-      }
-    }
-    return visited;
   }, []);
 
   // Handle node selection from search
@@ -212,7 +175,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
             center: { eles: node },
             zoom: 1.5,
           },
-          { duration: 300 }
+          { duration: GRAPH_CONFIG.TIMING.ANIMATION_DURATION }
         );
       }
     }
@@ -254,10 +217,9 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     }
 
     // If focus mode is active, filter to neighborhood
-    let neighborhoodNodes: Set<string> | null = null;
     if (focusedNode && connectedNodeIds.has(focusedNode)) {
-      neighborhoodNodes = getNeighborhood(focusedNode, focusDepth, filteredEdges);
-      filteredNodes = filteredNodes.filter((n) => neighborhoodNodes!.has(n.id));
+      const neighborhoodNodes = getNeighborhood(focusedNode, focusDepth, filteredEdges);
+      filteredNodes = filteredNodes.filter((n) => neighborhoodNodes.has(n.id));
     }
 
     // Filter edges to only include those between visible nodes
@@ -300,7 +262,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
             'text-margin-y': 8,
             'font-size': 12,
             'font-weight': 500,
-            'background-color': (ele) => kindColors[ele.data('kind')] || '#888',
+            'background-color': (ele) => NODE_COLORS[ele.data('kind')] || '#888',
             width: 40,
             height: 40,
             'border-width': 2,
@@ -321,8 +283,8 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
           selector: 'edge',
           style: {
             width: 2,
-            'line-color': (ele) => edgeColors[ele.data('kind')] || '#888',
-            'target-arrow-color': (ele) => edgeColors[ele.data('kind')] || '#888',
+            'line-color': (ele) => EDGE_COLORS[ele.data('kind')] || '#888',
+            'target-arrow-color': (ele) => EDGE_COLORS[ele.data('kind')] || '#888',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             label: 'data(label)',
@@ -349,15 +311,15 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
         name: 'cose',
         animate: false,
         nodeDimensionsIncludeLabels: true,
-        nodeRepulsion: () => 8000,
-        idealEdgeLength: () => 100,
-        edgeElasticity: () => 100,
-        gravity: 0.25,
-        padding: 50,
+        nodeRepulsion: () => GRAPH_CONFIG.LAYOUT.NODE_REPULSION,
+        idealEdgeLength: () => GRAPH_CONFIG.LAYOUT.IDEAL_EDGE_LENGTH,
+        edgeElasticity: () => GRAPH_CONFIG.LAYOUT.EDGE_ELASTICITY,
+        gravity: GRAPH_CONFIG.LAYOUT.GRAVITY,
+        padding: GRAPH_CONFIG.LAYOUT.PADDING,
       },
-      minZoom: 0.3,
-      maxZoom: 3,
-      wheelSensitivity: 0.3,
+      minZoom: GRAPH_CONFIG.ZOOM.MIN,
+      maxZoom: GRAPH_CONFIG.ZOOM.MAX,
+      wheelSensitivity: GRAPH_CONFIG.ZOOM.WHEEL_SENSITIVITY,
     });
 
     // Handle node clicks - focus mode on single click, navigate on double click
@@ -376,7 +338,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
         clickTimeout = setTimeout(() => {
           clickTimeout = null;
           setFocusedNode(nodeId);
-        }, 250);
+        }, GRAPH_CONFIG.TIMING.DOUBLE_CLICK_DELAY);
       }
     });
 
@@ -411,16 +373,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
       if (clickTimeout) clearTimeout(clickTimeout);
       cy.destroy();
     };
-  }, [
-    nodes,
-    edges,
-    includeAffiliations,
-    focusedNode,
-    focusDepth,
-    selectedTypes,
-    selectedDomains,
-    getNeighborhood,
-  ]);
+  }, [nodes, edges, includeAffiliations, focusedNode, focusDepth, selectedTypes, selectedDomains]);
 
   // Get the focused node's name for display
   const focusedNodeName = focusedNode ? nodes.find((n) => n.id === focusedNode)?.name : null;
@@ -431,7 +384,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
     if (typeof window !== 'undefined') {
       navigator.clipboard.writeText(window.location.href).then(() => {
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        setTimeout(() => setCopied(false), GRAPH_CONFIG.TIMING.COPY_FEEDBACK_DURATION);
       });
     }
   }, []);
@@ -514,7 +467,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                       width: 10,
                       height: 10,
                       borderRadius: '50%',
-                      backgroundColor: kindColors[node.kind],
+                      backgroundColor: NODE_COLORS[node.kind],
                       flexShrink: 0,
                     }}
                   />
@@ -665,7 +618,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                         width: 10,
                         height: 10,
                         borderRadius: '50%',
-                        backgroundColor: kindColors[kind],
+                        backgroundColor: NODE_COLORS[kind],
                       }}
                     />
                     {kind.charAt(0).toUpperCase() + kind.slice(1)}
@@ -878,7 +831,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                       width: 14,
                       height: 14,
                       borderRadius: '50%',
-                      backgroundColor: kindColors.people,
+                      backgroundColor: NODE_COLORS.people,
                     }}
                   />
                   <strong>People</strong> – innovators, founders, researchers
@@ -890,7 +843,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                       width: 14,
                       height: 14,
                       borderRadius: '50%',
-                      backgroundColor: kindColors.works,
+                      backgroundColor: NODE_COLORS.works,
                     }}
                   />
                   <strong>Works</strong> – projects, inventions, papers
@@ -902,7 +855,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                       width: 14,
                       height: 14,
                       borderRadius: '50%',
-                      backgroundColor: kindColors.institutions,
+                      backgroundColor: NODE_COLORS.institutions,
                     }}
                   />
                   <strong>Institutions</strong> – universities, companies, labs
@@ -929,7 +882,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                       display: 'inline-block',
                       width: 24,
                       height: 2,
-                      backgroundColor: edgeColors.influence,
+                      backgroundColor: EDGE_COLORS.influence,
                     }}
                   />
                   <strong>Strong</strong> (influence) – created, invented, inspired, built_on,
@@ -941,7 +894,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                       display: 'inline-block',
                       width: 24,
                       height: 2,
-                      backgroundColor: edgeColors.affiliation,
+                      backgroundColor: EDGE_COLORS.affiliation,
                       backgroundImage:
                         'repeating-linear-gradient(90deg, #999 0, #999 4px, transparent 4px, transparent 8px)',
                     }}
@@ -972,7 +925,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                 width: 12,
                 height: 12,
                 borderRadius: '50%',
-                backgroundColor: kindColors.people,
+                backgroundColor: NODE_COLORS.people,
               }}
             />
             People
@@ -984,7 +937,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                 width: 12,
                 height: 12,
                 borderRadius: '50%',
-                backgroundColor: kindColors.works,
+                backgroundColor: NODE_COLORS.works,
               }}
             />
             Works
@@ -996,7 +949,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
                 width: 12,
                 height: 12,
                 borderRadius: '50%',
-                backgroundColor: kindColors.institutions,
+                backgroundColor: NODE_COLORS.institutions,
               }}
             />
             Institutions
