@@ -179,6 +179,11 @@ pnpm lint         # ESLint code quality
 pnpm format:check # Check code formatting
 pnpm check-links  # Validate internal links and sources
 pnpm ci           # Run all checks (typecheck, lint, format, validate, links, build)
+
+# Content CLI tools
+pnpm new:person <slug>       # Create a new person (e.g., pnpm new:person ada-lovelace)
+pnpm new:work <slug>         # Create a new work (e.g., pnpm new:work analytical-engine)
+pnpm new:institution <slug>  # Create a new institution (e.g., pnpm new:institution bell-labs)
 ```
 
 ## Analytics

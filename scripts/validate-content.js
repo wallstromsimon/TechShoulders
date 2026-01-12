@@ -10,6 +10,7 @@
  * 4. ID matches filename
  * 5. signatureWorks references exist
  * 6. Pack cards references exist
+ * 7. Orphaned nodes (nodes with no edges)
  */
 
 import { readFileSync, readdirSync, existsSync } from 'fs';
@@ -222,13 +223,14 @@ function error(file, message) {
   errors.push(`ERROR [${file}]: ${message}`);
 }
 
-function _warn(file, message) {
+function warn(file, message) {
   warnings.push(`WARNING [${file}]: ${message}`);
 }
 
-// Collect all node IDs
-function collectNodeIds() {
+// Collect all node IDs and their edges
+function collectNodesAndEdges() {
   const nodeIds = new Set();
+  const allEdges = []; // { source, target, kind }
 
   const collections = ['people', 'works', 'institutions'];
 
@@ -242,11 +244,40 @@ function collectNodeIds() {
       const data = parseYamlFrontmatter(content);
       if (data?.id) {
         nodeIds.add(data.id);
+        // Collect inline edges
+        if (data.edges && Array.isArray(data.edges)) {
+          for (const edge of data.edges) {
+            allEdges.push({
+              source: data.id,
+              target: edge.target,
+              kind: edge.kind,
+            });
+          }
+        }
       }
     }
   }
 
-  return nodeIds;
+  return { nodeIds, allEdges };
+}
+
+// Check for orphaned nodes (nodes with no edges)
+function checkOrphanedNodes(nodeIds, edges) {
+  const connectedNodes = new Set();
+
+  for (const edge of edges) {
+    connectedNodes.add(edge.source);
+    connectedNodes.add(edge.target);
+  }
+
+  const orphaned = [];
+  for (const nodeId of nodeIds) {
+    if (!connectedNodes.has(nodeId)) {
+      orphaned.push(nodeId);
+    }
+  }
+
+  return orphaned;
 }
 
 // Validate a single MDX file
@@ -326,8 +357,8 @@ function validatePackCards(pack, nodeIds, filePath) {
 function validate() {
   console.log('Validating TechShoulders content...\n');
 
-  // First pass: collect all node IDs
-  const nodeIds = collectNodeIds();
+  // First pass: collect all node IDs and edges
+  const { nodeIds, allEdges } = collectNodesAndEdges();
   console.log(`Found ${nodeIds.size} nodes\n`);
 
   // Validate people
@@ -391,6 +422,16 @@ function validate() {
     }
     console.log(`  Checked ${files.length} files`);
   }
+
+  // Check for orphaned nodes
+  console.log('Checking for orphaned nodes...');
+  const orphaned = checkOrphanedNodes(nodeIds, allEdges);
+  if (orphaned.length > 0) {
+    for (const nodeId of orphaned) {
+      warn('orphan-check', `Node "${nodeId}" has no edges (orphaned)`);
+    }
+  }
+  console.log(`  Found ${orphaned.length} orphaned node(s)`);
 
   // Print results
   console.log('\n' + '='.repeat(50));

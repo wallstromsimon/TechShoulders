@@ -15,8 +15,36 @@ Thank you for your interest in contributing to TechShoulders! This project aims 
 
 1. Fork the repository
 2. Create a branch for your changes
-3. Add your content following the schemas below
-4. Submit a PR using the appropriate template
+3. Use the CLI tools to scaffold your content:
+   ```bash
+   pnpm new:person ada-lovelace      # Creates person template
+   pnpm new:work analytical-engine   # Creates work template
+   pnpm new:institution bell-labs    # Creates institution template
+   ```
+4. Fill in the frontmatter (including required fields: `type`, `era`, `domains`)
+5. Add inline edges to connect your node to others
+6. Run `pnpm validate` to check for errors
+7. Submit a PR using the appropriate template
+
+## Content CLI Tools
+
+These scripts create properly formatted template files to speed up content creation:
+
+| Command                       | Example                           | Description                  |
+| ----------------------------- | --------------------------------- | ---------------------------- |
+| `pnpm new:person <slug>`      | `pnpm new:person ada-lovelace`    | Create a person profile      |
+| `pnpm new:work <slug>`        | `pnpm new:work analytical-engine` | Create a work entry          |
+| `pnpm new:institution <slug>` | `pnpm new:institution bell-labs`  | Create an institution        |
+| `pnpm validate`               | `pnpm validate`                   | Check all content for errors |
+
+### What `pnpm validate` checks
+
+- **Schema compliance**: Required fields present, correct types
+- **Edge integrity**: Both source and target nodes exist
+- **Reference integrity**: signatureWorks and pack cards reference valid nodes
+- **Image attribution**: All attribution fields present when image exists
+- **Orphaned nodes**: Warns about nodes with no edges (disconnected from graph)
+- **ID matching**: Node ID matches filename
 
 ## Content Guidelines
 
@@ -74,30 +102,40 @@ id: ada-lovelace # Must match filename
 
 ## Content Schemas
 
+All nodes require `type`, `era`, and `domains` fields. Edges are defined inline within each node.
+
 ### People
 
 ```yaml
 ---
 id: person-id # Required: lowercase, hyphens
+type: person # Required
 name: Full Name # Required
-title: Brief Title # Optional: "Creator of X"
-era: 1990s–present # Required: time period active
-domains: # Optional
+era: 1990s-present # Required: time period active
+domains: # Required: at least one
   - Operating Systems
   - Programming Languages
+title: Brief Title # Optional: "Creator of X"
 signatureWorks: # Optional: array of work IDs
   - work-id-1
   - work-id-2
 whyYouCare: # Optional: importance bullets
   - Point about relevance
+edges: # Inline relationships
+  - target: linux-kernel
+    kind: influence
+    label: created
+  - target: university-of-helsinki
+    kind: affiliation
+    label: studied at
 links: # Optional
   - label: Wikipedia
     url: https://...
 image: # Optional (but recommended)
-  file: ../../assets/images/entities/person-id.jpg # Local image path
-  source: https://... # Source page URL (for attribution)
-  license: CC BY 2.0 # License type
-  author: Author Name # Attribution
+  file: ../../assets/images/entities/person-id.jpg
+  source: https://...
+  license: CC BY 2.0
+  author: Author Name
 ---
 Biography content in MDX...
 ```
@@ -107,11 +145,14 @@ Biography content in MDX...
 ```yaml
 ---
 id: work-id # Required
+type: work # Required
 name: Work Name # Required
 kind: project # Required: project, paper, tool, etc.
-year: 1991 # Required: year created
-domains: # Optional
+year: 1991 # Optional: year created
+era: 1990s-present # Required
+domains: # Required: at least one
   - Domain 1
+edges: [] # Inline relationships (usually empty for works)
 links: # Optional
   - label: Official Site
     url: https://...
@@ -129,9 +170,15 @@ Description of the work in MDX...
 ```yaml
 ---
 id: institution-id # Required
+type: institution # Required
 name: Institution Name # Required
 kind: university # Required: university, lab, company, org
+era: 1900s-present # Required
+domains: # Required: at least one
+  - Research
+  - Education
 location: City, Country # Optional
+edges: [] # Inline relationships (usually empty for institutions)
 links: # Optional
   - label: Official Site
     url: https://...
@@ -144,35 +191,18 @@ image: # Optional
 Description of the institution in MDX...
 ```
 
-### Edges (Relationships)
+### Edges (Inline Relationships)
 
-Edges are stored in JSON files:
+Edges are defined inline within each node's frontmatter using the `edges` array:
 
-**Influence edges** (`src/content/edges/influence.json`):
-
-```json
-[
-  {
-    "source": "person-id",
-    "target": "work-id",
-    "kind": "influence",
-    "label": "created"
-  }
-]
+```yaml
+edges:
+  - target: linux-kernel # Target node ID
+    kind: influence # influence or affiliation
+    label: created # Optional: relationship label
 ```
 
-**Affiliation edges** (`src/content/edges/affiliation.json`):
-
-```json
-[
-  {
-    "source": "person-id",
-    "target": "institution-id",
-    "kind": "affiliation",
-    "label": "worked at"
-  }
-]
-```
+Edges flow **from** the node containing them **to** the target. For example, to show that Linus Torvalds created Linux, add an edge in `linus-torvalds.mdx` pointing to `linux-kernel`.
 
 ## Image Guidelines
 
@@ -238,9 +268,9 @@ Use `affiliation` edges for context/association:
 
 CI will verify:
 
-1. Both `source` and `target` node IDs exist
+1. Target node IDs exist
 2. `kind` is either "influence" or "affiliation"
-3. JSON format is valid
+3. Orphaned nodes are flagged (nodes with no edges)
 
 ## Development Setup
 
@@ -256,6 +286,14 @@ pnpm build
 
 # Preview production build
 pnpm preview
+
+# Create new content
+pnpm new:person <slug>
+pnpm new:work <slug>
+pnpm new:institution <slug>
+
+# Validate all content
+pnpm validate
 ```
 
 ## Pull Request Process
@@ -269,10 +307,10 @@ pnpm preview
 
 Your PR will be automatically validated for:
 
-- Schema compliance (all required fields present)
-- Edge integrity (referenced nodes exist)
+- Schema compliance (all required fields present, correct types)
+- Edge integrity (target nodes exist)
 - Image attribution (all fields present when image exists)
-- JSON syntax (for edge files)
+- Orphaned nodes (nodes with no connections)
 
 ## Questions?
 

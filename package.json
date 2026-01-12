@@ -19,7 +19,10 @@
     "ci": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm validate && pnpm check-links && pnpm build",
     "generate:og": "node scripts/generate-og-image.mjs",
     "generate:og:packs": "node scripts/generate-pack-og-images.mjs",
-    "generate:graph": "node scripts/generate-graph-data.mjs"
+    "generate:graph": "node scripts/generate-graph-data.mjs",
+    "new:person": "node scripts/new-person.js",
+    "new:work": "node scripts/new-work.js",
+    "new:institution": "node scripts/new-institution.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",
