@@ -7,9 +7,9 @@
  * with 85% JPEG quality to match consistent format.
  */
 
-const sharp = require('sharp');
-const fs = require('fs');
-const path = require('path');
+import sharp from 'sharp';
+import fs from 'fs';
+import path from 'path';
 
 const IMAGES_DIR = './src/assets/images/entities';
 const TARGET_WIDTH = 440;
