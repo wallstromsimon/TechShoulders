@@ -16,26 +16,34 @@ When given a person's name, research and add them to the TechShoulders content s
    - Their most significant works
    - Associated institutions (where they studied/worked)
    - Good sources for citations
+   - **Find a Wikimedia Commons portrait** (search: `site:commons.wikimedia.org [person name] portrait`)
 
 2. **Create works first** (in `src/content/works/`):
    - Use slug format: `lowercase-with-hyphens.mdx`
    - Include: id, type, name, kind, era, year, domains, edges (usually empty), links
    - Write comprehensive content with Sources section
 
-3. **Create the person** (in `src/content/people/`):
+3. **Download portrait image** from Wikimedia Commons:
+   - Use `wget` to download to `src/assets/images/entities/<person-slug>.jpg`
+   - Use full-resolution URL: `https://upload.wikimedia.org/wikipedia/commons/[path]/[filename]`
+   - Note the license (usually Public Domain or CC BY) and author/date for attribution
+
+4. **Create the person** (in `src/content/people/`):
    - Include all required fields: id, type, name, era, domains
    - Add `edges` pointing to their works with `kind: influence` and `label: created`
    - Add `signatureWorks` array listing work IDs
    - Add `whyYouCare` bullets explaining their importance
+   - Add `image` block with file path, source URL, license, and author
+   - Add Wikimedia Commons link to `links` array
    - Write comprehensive biography with Sources section
 
-4. **Create institutions if needed** (in `src/content/institutions/`):
+6. **Create institutions if needed** (in `src/content/institutions/`):
    - Only if they don't already exist
    - Add affiliation edges from person to institution
 
-5. **Validate**: Run `pnpm validate` to check all content
+7. **Validate**: Run `pnpm validate` to check all content
 
-6. **Report** what was created and the graph connections
+8. **Report** what was created and the graph connections
 
 ## Content Quality Standards
 
@@ -68,7 +76,14 @@ whyYouCare:
   - Why this person matters
 links:
   - label: Wikipedia
-    url: https://...
+    url: https://en.wikipedia.org/wiki/Person_Name
+  - label: Wikimedia Commons
+    url: https://commons.wikimedia.org/wiki/Category:Person_Name
+image:
+  file: ../../assets/images/entities/person-slug.jpg
+  source: https://commons.wikimedia.org/wiki/File:Original_filename.jpg
+  license: Public Domain
+  author: Photographer Name (Year)
 ```
 
 ### Work frontmatter
@@ -93,7 +108,11 @@ User: "Add Claude Shannon"
 
 You would:
 1. Research Claude Shannon (father of information theory)
-2. Create `src/content/works/mathematical-theory-of-communication.mdx`
-3. Create `src/content/people/claude-shannon.mdx` with edges to his work
-4. Run validation
-5. Report the new nodes and connections
+2. Search for Wikimedia Commons portrait: `site:commons.wikimedia.org Claude Shannon portrait`
+3. Create `src/content/works/mathematical-theory-of-communication.mdx`
+4. Download image: `wget -O src/assets/images/entities/claude-shannon.jpg "https://upload.wikimedia.org/wikipedia/commons/..."`
+5. Create `src/content/people/claude-shannon.mdx` with:
+   - Edges to his work
+   - Image block with Wikimedia attribution
+6. Run `pnpm validate`
+7. Report the new nodes and connections
