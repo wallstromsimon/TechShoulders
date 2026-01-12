@@ -1,0 +1,71 @@
+---
+id: bombe
+type: work
+name: Bombe
+kind: project
+era: 1940s
+year: 1940
+domains:
+  - Computing
+  - Cryptography
+  - Electrical Engineering
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Bombe
+  - label: Bletchley Park
+    url: https://bletchleypark.org.uk/our-story/the-bombe
+  - label: National Museum of Computing
+    url: https://www.tnmoc.org/bombe
+---
+
+The Bombe was an electromechanical device designed by Alan Turing and Gordon Welchman at Bletchley Park to decrypt Nazi Germany's Enigma-enciphered messages during World War II. It was one of the most important technological achievements of the war, enabling the Allies to read German military communications.
+
+## The Enigma Problem
+
+The German Enigma machine created ciphers with approximately 158 million million million possible settings. The settings changed daily, making brute-force attacks seemingly impossible. German military commanders believed Enigma was unbreakable<sup><a href="#source-1">[1]</a></sup>.
+
+Breaking Enigma required finding the daily settings—the rotor order, ring settings, plugboard connections, and starting positions—before the next day's messages arrived.
+
+## Turing's Design
+
+Building on earlier Polish work, Turing designed the British Bombe in 1939. His key insight was to exploit a fundamental weakness: Enigma never encrypted a letter as itself. Combined with known or guessed plaintext ("cribs"), this allowed systematic elimination of impossible settings.
+
+The Bombe worked by:
+1. Assuming a piece of plaintext appeared at a specific position
+2. Testing this assumption against all possible rotor settings
+3. Using logical contradictions to eliminate impossible configurations
+4. Identifying settings that produced no contradictions<sup><a href="#source-2">[2]</a></sup>
+
+## Gordon Welchman's Improvement
+
+Welchman enhanced Turing's design with the "diagonal board," which dramatically increased the Bombe's effectiveness by exploiting additional properties of the Enigma's plugboard. This improvement made the Bombe fast enough to break messages in real time.
+
+## Impact on the War
+
+By 1942, over 200 Bombes were operating at Bletchley Park and outstations. They enabled the Allies to:
+
+- Read U-boat communications, turning the tide in the Battle of the Atlantic
+- Anticipate German military operations across all theaters
+- Shorten the war by an estimated two years, saving millions of lives<sup><a href="#source-3">[3]</a></sup>
+
+The intelligence derived from Enigma decrypts was codenamed "Ultra" and kept secret until the 1970s.
+
+## Legacy
+
+The Bombe represented a crucial step in the development of computing:
+
+- Demonstrated that machines could solve problems beyond human capability
+- Pioneered automated logical reasoning
+- Led to Colossus, a programmable electronic computer also used at Bletchley Park
+- Established Turing as a central figure in computing history
+
+A working Bombe reconstruction operates today at the National Museum of Computing at Bletchley Park.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Bletchley Park. ["The Bombe."](https://bletchleypark.org.uk/our-story/the-bombe) Overview of Enigma and the Bombe.
+2. <span id="source-2"></span>Wikipedia. ["Bombe."](https://en.wikipedia.org/wiki/Bombe) Technical details of operation.
+3. <span id="source-3"></span>Hinsley, F.H. "The Influence of Ultra in the Second World War." Estimates of Ultra's impact on the war's duration.
