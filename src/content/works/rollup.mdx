@@ -37,11 +37,11 @@ Tree-shaking eliminates code that isn't actually used:
 
 ```javascript
 // library.js
-export function used() { }
-export function unused() { }
+export function used() {}
+export function unused() {}
 
 // app.js
-import { used } from './library.js'
+import { used } from './library.js';
 ```
 
 Rollup removes `unused()` from the final bundle.
