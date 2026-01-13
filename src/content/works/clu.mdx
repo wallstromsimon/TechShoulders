@@ -1,0 +1,70 @@
+---
+id: clu
+type: work
+name: CLU
+kind: language
+era: 1975–1980s
+year: 1975
+domains:
+  - Programming Languages
+  - Object-Oriented Programming
+  - Software Engineering
+edges:
+  - target: pascal
+    kind: influence
+    label: built_on
+    year: 1975
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/CLU_(programming_language)
+  - label: MIT CLU Reference Manual
+    url: https://pmg.csail.mit.edu/CLU.html
+---
+
+CLU is a programming language designed at MIT by Barbara Liskov and her students, first released in 1975. Though not widely used commercially, CLU pioneered concepts that became fundamental to modern programming: abstract data types, iterators, exceptions, and generics.
+
+## Origins
+
+In the early 1970s, Barbara Liskov led a research group at MIT exploring how to make large software systems more reliable and maintainable. The key insight was that programs should be built from abstract data types—modules that hide their implementation and expose only operations<sup><a href="#source-1">[1]</a></sup>.
+
+CLU (named as a reference to "clusters," its term for abstract data types) was designed to support this programming methodology.
+
+## Key Innovations
+
+CLU introduced or refined several concepts that are now ubiquitous:
+
+**Abstract Data Types (Clusters)**: CLU enforced information hiding at the language level. A cluster defined a type and its operations; client code could only access the type through its defined interface. This was more rigorous than earlier module systems.
+
+**Iterators**: CLU introduced iterator abstraction—a way to loop over a collection without exposing its representation. The `yield` statement in CLU allowed iterators to produce values one at a time:
+
+```
+for x in string$chars(s) do ... end
+```
+
+This concept appeared decades later in Python's generators, C#'s `yield return`, and JavaScript's `function*`.
+
+**Exception Handling**: CLU provided structured exception handling with `signal` and `except`, influencing the try-catch patterns in later languages.
+
+**Parameterized Types (Generics)**: CLU supported type parameters, allowing abstract data types to work with any element type—what we now call generics or templates<sup><a href="#source-2">[2]</a></sup>.
+
+## Impact
+
+CLU never achieved commercial adoption, but its ideas spread throughout the industry:
+
+- **C++**: Stroustrup studied CLU before designing C++ exception handling
+- **Java**: Iterators, generics, and exception handling trace back to CLU
+- **Python**: Generators use CLU's `yield` concept
+- **Modern languages**: Abstract data types, now called "encapsulation," are fundamental
+
+The CLU research also led to foundational papers on program specification and the Liskov Substitution Principle.
+
+## Legacy
+
+CLU exemplifies how academic research shapes industrial practice. Its direct users were few, but its ideas—abstract data types, iterators, exceptions, generics—became the building blocks of modern object-oriented programming.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["CLU (programming language)."](https://en.wikipedia.org/wiki/CLU_(programming_language)) Language history and features.
+2. <span id="source-2"></span>MIT. ["CLU Reference Manual."](https://pmg.csail.mit.edu/CLU.html) Original documentation.

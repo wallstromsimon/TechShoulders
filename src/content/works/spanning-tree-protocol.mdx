@@ -1,0 +1,62 @@
+---
+id: spanning-tree-protocol
+type: work
+name: Spanning Tree Protocol
+kind: protocol
+era: 1980s–present
+year: 1985
+domains:
+  - Networking
+  - Computing
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Spanning_Tree_Protocol
+  - label: IEEE 802.1D Standard
+    url: https://ieeexplore.ieee.org/document/1309150
+---
+
+The Spanning Tree Protocol (STP) is a network protocol that prevents loops in Ethernet networks while allowing redundant paths for fault tolerance. Invented by Radia Perlman at Digital Equipment Corporation in 1985, it solved a critical problem that was blocking the growth of large-scale networks.
+
+## The Loop Problem
+
+Ethernet networks can have redundant paths between switches for reliability—if one link fails, traffic can flow through another. But redundant paths create a fatal problem: broadcast storms. When a switch receives a broadcast packet, it forwards it out all ports. With multiple paths, the same packet can loop endlessly through the network, multiplying exponentially until the network collapses.
+
+Before STP, network administrators had to carefully ensure their networks had no loops, sacrificing redundancy for stability.
+
+## The Solution
+
+Perlman's elegant solution was to have switches automatically negotiate which links to use, logically disabling redundant paths to create a loop-free spanning tree while keeping backup paths ready for failover. The protocol:
+
+1. Elects a **root bridge** as the tree's center
+2. Calculates the **shortest path** from each switch to the root
+3. **Disables** redundant links that would create loops
+4. **Monitors** the network and recalculates if topology changes
+
+The switches exchange special packets called Bridge Protocol Data Units (BPDUs) to coordinate this process automatically, with no manual configuration required.
+
+## The Algorhyme
+
+Perlman famously summarized her algorithm in a poem she calls "Algorhyme"<sup><a href="#source-1">[1]</a></sup>:
+
+> I think that I shall never see
+> A graph more lovely than a tree.
+> A tree whose crucial property
+> Is loop-free connectivity.
+> A tree that must be sure to span
+> So packets can reach every LAN.
+> First, the root must be selected.
+> By ID, it is elected.
+> Least-cost paths from root are traced.
+> In the tree, these paths are placed.
+> A mesh is made by folks like me,
+> Then bridges find a spanning tree.
+
+## Impact
+
+STP became part of the IEEE 802.1D standard and is implemented in virtually every Ethernet switch in the world. It enabled the construction of large, reliable networks by allowing redundancy without loops. Every enterprise network, data center, and campus network relies on spanning tree or its successors (Rapid STP, Multiple STP) to function.
+
+Perlman's work made it possible to build the scalable, fault-tolerant networks that underpin the modern Internet infrastructure.
+
+## Sources
+
+1. <span id="source-1"></span>Perlman, Radia. ["Interconnections: Bridges, Routers, Switches, and Internetworking Protocols."](https://www.informit.com/store/interconnections-bridges-routers-switches-and-internetworking-9780201634488) Addison-Wesley, 2nd Edition, 1999.

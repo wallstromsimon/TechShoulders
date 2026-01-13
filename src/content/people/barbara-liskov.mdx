@@ -1,0 +1,103 @@
+---
+id: barbara-liskov
+type: person
+name: Barbara Liskov
+title: Pioneer of Abstract Data Types and the Liskov Substitution Principle
+era: 1960s–present
+domains:
+  - Programming Languages
+  - Software Engineering
+  - Distributed Systems
+edges:
+  - target: clu
+    kind: influence
+    label: created
+    year: 1975
+  - target: liskov-substitution-principle
+    kind: influence
+    label: created
+    year: 1987
+  - target: massachusetts-institute-of-technology
+    kind: affiliation
+    label: professor at
+    year: 1972
+  - target: stanford-university
+    kind: affiliation
+    label: studied at
+    year: 1968
+signatureWorks:
+  - clu
+  - liskov-substitution-principle
+whyYouCare:
+  - Created CLU, which pioneered abstract data types, iterators, exceptions, and generics—features now in nearly every modern language
+  - Formulated the Liskov Substitution Principle, the "L" in SOLID and a foundation of correct object-oriented design
+  - Won the Turing Award for practical and theoretical advances in programming language and system design
+  - One of the first women to earn a computer science Ph.D. in the United States, paving the way for others
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Barbara_Liskov
+  - label: Turing Award
+    url: https://amturing.acm.org/award_winners/liskov_1108679.cfm
+  - label: MIT CSAIL Profile
+    url: https://www.csail.mit.edu/person/barbara-liskov
+image:
+  file: ../../assets/images/entities/barbara-liskov.jpg
+  source: https://commons.wikimedia.org/wiki/File:Barbara_Liskov_MIT_computer_scientist_2010.jpg
+  license: CC BY-SA 3.0
+  author: Kenneth C. Zirkel (2010)
+---
+
+Barbara Liskov (born 1939) is an American computer scientist who has made foundational contributions to programming language design, software engineering methodology, and distributed systems. Her work on abstract data types and the substitution principle that bears her name shaped how software is designed and built.
+
+## Early Life and Education
+
+Born Barbara Jane Huberman in California, Liskov showed early aptitude for mathematics. She earned her bachelor's degree in mathematics from the University of California, Berkeley in 1961<sup><a href="#source-1">[1]</a></sup>.
+
+After working briefly as a programmer at the Mitre Corporation, she returned to graduate school at Stanford University, where she earned her Ph.D. in computer science in 1968. She was one of the first women in the United States to earn a doctorate in computer science. Her dissertation, supervised by John McCarthy, concerned a program for playing chess endgames.
+
+## MIT and Abstract Data Types
+
+Liskov joined MIT in 1972, where she began her influential work on program methodology. The central question: how can we build large, reliable software systems?
+
+Her answer was abstract data types—the idea that a program should be built from modules that hide their internal representation and expose only operations. This went beyond simple data hiding; Liskov developed rigorous methods for specifying what operations should do, enabling mathematical reasoning about program correctness<sup><a href="#source-2">[2]</a></sup>.
+
+## CLU (1975)
+
+To embody these ideas, Liskov and her students designed CLU, a programming language built around abstract data types (called "clusters"). Though CLU never achieved commercial success, it introduced concepts that became fundamental:
+
+- **Iterators** with the `yield` statement (now in Python, C#, JavaScript)
+- **Exception handling** (now in virtually every language)
+- **Generics/parameterized types** (now in Java, C#, Rust, and many others)
+- **Encapsulation** enforced by the language
+
+## The Liskov Substitution Principle (1987)
+
+At OOPSLA 1987, Liskov articulated a principle that formalized correct use of inheritance: if S is a subtype of T, then objects of type T can be replaced with objects of type S without altering the correctness of the program.
+
+This seemingly simple principle has profound implications. It explains why some inheritance hierarchies work well and others cause bugs. The principle became the "L" in SOLID, the five principles of object-oriented design taught to every software engineer.
+
+## Distributed Systems
+
+Liskov's later work focused on distributed systems, including:
+
+- **Argus**: A language and system for building reliable distributed programs
+- **Byzantine fault tolerance**: Practical algorithms for systems that must work even when some components are malicious
+- **PBFT**: Practical Byzantine Fault Tolerance, influential in distributed systems and blockchain
+
+## Recognition
+
+Liskov received the Turing Award in 2008 "for practical and theoretical advances in programming language and system design, especially related to data abstraction, fault tolerance, and distributed computing"<sup><a href="#source-3">[3]</a></sup>.
+
+She continues as an Institute Professor at MIT, the highest faculty honor.
+
+## Legacy
+
+Barbara Liskov's contributions are woven into the fabric of modern software engineering. Every time a programmer uses encapsulation, writes an iterator, catches an exception, or uses generics, they are using concepts she pioneered. Her insistence on rigorous specification and correct-by-design systems continues to influence how we think about software quality.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Barbara Liskov."](https://en.wikipedia.org/wiki/Barbara_Liskov) Biography and career history.
+2. <span id="source-2"></span>MIT CSAIL. ["Barbara Liskov."](https://www.csail.mit.edu/person/barbara-liskov) MIT faculty profile.
+3. <span id="source-3"></span>ACM Turing Award. ["Barbara Liskov."](https://amturing.acm.org/award_winners/liskov_1108679.cfm) Turing Award citation.

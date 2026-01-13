@@ -1,0 +1,96 @@
+---
+id: john-backus
+type: person
+name: John Backus
+title: Creator of FORTRAN and BNF Notation
+era: 1950s–2000s
+domains:
+  - Programming Languages
+  - Compilers
+  - Formal Languages
+edges:
+  - target: fortran
+    kind: influence
+    label: created
+    year: 1957
+  - target: backus-naur-form
+    kind: influence
+    label: created
+    year: 1959
+  - target: ibm
+    kind: affiliation
+    label: worked at
+    year: 1950
+signatureWorks:
+  - fortran
+  - backus-naur-form
+whyYouCare:
+  - Created FORTRAN, the first widely-used high-level programming language, proving that compiled code could be as efficient as hand-written assembly
+  - Invented Backus-Naur Form (BNF), the standard notation for defining programming language syntax that every compiler textbook still uses
+  - Won the Turing Award for "profound, influential, and lasting contributions" to programming language design
+  - Later critiqued his own work, arguing for functional programming as a better paradigm in his famous "Can Programming Be Liberated from the von Neumann Style?" lecture
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/John_Backus
+  - label: Turing Award
+    url: https://amturing.acm.org/award_winners/backus_0703524.cfm
+  - label: Computer History Museum
+    url: https://computerhistory.org/profile/john-backus/
+image:
+  file: ../../assets/images/entities/john-backus.jpg
+  source: https://commons.wikimedia.org/wiki/File:John_Backus_2.jpg
+  license: Public Domain
+  author: Unknown
+---
+
+John Warner Backus (1924–2007) was an American computer scientist who led the team that created FORTRAN, the first widely-adopted high-level programming language. He also developed Backus-Naur Form (BNF), the notation used to formally specify programming language syntax. His work fundamentally changed how humans communicate with computers.
+
+## Early Life
+
+Backus was, by his own admission, an unlikely computing pioneer. Born in Philadelphia, he was a poor student who dropped out of the University of Virginia and drifted through several schools and careers. After serving in World War II, he studied mathematics at Columbia University, where he encountered an IBM computer and became fascinated<sup><a href="#source-1">[1]</a></sup>.
+
+In 1950, IBM hired him as a programmer despite his unconventional background—a decision that would prove momentous.
+
+## FORTRAN (1954-1957)
+
+By the early 1950s, programming IBM's mainframes required writing tedious machine code. Backus proposed a radical solution: create a language that would let scientists write mathematical formulas naturally and have the computer translate them automatically.
+
+Many doubted this was possible. Previous "automatic programming" systems produced code far slower than hand-written assembly. But Backus assembled a small team and spent three years proving the skeptics wrong<sup><a href="#source-2">[2]</a></sup>.
+
+The first FORTRAN compiler, released in 1957, was a technical triumph. Its sophisticated optimization techniques produced code that ran nearly as fast as hand-written assembly—demolishing the argument that high-level languages were impractical.
+
+FORTRAN's success was immediate. Within a year, more than half of IBM 704 users had adopted it. The language proved that computers could efficiently process human-readable programming languages.
+
+## Backus-Naur Form (1959)
+
+While working on ALGOL 60, Backus developed a formal notation for describing language syntax. Refined by Peter Naur, this "Backus-Naur Form" became the standard way to specify programming languages.
+
+BNF provided, for the first time, a precise way to define what constitutes a valid program. This enabled:
+
+- Rigorous language specifications
+- Automatic parser generation
+- Formal reasoning about language properties
+
+Every programming language textbook today uses BNF or its descendants.
+
+## "Can Programming Be Liberated?" (1977)
+
+When Backus received the Turing Award in 1977, he surprised the computing community with his lecture "Can Programming Be Liberated from the von Neumann Style?" Rather than celebrating his achievements, he critiqued the very paradigm he had helped establish<sup><a href="#source-3">[3]</a></sup>.
+
+Backus argued that conventional programming languages, including FORTRAN, were too closely tied to the sequential, state-manipulating style dictated by von Neumann computer architecture. He proposed functional programming—where programs are built from mathematical functions without side effects—as a more elegant alternative.
+
+This lecture helped spark renewed interest in functional programming and influenced languages like Haskell.
+
+## Legacy
+
+John Backus transformed programming from a low-level craft into a discipline with formal foundations. FORTRAN showed that high-level languages were practical; BNF showed that languages could be precisely specified; his Turing lecture showed that he never stopped questioning fundamental assumptions.
+
+He died in 2007, having lived to see his creations become the bedrock of modern computing.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Computer History Museum. ["John Backus."](https://computerhistory.org/profile/john-backus/) Biography and career history.
+2. <span id="source-2"></span>Wikipedia. ["Fortran."](https://en.wikipedia.org/wiki/Fortran) History of FORTRAN development.
+3. <span id="source-3"></span>ACM. ["Can Programming Be Liberated from the von Neumann Style?"](https://dl.acm.org/doi/10.1145/359576.359579) Backus's 1977 Turing Award lecture.

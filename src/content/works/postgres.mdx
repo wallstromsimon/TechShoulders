@@ -1,0 +1,83 @@
+---
+id: postgres
+type: work
+name: Postgres
+kind: project
+era: 1980s–present
+year: 1986
+domains:
+  - Computing
+  - Databases
+edges:
+  - target: ingres
+    kind: influence
+    label: built_on
+    year: 1986
+  - target: relational-model
+    kind: influence
+    label: built_on
+    year: 1986
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/PostgreSQL
+  - label: PostgreSQL Official Site
+    url: https://www.postgresql.org/
+  - label: PostgreSQL History
+    url: https://www.postgresql.org/docs/current/history.html
+---
+
+Postgres (later PostgreSQL) is an open-source object-relational database system developed at UC Berkeley starting in 1986. Created by Michael Stonebraker as the successor to Ingres, it pioneered object-relational concepts and grew into one of the most advanced and widely-used database systems in the world.
+
+## Origins
+
+After the commercial success of Ingres, Michael Stonebraker returned to academia at Berkeley to explore new database ideas. In 1986, he started the POSTGRES project (Post-Ingres) to address limitations of pure relational systems<sup><a href="#source-1">[1]</a></sup>.
+
+Where Ingres focused on implementing Codd's relational model, Postgres aimed to extend it—adding support for complex data types, user-defined functions, and sophisticated data relationships that pure relational systems couldn't easily express.
+
+## Object-Relational Model
+
+Postgres pioneered the object-relational paradigm:
+
+**Complex Data Types**: Users could define custom types beyond simple integers and strings—geometric shapes, arrays, JSON, and arbitrary complex structures.
+
+**Inheritance**: Tables could inherit from other tables, sharing columns and constraints—a concept borrowed from object-oriented programming.
+
+**Rules and Triggers**: The system supported complex business logic within the database itself.
+
+**Extensibility**: Developers could extend nearly every aspect of the system, adding new data types, operators, index methods, and procedural languages.
+
+## Technical Innovations
+
+Postgres introduced several influential ideas:
+
+**MVCC (Multi-Version Concurrency Control)**: Postgres handles concurrent transactions without locking, providing each transaction a consistent snapshot of the database. This innovation enabled high-concurrency applications<sup><a href="#source-2">[2]</a></sup>.
+
+**Write-Ahead Logging**: For crash recovery and reliability
+
+**Sophisticated Query Planner**: Advanced optimization for complex queries
+
+## From Postgres to PostgreSQL
+
+The Berkeley Postgres project ran from 1986 to 1994. In 1996, Andrew Yu and Jolly Chen added SQL support (replacing the original POSTQUEL language), creating PostgreSQL<sup><a href="#source-1">[1]</a></sup>.
+
+Released as open-source software, PostgreSQL grew through community development. Regular releases added features like:
+- Full ACID compliance
+- Point-in-time recovery
+- Replication
+- JSON and JSONB support
+- Foreign data wrappers
+- Parallel query execution
+
+## Modern PostgreSQL
+
+Today PostgreSQL powers applications at companies including Apple, Instagram, Spotify, and Reddit. It's the default database for many startups and powers significant portions of cloud infrastructure.
+
+The 2024 Stack Overflow Developer Survey ranked PostgreSQL as the most-used database among professional developers<sup><a href="#source-3">[3]</a></sup>, reflecting decades of development from Stonebraker's original vision.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>PostgreSQL. ["A Brief History of PostgreSQL."](https://www.postgresql.org/docs/current/history.html) Official project history.
+2. <span id="source-2"></span>Wikipedia. ["PostgreSQL."](https://en.wikipedia.org/wiki/PostgreSQL) Technical overview.
+3. <span id="source-3"></span>Stack Overflow. ["2024 Developer Survey."](https://survey.stackoverflow.co/2024/) Database usage statistics.

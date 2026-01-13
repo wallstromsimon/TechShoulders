@@ -1,0 +1,73 @@
+---
+id: sql
+type: work
+name: SQL
+kind: language
+era: 1970s–present
+year: 1974
+domains:
+  - Computing
+  - Databases
+  - Programming Languages
+edges:
+  - target: relational-model
+    kind: influence
+    label: built_on
+    year: 1974
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/SQL
+  - label: ISO Standard
+    url: https://www.iso.org/standard/76583.html
+---
+
+SQL (Structured Query Language) is the standard language for managing and querying relational databases. Developed at IBM in the 1970s as part of the System R project, SQL became an industry standard and remains the dominant interface for database systems worldwide.
+
+## Origins
+
+Donald Chamberlin and Raymond Boyce at IBM San Jose Research Laboratory designed SQL (originally called SEQUEL—Structured English Query Language) to provide a practical interface to Edgar Codd's relational model. Their goal was a language that non-programmers could use to retrieve and manipulate data<sup><a href="#source-1">[1]</a></sup>.
+
+The name was shortened to SQL due to trademark conflicts with an existing SEQUEL product.
+
+## Revolutionary Approach
+
+SQL introduced declarative programming to data management:
+
+**Declarative, Not Procedural**: Users specify *what* data they want, not *how* to get it. `SELECT name FROM employees WHERE salary > 50000` describes the desired result; the database determines the optimal retrieval method.
+
+**Set-Based Operations**: SQL operates on sets of rows rather than individual records, making bulk operations natural and efficient.
+
+**English-Like Syntax**: Keywords like SELECT, FROM, WHERE, JOIN, and ORDER BY were chosen to be readable by non-programmers.
+
+## Core Operations
+
+SQL encompasses several categories of commands:
+
+- **Data Query Language (DQL)**: SELECT statements for retrieving data
+- **Data Manipulation Language (DML)**: INSERT, UPDATE, DELETE for modifying data
+- **Data Definition Language (DDL)**: CREATE, ALTER, DROP for defining schema
+- **Data Control Language (DCL)**: GRANT, REVOKE for access control
+
+## Standardization
+
+SQL became an ANSI standard in 1986 and an ISO standard in 1987. Subsequent revisions added features:
+
+- SQL-89: Minor revision
+- SQL-92: Major expansion with new data types
+- SQL:1999: Object-relational features, recursive queries
+- SQL:2003: XML support, window functions
+- SQL:2011: Temporal data
+- SQL:2016: JSON support
+
+## Ubiquity
+
+Every major relational database implements SQL: Oracle, MySQL, PostgreSQL, Microsoft SQL Server, SQLite, and dozens more. While each vendor adds proprietary extensions, core SQL remains remarkably consistent. Knowing SQL provides access to virtually any relational database system<sup><a href="#source-2">[2]</a></sup>.
+
+Even non-relational systems increasingly support SQL or SQL-like interfaces, recognizing its value as a lingua franca for data.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Chamberlin, Donald. ["Early History of SQL."](https://ieeexplore.ieee.org/document/6359709) IEEE Annals of the History of Computing, 2012.
+2. <span id="source-2"></span>Wikipedia. ["SQL."](https://en.wikipedia.org/wiki/SQL) Overview and history.

@@ -1,0 +1,58 @@
+---
+id: relational-model
+type: work
+name: A Relational Model of Data for Large Shared Data Banks
+kind: paper
+era: "1970"
+year: 1970
+domains:
+  - Computing
+  - Databases
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Relational_model
+  - label: Original Paper (PDF)
+    url: https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf
+  - label: ACM Digital Library
+    url: https://dl.acm.org/doi/10.1145/362384.362685
+---
+
+Edgar F. Codd's 1970 paper "A Relational Model of Data for Large Shared Data Banks" introduced the relational model for database management, fundamentally transforming how data is stored, organized, and queried. Published in Communications of the ACM, it is one of the most influential papers in computing history.
+
+## The Problem It Solved
+
+Before the relational model, databases were organized using hierarchical or network models. These systems required programmers to understand the physical storage structure—how data was laid out on disk, which pointers connected records. Changing the structure meant rewriting application code. Programs were tightly coupled to implementation details<sup><a href="#source-1">[1]</a></sup>.
+
+## Key Ideas
+
+Codd's insight was to separate the logical organization of data from its physical storage:
+
+**Relations (Tables)**: Data is organized into relations—what we now call tables—consisting of rows (tuples) and columns (attributes). Each row represents an entity; each column represents a property.
+
+**Data Independence**: Applications interact with data through a logical view, insulated from physical storage details. The database system handles translation between logical queries and physical storage.
+
+**Mathematical Foundation**: The model is grounded in set theory and first-order predicate logic, providing a rigorous framework for data manipulation and integrity constraints.
+
+**Declarative Queries**: Instead of specifying *how* to retrieve data (navigating pointers), users specify *what* data they want. The database optimizes the retrieval automatically.
+
+## Normalization
+
+Codd introduced normal forms—rules for organizing data to reduce redundancy and prevent anomalies. A normalized database stores each fact once, making updates consistent and storage efficient.
+
+## Industry Resistance
+
+IBM initially resisted implementing Codd's ideas, as they had invested heavily in the hierarchical IMS database. It took the System R research project (1973–1979) to prove the relational model was practical. Meanwhile, Larry Ellison read Codd's papers and founded Oracle to commercialize relational databases<sup><a href="#source-2">[2]</a></sup>.
+
+## Legacy
+
+The relational model became the dominant paradigm for databases. SQL, developed to query relational databases, became an industry standard. Oracle, MySQL, PostgreSQL, SQL Server, and countless other systems implement Codd's vision. Even NoSQL databases often incorporate relational concepts.
+
+The paper earned Codd the ACM Turing Award in 1981.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>ACM. ["Edgar F. Codd - A.M. Turing Award Laureate."](https://amturing.acm.org/award_winners/codd_1000892.cfm) Turing Award citation.
+2. <span id="source-2"></span>Wikipedia. ["Edgar F. Codd."](https://en.wikipedia.org/wiki/Edgar_F._Codd) Biography and impact.

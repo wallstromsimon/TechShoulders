@@ -175,21 +175,30 @@ function loadNodes() {
 }
 
 /**
- * Load all edges from JSON files
+ * Load all edges from inline frontmatter of content files
  */
 function loadEdges() {
   const edges = [];
-  const edgesDir = join(CONTENT_DIR, 'edges');
+  const collections = ['people', 'works', 'institutions', 'packs'];
 
-  if (existsSync(edgesDir)) {
-    const files = readdirSync(edgesDir).filter((f) => f.endsWith('.json'));
+  for (const collection of collections) {
+    const dir = join(CONTENT_DIR, collection);
+    if (!existsSync(dir)) continue;
+
+    const files = readdirSync(dir).filter((f) => f.endsWith('.mdx'));
     for (const file of files) {
-      const content = readFileSync(join(edgesDir, file), 'utf-8');
-      try {
-        const data = JSON.parse(content);
-        edges.push(...data);
-      } catch (e) {
-        console.error(`Failed to parse ${file}:`, e.message);
+      const content = readFileSync(join(dir, file), 'utf-8');
+      const data = parseYamlFrontmatter(content);
+      if (data && data.edges && Array.isArray(data.edges)) {
+        for (const edge of data.edges) {
+          edges.push({
+            source: data.id,
+            target: edge.target,
+            kind: edge.kind,
+            label: edge.label,
+            year: edge.year,
+          });
+        }
       }
     }
   }

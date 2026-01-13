@@ -1,0 +1,68 @@
+---
+id: liskov-substitution-principle
+type: work
+name: Liskov Substitution Principle
+kind: paper
+era: 1987–present
+year: 1987
+domains:
+  - Programming Languages
+  - Object-Oriented Programming
+  - Software Engineering
+edges:
+  - target: clu
+    kind: influence
+    label: built_on
+    year: 1987
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Liskov_substitution_principle
+  - label: Original Paper
+    url: https://dl.acm.org/doi/10.1145/62139.62141
+---
+
+The Liskov Substitution Principle (LSP) is a fundamental principle of object-oriented programming, stating that objects of a superclass should be replaceable with objects of its subclasses without altering the correctness of the program. Introduced by Barbara Liskov in 1987, it provides the theoretical foundation for behavioral subtyping.
+
+## Origins
+
+In 1987, Barbara Liskov gave a keynote address at the OOPSLA conference titled "Data Abstraction and Hierarchy." In it, she articulated a principle that had emerged from years of research on abstract data types and program specification<sup><a href="#source-1">[1]</a></sup>:
+
+> "What is wanted here is something like the following substitution property: If for each object o1 of type S there is an object o2 of type T such that for all programs P defined in terms of T, the behavior of P is unchanged when o1 is substituted for o2, then S is a subtype of T."
+
+This formal definition captured what it means for inheritance to be used correctly.
+
+## The Principle Explained
+
+In practical terms, the Liskov Substitution Principle means:
+
+- A subclass should be usable anywhere its parent class is expected
+- Subclasses should not strengthen preconditions (require more than the parent)
+- Subclasses should not weaken postconditions (promise less than the parent)
+- Subclasses should preserve invariants established by the parent
+
+## Classic Violation: Square and Rectangle
+
+The most famous LSP violation involves squares and rectangles:
+
+A `Square` seems like it should inherit from `Rectangle`—after all, a square is a rectangle mathematically. But if `Rectangle` has independent `setWidth` and `setHeight` methods, `Square` cannot properly inherit them without violating the principle. Setting a square's width must also change its height, which violates the rectangle's implicit contract<sup><a href="#source-2">[2]</a></sup>.
+
+This example shows that inheritance should model behavioral compatibility, not just conceptual "is-a" relationships.
+
+## Impact
+
+The Liskov Substitution Principle became one of the five SOLID principles of object-oriented design (the "L" in SOLID). It provides:
+
+- **Design guidance**: Helps identify when inheritance is appropriate
+- **Correctness criteria**: Programs that follow LSP are more likely to work correctly when types change
+- **API design insight**: Informs decisions about method contracts and class hierarchies
+
+## Legacy
+
+Liskov and Jeannette Wing formalized the principle more rigorously in their 1994 paper "A Behavioral Notion of Subtyping." The principle remains a cornerstone of object-oriented design education and practice.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Liskov substitution principle."](https://en.wikipedia.org/wiki/Liskov_substitution_principle) History and explanation.
+2. <span id="source-2"></span>ACM. ["Data Abstraction and Hierarchy."](https://dl.acm.org/doi/10.1145/62139.62141) Liskov's 1987 OOPSLA keynote.

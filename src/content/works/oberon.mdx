@@ -1,0 +1,66 @@
+---
+id: oberon
+type: work
+name: Oberon
+kind: language
+era: 1987–present
+year: 1987
+domains:
+  - Programming Languages
+  - Systems Programming
+  - Operating Systems
+edges:
+  - target: modula-2
+    kind: influence
+    label: built_on
+    year: 1987
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Oberon_(programming_language)
+  - label: Project Oberon
+    url: https://www.projectoberon.net/
+---
+
+Oberon is a programming language and operating system designed by Niklaus Wirth and Jürg Gutknecht at ETH Zurich, first released in 1987. True to Wirth's philosophy, Oberon stripped away features to achieve radical simplicity while adding type extension as its one major innovation.
+
+## Origins
+
+After Modula-2, Wirth spent a sabbatical at Xerox PARC, where he was inspired by the elegant simplicity of the Cedar/Mesa system. Returning to ETH Zurich, he and Gutknecht set out to build an entire computing system—language, compiler, operating system, and applications—from scratch<sup><a href="#source-1">[1]</a></sup>.
+
+## Design Philosophy
+
+Oberon exemplifies Wirth's principle: "Make it as simple as possible, but no simpler." The language removed features from Modula-2:
+
+- No enumeration types
+- No subrange types
+- No variant records
+- Simplified module system
+- Removed many forms of syntactic sugar
+
+What remained was a small, elegant language that could still express everything needed for systems programming.
+
+## Type Extension
+
+Oberon's one major addition was type extension—a form of inheritance for records. A type could extend another type, inheriting its fields and being compatible with procedures expecting the base type. This provided object-oriented capability without the complexity of full-blown OOP languages<sup><a href="#source-2">[2]</a></sup>.
+
+## Project Oberon
+
+The complete Oberon system—including the compiler, operating system, text editor, graphics system, and network stack—was written in Oberon and published with full source code. Wirth later published "Project Oberon: The Design of an Operating System and Compiler" (1992), providing a complete, readable description of an entire computing system.
+
+In 2013, Wirth revised the entire system for a modern FPGA platform, proving the design's enduring elegance.
+
+## Legacy
+
+While Oberon never achieved wide commercial adoption, its influence persists:
+
+- Demonstrated that simplicity could be achieved without sacrificing power
+- Influenced Go (Rob Pike cited Oberon as an influence)
+- Provided a teaching example of complete system design
+- Inspired Component Pascal and Active Oberon
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Oberon (programming language)."](https://en.wikipedia.org/wiki/Oberon_(programming_language)) Language history and design.
+2. <span id="source-2"></span>Project Oberon. ["Project Oberon."](https://www.projectoberon.net/) Complete system documentation.

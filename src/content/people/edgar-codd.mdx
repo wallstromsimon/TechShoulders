@@ -1,0 +1,94 @@
+---
+id: edgar-codd
+type: person
+name: Edgar F. Codd
+title: Father of the Relational Database
+era: 1950s–2000s
+domains:
+  - Computing
+  - Databases
+  - Mathematics
+edges:
+  - target: relational-model
+    kind: influence
+    label: created
+    year: 1970
+  - target: ibm-research
+    kind: affiliation
+    label: worked at
+    year: 1949
+  - target: university-of-oxford
+    kind: affiliation
+    label: studied at
+    year: 1948
+signatureWorks:
+  - relational-model
+whyYouCare:
+  - Invented the relational database model—the theoretical foundation for Oracle, MySQL, PostgreSQL, SQL Server, and virtually every database you use
+  - Made databases accessible by separating logical data organization from physical storage, freeing programmers from low-level details
+  - His 1970 paper is one of the most influential in computing history, transforming a $50+ billion industry
+  - Without his work, modern data-driven applications—from banking to social media—would be fundamentally different
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Edgar_F._Codd
+  - label: ACM Turing Award
+    url: https://amturing.acm.org/award_winners/codd_1000892.cfm
+  - label: Original 1970 Paper (PDF)
+    url: https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf
+image:
+  file: ../../assets/images/entities/edgar-codd.jpg
+  source: https://en.wikipedia.org/wiki/File:Edgar_F_Codd.jpg
+  license: Fair use
+  author: Unknown
+---
+
+Edgar Frank Codd (1923–2003) was a British-American computer scientist who invented the relational model for database management. His 1970 paper "A Relational Model of Data for Large Shared Data Banks" revolutionized how data is stored and accessed, establishing the theoretical foundation for the entire database industry.
+
+## Early Life and Education
+
+Edgar Codd was born on August 19, 1923, in Fortuneswell, Dorset, England—the youngest of seven children. He attended Poole Grammar School and won a scholarship to Exeter College, Oxford, to study mathematics and chemistry. His studies were interrupted by World War II, during which he served as a pilot in the Royal Air Force<sup><a href="#source-1">[1]</a></sup>.
+
+After the war, Codd completed his degree at Oxford in 1948, earning a degree in mathematics.
+
+## Move to America and IBM
+
+In 1948, Codd emigrated to the United States, becoming a naturalized citizen in 1961. He joined IBM in 1949, beginning a career that would span decades. During the McCarthy era, he briefly moved to Canada rather than answer questions about his political views during security clearances<sup><a href="#source-1">[1]</a></sup>.
+
+Codd worked on IBM's early computers and developed his programming skills. He earned a PhD in computer science from the University of Michigan in 1965, studying cellular automata under John Holland.
+
+## The Relational Model
+
+Working at IBM's San Jose Research Laboratory in the late 1960s, Codd grew frustrated with existing database systems. The dominant approaches—hierarchical and network models—required programmers to understand physical storage structures. Changing how data was stored meant rewriting applications. Programs were fragile and difficult to maintain.
+
+Codd's insight was to apply mathematical rigor to the problem. Drawing on set theory and first-order logic, he proposed organizing data into "relations"—tables of rows and columns. Applications would interact with data through a logical view, completely independent of physical storage. The database system would translate between the two<sup><a href="#source-2">[2]</a></sup>.
+
+His landmark 1970 paper introduced:
+- **Data independence**: Separating logical and physical organization
+- **Relational algebra**: Mathematical operations on data sets
+- **Normal forms**: Rules for eliminating redundancy
+- **Declarative queries**: Describing *what* data you want, not *how* to get it
+
+## Industry Resistance
+
+IBM initially resisted Codd's ideas. They had invested heavily in IMS, a hierarchical database, and saw no need to cannibalize their own product. Codd's concepts threatened existing business models.
+
+The System R project eventually validated the relational approach, but IBM was slow to commercialize it. Larry Ellison, reading Codd's published research, founded Relational Software (later Oracle) and beat IBM to market with a commercial relational database<sup><a href="#source-1">[1]</a></sup>.
+
+## Twelve Rules
+
+In 1985, Codd published his "12 Rules" (actually 13, numbered 0–12) defining what constitutes a truly relational database management system. These rules became a benchmark for evaluating database products and pushed vendors toward fuller implementations of his model.
+
+## Recognition and Later Life
+
+Codd received the ACM Turing Award in 1981 "for his fundamental and continuing contributions to the theory and practice of database management systems." He was the first British-born person to receive the award<sup><a href="#source-2">[2]</a></sup>.
+
+After retiring from IBM in 1984, Codd continued consulting and writing. He developed OLAP (Online Analytical Processing) concepts, extending relational ideas to multidimensional analysis.
+
+Edgar Codd died on April 18, 2003, in Williams Island, Florida. His invention of the relational model remains one of the most consequential contributions to computer science, underlying the data infrastructure of the modern world.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Edgar F. Codd."](https://en.wikipedia.org/wiki/Edgar_F._Codd) Biography and career.
+2. <span id="source-2"></span>ACM. ["Edgar F. Codd - A.M. Turing Award Laureate."](https://amturing.acm.org/award_winners/codd_1000892.cfm) Turing Award citation.

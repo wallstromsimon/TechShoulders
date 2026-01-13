@@ -1,0 +1,57 @@
+---
+id: modula-2
+type: work
+name: Modula-2
+kind: language
+era: 1978–present
+year: 1978
+domains:
+  - Programming Languages
+  - Systems Programming
+  - Software Engineering
+edges:
+  - target: pascal
+    kind: influence
+    label: built_on
+    year: 1978
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Modula-2
+---
+
+Modula-2 is a systems programming language designed by Niklaus Wirth at ETH Zurich, first published in 1978. Building on Pascal, it added modules for large-scale program organization, low-level facilities for systems programming, and coroutines for concurrent programming.
+
+## Origins
+
+After designing Pascal, Wirth worked on the Lilith workstation project at ETH Zurich. He needed a language suitable for writing an operating system while maintaining Pascal's elegant structure. The result was Modula-2 (following an earlier experimental language called Modula)<sup><a href="#source-1">[1]</a></sup>.
+
+## Key Innovations
+
+Modula-2 extended Pascal with several important features:
+
+**Modules**: The language's namesake feature allowed programs to be divided into separate compilation units with explicit interfaces. A module could export only specific identifiers, hiding implementation details. This was a major advance for building large software systems.
+
+**Low-level facilities**: Unlike Pascal, Modula-2 provided controlled access to machine-level operations—necessary for writing operating systems and device drivers while maintaining type safety where possible.
+
+**Coroutines**: Built-in support for coroutines enabled concurrent programming, essential for the Lilith operating system.
+
+**Procedure variables**: First-class procedure types allowed more flexible programming patterns.
+
+## The Lilith Workstation
+
+Modula-2 was developed alongside the Lilith personal workstation (1978-1980). The entire Lilith system—including the operating system, compiler, and applications—was written in Modula-2, demonstrating that a high-level language could replace assembly for systems programming<sup><a href="#source-2">[2]</a></sup>.
+
+## Influence
+
+Modula-2's module system influenced many later languages:
+
+- **Ada**: Adopted similar package/module concepts
+- **Oberon**: Wirth's successor language refined the ideas further
+- **Modern languages**: The principle of explicit module interfaces became standard
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Modula-2."](https://en.wikipedia.org/wiki/Modula-2) Language history and features.
+2. <span id="source-2"></span>ETH Zurich. ["The Lilith Project."](https://www.research-collection.ethz.ch/handle/20.500.11850/68895) Historical documentation.

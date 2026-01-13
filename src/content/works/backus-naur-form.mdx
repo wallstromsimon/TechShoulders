@@ -1,0 +1,66 @@
+---
+id: backus-naur-form
+type: work
+name: Backus-Naur Form (BNF)
+kind: notation
+era: 1959–present
+year: 1959
+domains:
+  - Programming Languages
+  - Compilers
+  - Formal Languages
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
+  - label: Original ALGOL 60 Report
+    url: https://www.masswerk.at/algol60/report.htm
+---
+
+Backus-Naur Form (BNF) is a formal notation for describing the syntax of programming languages. Developed by John Backus and refined by Peter Naur in 1959-1960 for the ALGOL 60 specification, BNF provided the first rigorous way to define what constitutes a valid program in a language.
+
+## Origins
+
+When the international committee designing ALGOL 60 needed to specify the language precisely, Backus introduced a notation he had developed while working on FORTRAN. Peter Naur refined it for the ALGOL 60 report, and the notation became known as Backus-Naur Form (originally "Backus Normal Form")<sup><a href="#source-1">[1]</a></sup>.
+
+## The Notation
+
+BNF uses a simple but powerful formalism:
+
+```
+<expression> ::= <term> | <expression> "+" <term>
+<term> ::= <factor> | <term> "*" <factor>
+<factor> ::= <number> | "(" <expression> ")"
+```
+
+This example defines arithmetic expressions with proper operator precedence. The notation uses:
+
+- **`<...>`**: Non-terminal symbols (to be further defined)
+- **`::=`**: "Is defined as"
+- **`|`**: "Or" (alternative productions)
+- **Quoted strings**: Literal terminal symbols
+
+## Impact
+
+BNF transformed programming language design:
+
+- **Precision**: For the first time, language syntax could be defined unambiguously
+- **Parser generation**: BNF grammars can be mechanically converted into parsers
+- **Communication**: Language designers could share specifications precisely
+- **Theory foundation**: BNF established connections to formal language theory and context-free grammars
+
+## Extensions and Legacy
+
+BNF spawned many variants:
+
+- **Extended BNF (EBNF)**: Added repetition and optional elements
+- **ABNF**: Used in internet standards (RFCs)
+- **Parser generators**: Tools like yacc, bison, and ANTLR use BNF-like notation
+
+Every modern programming language specification uses some form of BNF notation. It remains the standard way to formally define language syntax.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Backus–Naur form."](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) History and technical details of BNF notation.

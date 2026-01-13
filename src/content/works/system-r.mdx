@@ -1,0 +1,60 @@
+---
+id: system-r
+type: work
+name: System R
+kind: project
+era: 1970s
+year: 1974
+domains:
+  - Computing
+  - Databases
+edges:
+  - target: relational-model
+    kind: influence
+    label: built_on
+    year: 1974
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/IBM_System_R
+  - label: ACM History
+    url: https://dl.acm.org/doi/10.1145/1480083.1480126
+---
+
+System R was IBM's research project to build the first complete implementation of Edgar Codd's relational database model. Developed at IBM San Jose Research Laboratory from 1974 to 1979, it proved that relational databases could be practical and efficient, and it created SQL—the query language that became an industry standard.
+
+## Origins
+
+After Edgar Codd published his relational model paper in 1970, IBM management was skeptical. Their existing IMS database was profitable; why invest in an unproven approach? A research project was approved to test whether relational databases could achieve acceptable performance<sup><a href="#source-1">[1]</a></sup>.
+
+The System R team, led by Donald Chamberlin and Raymond Boyce, set out to build a fully functional relational database system from scratch.
+
+## Key Innovations
+
+**SQL (Originally SEQUEL)**: Chamberlin and Boyce designed Structured English Query Language, later shortened to SQL due to trademark issues. SQL allowed users to describe what data they wanted without specifying how to retrieve it—a revolutionary abstraction<sup><a href="#source-2">[2]</a></sup>.
+
+**Query Optimization**: System R pioneered automatic query optimization. The system analyzed SQL statements and determined the most efficient execution strategy, choosing optimal join orders and access paths.
+
+**Transaction Management**: The project implemented ACID transactions (Atomicity, Consistency, Isolation, Durability), ensuring database reliability even during system failures.
+
+**Indexing and Access Methods**: B-tree indexes and sophisticated access path selection made relational queries competitive with navigational databases.
+
+## Two Phases
+
+System R developed in two phases:
+- **Phase 1 (1974–1976)**: Single-user prototype proving core concepts
+- **Phase 2 (1976–1979)**: Multi-user system with transactions, recovery, and concurrency control
+
+## Commercial Impact
+
+Though IBM chose to develop SQL/DS and DB2 as commercial products rather than productizing System R directly, the research's influence was immediate. Larry Ellison's Relational Software (later Oracle) implemented SQL based on published System R papers, beating IBM to market. Ingres at Berkeley, though using a different query language initially, also built on relational concepts<sup><a href="#source-1">[1]</a></sup>.
+
+## Recognition
+
+System R demonstrated that relational databases were not just theoretically elegant but practically viable. The project's leaders received the ACM Software System Award in 1988. SQL became an ANSI/ISO standard and remains the dominant database query language.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["IBM System R."](https://en.wikipedia.org/wiki/IBM_System_R) History and development.
+2. <span id="source-2"></span>Chamberlin, Donald. ["Early History of SQL."](https://ieeexplore.ieee.org/document/6359709) IEEE Annals of the History of Computing, 2012.

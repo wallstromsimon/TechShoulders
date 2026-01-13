@@ -1,0 +1,112 @@
+---
+id: michael-stonebraker
+type: person
+name: Michael Stonebraker
+title: Pioneer of Database Systems
+era: 1970s–present
+domains:
+  - Computing
+  - Databases
+edges:
+  - target: ingres
+    kind: influence
+    label: created
+    year: 1974
+  - target: postgres
+    kind: influence
+    label: created
+    year: 1986
+  - target: uc-berkeley
+    kind: affiliation
+    label: professor at
+    year: 1971
+  - target: massachusetts-institute-of-technology
+    kind: affiliation
+    label: professor at
+    year: 2001
+signatureWorks:
+  - ingres
+  - postgres
+whyYouCare:
+  - Created Ingres and Postgres—foundational systems that influenced Sybase, SQL Server, and PostgreSQL, used by millions of applications
+  - Demonstrated that academic research could produce production-grade software, pioneering open-source-style distribution
+  - Founded nine database companies, translating research innovations into commercial products
+  - PostgreSQL, his descendant project, is now the world's most popular database among professional developers
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Michael_Stonebraker
+  - label: ACM Turing Award
+    url: https://amturing.acm.org/award_winners/stonebraker_1172121.cfm
+  - label: MIT CSAIL Profile
+    url: https://www.csail.mit.edu/person/michael-stonebraker
+image:
+  file: ../../assets/images/entities/michael-stonebraker.jpg
+  source: https://amturing.acm.org/award_winners/stonebraker_1172121.cfm
+  license: Fair use
+  author: ACM
+---
+
+Michael Stonebraker (born 1943) is an American computer scientist who has shaped database technology for over five decades. As the creator of Ingres and Postgres at UC Berkeley, founder of nine database companies, and recipient of the 2014 ACM Turing Award, he stands alongside Edgar Codd as one of the most influential figures in database history.
+
+## Early Life and Education
+
+Michael Ralph Stonebraker was born on October 11, 1943. He earned his bachelor's degree in electrical engineering from Princeton University in 1965 and his PhD from the University of Michigan in 1971, studying computer and communication sciences<sup><a href="#source-1">[1]</a></sup>.
+
+## UC Berkeley and Ingres
+
+Stonebraker joined the UC Berkeley faculty in 1971. In 1973, he and Eugene Wong began the Ingres project to build a practical relational database based on Edgar Codd's theoretical model. Where IBM's well-funded System R worked behind corporate walls, Berkeley's Ingres was developed by graduate students and distributed freely to universities<sup><a href="#source-2">[2]</a></sup>.
+
+Ingres proved that relational databases could work. Its graduates and code spawned commercial products including Sybase (which licensed its technology to create early Microsoft SQL Server), Informix, and NonStop SQL. In 1980, Stonebraker co-founded Relational Technology Inc. to commercialize Ingres.
+
+## Postgres: Beyond Relational
+
+Returning to Berkeley after his commercial venture, Stonebraker started the POSTGRES project in 1986 to address what he saw as limitations in pure relational systems. Postgres (Post-Ingres) introduced:
+
+- **Complex data types**: Beyond simple integers and strings
+- **Object-relational features**: Inheritance, user-defined functions
+- **Extensibility**: Users could add new data types and operators
+- **Rules**: Sophisticated constraint enforcement
+
+The project pioneered Multi-Version Concurrency Control (MVCC), enabling high-concurrency applications without locking. When students added SQL support in 1996, PostgreSQL was born—now one of the most popular databases worldwide<sup><a href="#source-1">[1]</a></sup>.
+
+## Serial Entrepreneur
+
+Stonebraker's career uniquely combines academic research with entrepreneurship. He has founded or co-founded nine database companies:
+
+- **Relational Technology** (Ingres) — 1980
+- **Illustra** (object-relational) — 1992, acquired by Informix
+- **Cohera** (federated databases) — 1998
+- **StreamBase** (streaming data) — 2003
+- **Vertica** (column-store analytics) — 2005, acquired by HP
+- **VoltDB** (in-memory OLTP) — 2009
+- **Tamr** (data integration) — 2012
+- **Paradigm4** (scientific computing) — 2013
+
+Each company addressed specific database challenges he identified through research<sup><a href="#source-2">[2]</a></sup>.
+
+## MIT and Continued Research
+
+In 2001, Stonebraker moved to MIT as an adjunct professor, continuing to research and incubate database startups. He has argued that "one size fits all" databases are obsolete—specialized engines for analytics, streaming, scientific data, and transactions each have their place.
+
+## Recognition
+
+Stonebraker's contributions earned numerous awards:
+
+- ACM Turing Award (2014)
+- ACM SIGMOD Edgar F. Codd Innovations Award (1988)
+- IEEE John von Neumann Medal (2005)
+- VLDB 10-Year Best Paper Awards (multiple)
+
+His 2014 Turing Award citation recognized "fundamental contributions to the concepts and practices underlying modern database systems"<sup><a href="#source-3">[3]</a></sup>.
+
+## Philosophy
+
+Stonebraker is known for provocative positions and colorful writing. He has criticized SQL's limitations, advocated for specialized database architectures, and called out industry resistance to innovation. His influence extends beyond his own systems to shaping how the entire field thinks about data management.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Michael Stonebraker."](https://en.wikipedia.org/wiki/Michael_Stonebraker) Biography and career.
+2. <span id="source-2"></span>ACM. ["Michael Stonebraker - A.M. Turing Award Laureate."](https://amturing.acm.org/award_winners/stonebraker_1172121.cfm) Turing Award profile.
+3. <span id="source-3"></span>MIT CSAIL. ["Michael Stonebraker."](https://www.csail.mit.edu/person/michael-stonebraker) Faculty profile.

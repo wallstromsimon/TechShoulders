@@ -1,0 +1,64 @@
+---
+id: ingres
+type: work
+name: Ingres
+kind: project
+era: 1970s–1980s
+year: 1974
+domains:
+  - Computing
+  - Databases
+edges:
+  - target: relational-model
+    kind: influence
+    label: built_on
+    year: 1974
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Ingres_(database)
+---
+
+Ingres (Interactive Graphics and Retrieval System) was a relational database management system developed at UC Berkeley from 1974 to 1979. One of the first implementations of Edgar Codd's relational model, it pioneered key database concepts and spawned numerous commercial systems including Sybase, Microsoft SQL Server, and PostgreSQL.
+
+## Origins
+
+Michael Stonebraker and Eugene Wong started the Ingres project in 1973 at the University of California, Berkeley. Like IBM's System R project, Ingres aimed to prove that relational databases could be practical. But where IBM was a well-funded corporate lab, Berkeley operated on research grants with graduate student labor<sup><a href="#source-1">[1]</a></sup>.
+
+The project ran from 1974 to 1979, producing working software distributed freely to universities and research institutions—an early example of open-source-style development.
+
+## QUEL Query Language
+
+Rather than adopt IBM's SQL, Stonebraker designed QUEL, an alternative query language based on relational calculus. Many researchers considered QUEL more elegant and powerful than SQL. It supported range variables and offered clearer semantics for complex queries<sup><a href="#source-2">[2]</a></sup>.
+
+Despite QUEL's technical merits, SQL's adoption by IBM and subsequent standardization meant SQL ultimately won the language war.
+
+## Technical Innovations
+
+Ingres introduced several important concepts:
+
+**Query Decomposition**: Breaking complex queries into simpler sub-queries
+**Access Path Selection**: Automatically choosing optimal data retrieval methods
+**Process-Per-User Model**: Each database connection ran in its own process
+
+The system was implemented in C and ran on PDP-11 and VAX computers under Unix.
+
+## Commercial Impact
+
+Ingres spawned a remarkable lineage of database products:
+
+**Relational Technology Inc. (RTI)**: Stonebraker co-founded this company in 1980 to commercialize Ingres. It was later acquired by ASK and eventually Computer Associates.
+
+**Sybase**: Founded by former Ingres developers, Sybase's architecture influenced Microsoft SQL Server (which Microsoft licensed from Sybase before developing independently)<sup><a href="#source-1">[1]</a></sup>.
+
+**PostgreSQL**: Stonebraker's successor project at Berkeley, Postgres, evolved into PostgreSQL—one of the most popular open-source databases today.
+
+## Legacy
+
+Ingres demonstrated that academic research could produce production-quality database software. Its open distribution model influenced later open-source projects. The generations of graduate students trained on Ingres went on to build much of the commercial database industry.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Ingres (database)."](https://en.wikipedia.org/wiki/Ingres_(database)) History and impact.
+2. <span id="source-2"></span>Stonebraker, Michael. ["The Land Sharks Are on the Squawk Box."](https://cacm.acm.org/research/the-land-sharks-are-on-the-squawk-box/) Reflections on database history.

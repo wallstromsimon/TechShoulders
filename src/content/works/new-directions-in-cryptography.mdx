@@ -1,0 +1,71 @@
+---
+id: new-directions-in-cryptography
+type: work
+name: New Directions in Cryptography
+kind: paper
+year: 1976
+era: 1970s
+domains:
+  - Cryptography
+  - Security
+  - Mathematics
+edges:
+  - target: a-mathematical-theory-of-communication
+    kind: influence
+    label: built_on
+    year: 1976
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange
+  - label: Original Paper (PDF)
+    url: https://ee.stanford.edu/~hellman/publications/24.pdf
+  - label: IEEE Xplore
+    url: https://ieeexplore.ieee.org/document/1055638
+---
+
+"New Directions in Cryptography" is a landmark 1976 paper by Whitfield Diffie and Martin Hellman that introduced public-key cryptography and the Diffie-Hellman key exchange protocol. Published in IEEE Transactions on Information Theory, this paper revolutionized cryptography and made secure digital communication possible.
+
+## The Revolutionary Idea
+
+Before this paper, all cryptographic systems were symmetric: both parties needed to share a secret key in advance. This created an impossible bootstrapping problem—how could two parties who had never met establish a shared secret over an insecure channel?
+
+Diffie and Hellman proposed an audacious solution: what if encryption and decryption used different keys?<sup><a href="#source-1">[1]</a></sup> Their key insight was that certain mathematical operations are easy to perform but computationally infeasible to reverse—so-called "one-way functions."
+
+## Diffie-Hellman Key Exchange
+
+The paper introduced what is now called the Diffie-Hellman key exchange, a method allowing two parties to establish a shared secret over a public channel. The protocol works by:
+
+1. Both parties agree on public parameters (a large prime and a generator)
+2. Each party generates a private random number
+3. Each party computes and exchanges a public value
+4. Both can independently compute the same shared secret
+
+An eavesdropper seeing the public values cannot feasibly compute the shared secret—the discrete logarithm problem is computationally hard<sup><a href="#source-2">[2]</a></sup>.
+
+## Conceptualizing Public-Key Cryptography
+
+Beyond the key exchange, the paper laid out the concept of asymmetric encryption with public and private key pairs. While Diffie and Hellman described the concept, they left the construction of a practical public-key encryption system as an open problem—one that RSA would solve the following year.
+
+## Impact and Legacy
+
+The paper's impact on modern computing is immeasurable:
+
+- **HTTPS/TLS**: Every secure web connection uses descendants of Diffie-Hellman
+- **SSH**: Secure shell connections rely on Diffie-Hellman key exchange
+- **End-to-end encryption**: Signal, WhatsApp, and other messaging apps build on these foundations
+- **Digital signatures**: The conceptual framework enabled authentication without shared secrets
+- **Cryptocurrencies**: Bitcoin and other cryptocurrencies depend on public-key cryptography
+
+The paper won the IEEE Information Theory Society Best Paper Award and laid groundwork that earned Diffie and Hellman the 2015 Turing Award<sup><a href="#source-3">[3]</a></sup>.
+
+## Historical Context
+
+Unbeknownst to Diffie and Hellman, similar ideas had been developed secretly at Britain's GCHQ by James Ellis, Clifford Cocks, and Malcolm Williamson in the early 1970s. However, their work remained classified until 1997, and Diffie and Hellman are credited with the independent public discovery that transformed the field.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["Diffie–Hellman key exchange."](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange) Overview of the key exchange protocol.
+2. <span id="source-2"></span>Stanford. ["New Directions in Cryptography."](https://ee.stanford.edu/~hellman/publications/24.pdf) Original paper by Diffie and Hellman.
+3. <span id="source-3"></span>ACM. ["Diffie and Hellman Win 2015 ACM A.M. Turing Award."](https://amturing.acm.org/award_winners/diffie_8371646.cfm) Turing Award announcement.

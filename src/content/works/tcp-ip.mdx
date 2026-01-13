@@ -1,0 +1,54 @@
+---
+id: tcp-ip
+type: work
+name: TCP/IP
+kind: protocol
+era: 1970s–present
+year: 1974
+domains:
+  - Networking
+  - Computing
+edges:
+  - target: arpanet
+    kind: influence
+    label: built_on
+    year: 1974
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Internet_protocol_suite
+  - label: RFC 793 (TCP)
+    url: https://datatracker.ietf.org/doc/html/rfc793
+  - label: RFC 791 (IP)
+    url: https://datatracker.ietf.org/doc/html/rfc791
+---
+
+TCP/IP (Transmission Control Protocol/Internet Protocol) is the foundational communication protocol suite that powers the Internet. Developed in the 1970s by Vint Cerf and Bob Kahn, it solved the critical problem of enabling diverse computer networks to communicate with each other—creating a true "network of networks."
+
+## Origins
+
+In the early 1970s, ARPANET had proven that packet-switched networking worked, but it was a single network with its own protocol. The challenge was connecting different networks—each with their own protocols, speeds, and characteristics—into a unified system. Cerf and Kahn tackled this problem while working on ARPANET, publishing their seminal paper "A Protocol for Packet Network Intercommunication" in 1974<sup><a href="#source-1">[1]</a></sup>.
+
+## The Two Protocols
+
+The suite consists of two main protocols working in tandem:
+
+**TCP (Transmission Control Protocol)** handles reliable data delivery. It breaks data into packets, ensures they arrive correctly and in order, manages congestion, and handles retransmission of lost packets. TCP provides the guarantee that data will arrive intact.
+
+**IP (Internet Protocol)** handles addressing and routing. Each device gets a unique IP address, and the protocol determines how packets travel from source to destination across multiple networks. IP makes no guarantees about delivery—it just moves packets toward their destination.
+
+This separation of concerns—reliability at one layer, routing at another—proved to be a brilliant architectural decision that allowed the Internet to scale.
+
+## Adoption
+
+ARPANET officially switched from NCP to TCP/IP on January 1, 1983—a date sometimes called the "birth of the Internet"<sup><a href="#source-2">[2]</a></sup>. The transition was carefully planned, with a deadline that forced all connected hosts to upgrade. This "flag day" approach worked, and the modern Internet was born.
+
+## Impact
+
+TCP/IP became the universal language of networked computing. Every device on the Internet—from smartphones to servers to IoT sensors—uses TCP/IP to communicate. The protocol suite's elegant design allowed it to scale from a few dozen hosts in 1983 to billions of devices today, carrying everything from email to video streaming to financial transactions.
+
+The World Wide Web, email, streaming media, cloud computing, and virtually every networked application runs on TCP/IP. It's the invisible foundation that makes the connected world possible.
+
+## Sources
+
+1. <span id="source-1"></span>Cerf, V., Kahn, R. ["A Protocol for Packet Network Intercommunication."](https://ieeexplore.ieee.org/document/1092259) IEEE Transactions on Communications, 1974.
+2. <span id="source-2"></span>Ronda Hauben. ["From the ARPANET to the Internet."](https://www.columbia.edu/~rh120/other/tcpdigest_paper.txt) TCP Digest, 2001.
