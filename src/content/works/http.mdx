@@ -1,0 +1,91 @@
+---
+id: http
+type: work
+name: HTTP
+kind: standard
+era: 1991–present
+year: 1991
+domains:
+  - Computing
+  - Networking
+  - Information Systems
+edges:
+  - target: world-wide-web
+    kind: influence
+    label: built_on
+    year: 1991
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/HTTP
+  - label: HTTP/1.1 Specification (RFC 2616)
+    url: https://www.rfc-editor.org/rfc/rfc2616
+  - label: MDN Web Docs
+    url: https://developer.mozilla.org/en-US/docs/Web/HTTP
+---
+
+HTTP (HyperText Transfer Protocol) is the foundation of data communication on the World Wide Web. Designed by Tim Berners-Lee at CERN in 1989–1991, HTTP defines how messages are formatted and transmitted, and how web servers and browsers should respond to various commands.
+
+## Origins
+
+When Tim Berners-Lee created the World Wide Web, he needed a protocol for clients (browsers) and servers to communicate. HTTP was designed to be simple and human-readable—a request-response protocol where clients ask for resources and servers provide them<sup><a href="#source-1">[1]</a></sup>.
+
+The first version, HTTP/0.9, was remarkably simple: a client sent a single line requesting a document, and the server returned the content. No headers, no metadata, no status codes—just the document itself.
+
+## How HTTP Works
+
+HTTP follows a request-response model:
+
+1. **Client sends request**: Specifies a method (GET, POST, etc.), a URL, and optional headers
+2. **Server processes request**: Locates the resource and determines how to respond
+3. **Server sends response**: Returns a status code, headers, and the requested content
+
+The protocol is stateless—each request is independent, with no memory of previous interactions. This simplicity made HTTP scalable to billions of users.
+
+## Evolution
+
+HTTP has evolved to meet growing demands<sup><a href="#source-2">[2]</a></sup>:
+
+- **HTTP/0.9 (1991)**: Original single-line protocol
+- **HTTP/1.0 (1996)**: Added headers, status codes, and multiple content types
+- **HTTP/1.1 (1997)**: Persistent connections, chunked transfers, and caching
+- **HTTP/2 (2015)**: Binary protocol, multiplexing, and header compression
+- **HTTP/3 (2022)**: Built on QUIC for improved performance over unreliable networks
+
+## Key Concepts
+
+### Methods
+
+HTTP defines several request methods:
+
+- **GET**: Retrieve a resource (the most common method)
+- **POST**: Submit data to be processed
+- **PUT**: Replace a resource
+- **DELETE**: Remove a resource
+- **HEAD**: Retrieve headers only
+
+### Status Codes
+
+Servers respond with three-digit status codes:
+
+- **200 OK**: Request succeeded
+- **301 Moved Permanently**: Resource has a new URL
+- **404 Not Found**: Resource doesn't exist
+- **500 Internal Server Error**: Server failed to process the request
+
+## Impact
+
+HTTP's simplicity enabled the Web's explosive growth. Unlike complex protocols designed by committee, HTTP was pragmatic—easy to implement, debug, and extend<sup><a href="#source-3">[3]</a></sup>.
+
+Today, HTTP carries not just web pages but APIs, streaming media, real-time communications, and virtually all modern internet applications. It has become the universal language of networked computing.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["HTTP."](https://en.wikipedia.org/wiki/HTTP) Overview of
+   HTTP's history and technical details.
+2. <span id="source-2"></span>MDN Web Docs. ["Evolution of
+   HTTP."](https://developer.mozilla.org/en-US/docs/Web/HTTP/Evolution_of_HTTP) Documents the
+   protocol's development over time.
+3. <span id="source-3"></span>IETF. ["RFC 2616 - HTTP/1.1."](https://www.rfc-editor.org/rfc/rfc2616)
+   The formal HTTP/1.1 specification.

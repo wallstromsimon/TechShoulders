@@ -1,0 +1,90 @@
+---
+id: url
+type: work
+name: URL
+kind: standard
+era: 1994–present
+year: 1994
+domains:
+  - Computing
+  - Networking
+  - Information Systems
+edges:
+  - target: world-wide-web
+    kind: influence
+    label: built_on
+    year: 1994
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/URL
+  - label: URL Specification (RFC 3986)
+    url: https://www.rfc-editor.org/rfc/rfc3986
+  - label: WHATWG URL Standard
+    url: https://url.spec.whatwg.org/
+---
+
+The URL (Uniform Resource Locator) is a reference to a web resource that specifies its location and how to retrieve it. Designed by Tim Berners-Lee as part of the World Wide Web, URLs provide the addressing system that makes the Web navigable—every web page, image, video, and file has a unique URL.
+
+## Origins
+
+When Tim Berners-Lee created the World Wide Web at CERN, he needed a universal way to identify and locate resources. The URL system he designed combines three pieces of information<sup><a href="#source-1">[1]</a></sup>:
+
+1. **Protocol**: How to access the resource (e.g., `http://` or `https://`)
+2. **Host**: Where the resource lives (e.g., `www.example.com`)
+3. **Path**: Which specific resource to retrieve (e.g., `/page.html`)
+
+This simple structure—`protocol://host/path`—became the foundation of web addressing.
+
+## Anatomy of a URL
+
+A complete URL can contain several components:
+
+```
+https://www.example.com:443/path/page.html?query=value#section
+```
+
+- **Scheme** (`https`): The protocol to use
+- **Host** (`www.example.com`): The server's domain name
+- **Port** (`443`): The network port (usually implicit)
+- **Path** (`/path/page.html`): Location within the server
+- **Query** (`?query=value`): Parameters passed to the server
+- **Fragment** (`#section`): A location within the document
+
+## Evolution: From URL to URI
+
+The URL concept evolved into a broader framework<sup><a href="#source-2">[2]</a></sup>:
+
+- **URL (Uniform Resource Locator)**: Specifies how to access a resource
+- **URN (Uniform Resource Name)**: Names a resource without specifying location
+- **URI (Uniform Resource Identifier)**: The umbrella term encompassing both
+
+In practice, "URL" remains the commonly used term for web addresses.
+
+## Design Principles
+
+URLs were designed with several key principles:
+
+- **Human-readable**: People can type, share, and remember URLs
+- **Hierarchical**: The path structure mirrors logical organization
+- **Extensible**: New schemes can be added for new protocols
+- **Universal**: The same format works for web pages, files, email, and more
+
+## Impact
+
+The URL transformed how we reference information. Before URLs, locating a networked resource required knowing server names, protocols, and file paths. URLs unified this into a single, shareable string<sup><a href="#source-3">[3]</a></sup>.
+
+Today, URLs are embedded in everything from business cards to billboards. They're so fundamental to modern life that "URL" has entered everyday vocabulary—people "share links" and "copy URLs" without thinking about the underlying technology.
+
+The URL system handles billions of requests daily, serving as the addressing infrastructure for the entire Web.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Wikipedia. ["URL."](https://en.wikipedia.org/wiki/URL) Comprehensive
+   overview of URL syntax and history.
+2. <span id="source-2"></span>IETF. ["RFC 3986 - URI Generic
+   Syntax."](https://www.rfc-editor.org/rfc/rfc3986) The formal URI specification, superseding
+   earlier URL standards.
+3. <span id="source-3"></span>WHATWG. ["URL Standard."](https://url.spec.whatwg.org/) The living
+   standard for URL parsing and manipulation.
