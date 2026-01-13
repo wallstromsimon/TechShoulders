@@ -1,0 +1,74 @@
+---
+id: apollo-guidance-software
+type: work
+name: Apollo Guidance Computer Software
+kind: project
+era: 1960s
+year: 1969
+domains:
+  - Computing
+  - Software Engineering
+  - Aerospace
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Apollo_Guidance_Computer
+  - label: NASA History
+    url: https://history.nasa.gov/computers/contents.html
+  - label: Virtual AGC Project
+    url: https://www.ibiblio.org/apollo/
+---
+
+The Apollo Guidance Computer (AGC) software was the on-board flight software for NASA's Apollo program, responsible for guiding spacecraft to the Moon and back. Developed at MIT's Instrumentation Laboratory under Margaret Hamilton's leadership, it represented a breakthrough in real-time, mission-critical software and helped establish software engineering as a discipline.
+
+## The Challenge
+
+The Apollo missions required software that could:
+
+- Navigate spacecraft through complex orbital maneuvers
+- Process data from multiple sensors simultaneously
+- Respond to astronaut commands in real time
+- Recover gracefully from errors without human intervention
+- Fit within severe hardware constraints (2 KB RAM, 36 KB ROM)
+
+No one had built software this critical or complex before. The AGC had to work perfectly—failure meant astronauts' lives<sup><a href="#source-1">[1]</a></sup>.
+
+## Development at MIT
+
+Margaret Hamilton led the Software Engineering Division at MIT's Instrumentation Laboratory (later Draper Lab), with responsibility for the on-board flight software. She was the first programmer hired for the Apollo project and eventually led a team of hundreds of engineers<sup><a href="#source-2">[2]</a></sup>.
+
+The team invented many techniques now standard in software engineering:
+
+- **Priority scheduling**: Ensuring critical tasks always completed
+- **Asynchronous processing**: Handling multiple operations concurrently
+- **Error detection and recovery**: Gracefully handling unexpected conditions
+- **Rigorous testing**: Simulating missions before they happened
+
+## The Apollo 11 Moment
+
+Three minutes before the Apollo 11 lunar module Eagle landed on the Moon, alarms sounded in the cockpit. The computer was overloaded—the rendezvous radar had been left on, consuming resources. The software's priority-based scheduling recognized the situation and shed lower-priority tasks, keeping only those essential for landing.
+
+Hamilton later recalled: "The software's action, in this case, was to eliminate lower priority tasks and re-establish the more important ones. If the computer hadn't recognized this problem and taken recovery action, I doubt if Apollo 11 would have been the successful moon landing it was."
+
+## Legacy
+
+The AGC software proved that complex, real-time software could be made reliable through rigorous engineering. Its influence extends to:
+
+- Modern avionics systems
+- Medical device software
+- Real-time operating systems
+- Safety-critical software methodology
+
+The techniques developed for Apollo—priority scheduling, redundancy, fail-safe design—became foundations of software engineering practice.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>NASA Science. ["Margaret
+   Hamilton."](https://science.nasa.gov/people/margaret-hamilton/) Overview of Hamilton's
+   contributions to Apollo.
+2. <span id="source-2"></span>Smithsonian Magazine. ["Margaret Hamilton Led the NASA Software Team
+   That Landed Astronauts on the
+   Moon."](https://www.smithsonianmag.com/smithsonian-institution/margaret-hamilton-led-nasa-software-team-landed-astronauts-moon-180971575/)
+   History of the Apollo software development.

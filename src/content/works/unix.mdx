@@ -1,0 +1,66 @@
+---
+id: unix
+type: work
+name: Unix
+kind: project
+era: 1970s
+year: 1969
+domains:
+  - Computing
+  - Operating Systems
+  - Systems Programming
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Unix
+  - label: The UNIX Time-Sharing System (original paper)
+    url: https://dsf.berkeley.edu/cs262/unix.pdf
+  - label: Bell Labs Unix History
+    url: https://www.bell-labs.com/usr/dmr/www/hist.html
+---
+
+Unix is a family of multitasking, multi-user operating systems created at Bell Labs in 1969 by Ken Thompson, Dennis Ritchie, and others. Its elegant design principles and portable architecture made it one of the most influential operating systems in computing history.
+
+## Origins at Bell Labs
+
+Unix emerged from the ashes of Multics, an ambitious but troubled time-sharing project involving MIT, GE, and Bell Labs. When Bell Labs withdrew from Multics in 1969, Ken Thompson began developing a simpler alternative on a spare PDP-7 minicomputer<sup><a href="#source-1">[1]</a></sup>.
+
+Thompson's initial system, written in assembly language, included a file system, process management, and a command interpreter. Brian Kernighan coined the name "Unix" as a pun on "Multics"—where Multics was "multiplexed," Unix was "uniplexed" (initially single-user).
+
+## Design Philosophy
+
+Unix embodied several revolutionary principles:
+
+- **Everything is a file**: Devices, processes, and data streams are accessed through a uniform file interface
+- **Small, composable tools**: Programs do one thing well and can be connected via pipes
+- **Plain text**: Configuration and data use human-readable text formats
+- **Portability**: Written in C (after 1973), Unix could be adapted to different hardware
+
+## Rewritten in C
+
+In 1973, Thompson and Ritchie made the audacious decision to rewrite Unix in the C programming language<sup><a href="#source-2">[2]</a></sup>. This was the first operating system written in a high-level language, and it transformed Unix from a Bell Labs curiosity into a portable platform that could run on diverse hardware.
+
+## Spreading Through Universities
+
+AT&T licensed Unix to universities at minimal cost for educational use. The University of California, Berkeley, became a major center of Unix development, creating the Berkeley Software Distribution (BSD) that added networking, the vi editor, and the C shell.
+
+## Impact and Legacy
+
+Unix's influence pervades modern computing:
+
+- **Linux**: Linus Torvalds created Linux as a Unix-like system; it now powers most servers, Android phones, and embedded systems
+- **macOS/iOS**: Apple's operating systems are built on Unix (via BSD and NeXTSTEP)
+- **The Internet**: Unix systems ran the early internet; most web servers still run on Unix-like systems
+- **Philosophy**: The Unix design principles—simplicity, modularity, text streams—shaped software engineering practice
+
+Thompson and Ritchie received the ACM Turing Award in 1983 and the National Medal of Technology in 1999 for their work on Unix.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Nokia Bell Labs. ["The Invention of
+   Unix."](https://www.nokia.com/blog/the-invention-of-unix/) History of Unix's creation at Bell
+   Labs.
+2. <span id="source-2"></span>Wikipedia. ["History of
+   Unix."](https://en.wikipedia.org/wiki/History_of_Unix) Comprehensive history of Unix development.

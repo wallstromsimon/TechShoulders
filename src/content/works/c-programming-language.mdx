@@ -1,0 +1,79 @@
+---
+id: c-programming-language
+type: work
+name: C Programming Language
+kind: language
+era: 1970s
+year: 1972
+domains:
+  - Computing
+  - Programming Languages
+  - Systems Programming
+edges:
+  - target: unix
+    kind: influence
+    label: built_on
+    year: 1973
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/C_(programming_language)
+  - label: The C Programming Language (K&R book)
+    url: https://en.wikipedia.org/wiki/The_C_Programming_Language
+  - label: ISO C Standard
+    url: https://www.iso.org/standard/74528.html
+---
+
+C is a general-purpose programming language created by Dennis Ritchie at Bell Labs between 1969 and 1973. It became one of the most influential and widely used programming languages in history, serving as the foundation for Unix, Linux, Windows, and countless other systems.
+
+## Origins
+
+C evolved from the B programming language, which Ken Thompson had developed for early Unix on the PDP-7. When Unix was ported to the more powerful PDP-11 in 1971, B's limitations became apparent—particularly its lack of data types suited to the new hardware<sup><a href="#source-1">[1]</a></sup>.
+
+Ritchie extended B with a type system, creating "New B" and eventually C. The name C simply came from being the successor to B.
+
+## Key Features
+
+C introduced concepts that remain fundamental to programming:
+
+- **Static type system** with integers, characters, and pointers
+- **Low-level memory access** through pointer arithmetic
+- **Structured programming** with functions, loops, and conditionals
+- **Minimal runtime** requirements, enabling use on resource-constrained systems
+- **Preprocessor** for macros and conditional compilation
+
+## Rewriting Unix in C
+
+The landmark achievement came in 1973 when Thompson and Ritchie rewrote Unix almost entirely in C<sup><a href="#source-2">[2]</a></sup>. This was revolutionary—operating systems had always been written in assembly language. Using a high-level language made Unix:
+
+- **Portable**: Unix could be adapted to new hardware by recompiling
+- **Maintainable**: Code was more readable and modifiable
+- **Extensible**: New features could be added more easily
+
+## The K&R Book
+
+In 1978, Brian Kernighan and Dennis Ritchie published "The C Programming Language," universally known as K&R. This slim book became the definitive reference and taught generations of programmers. Its clear, concise style influenced technical writing for decades.
+
+## Standardization
+
+C was standardized by ANSI in 1989 (C89/C90) and by ISO in 1990. Subsequent standards (C99, C11, C17, C23) have added features while maintaining backward compatibility.
+
+## Impact
+
+C's influence is difficult to overstate:
+
+- **Operating systems**: Unix, Linux, Windows, macOS kernels are written in C
+- **Languages**: C++, Objective-C, Java, C#, Go, and Rust all descend from or were influenced by C
+- **Embedded systems**: C remains the dominant language for firmware and microcontrollers
+- **Infrastructure**: Databases, web servers, compilers, and interpreters are often written in C
+
+Over 50 years after its creation, C remains among the most widely used programming languages in the world.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Bell Labs. ["The Development of the C
+   Language."](https://www.bell-labs.com/usr/dmr/www/chist.html) Ritchie's own account of C's
+   evolution from B.
+2. <span id="source-2"></span>Wikipedia. ["History of
+   Unix."](https://en.wikipedia.org/wiki/History_of_Unix) Documents the rewriting of Unix in C.

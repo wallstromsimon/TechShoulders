@@ -1,0 +1,73 @@
+---
+id: go-programming-language
+type: work
+name: Go Programming Language
+kind: language
+era: 2000s–2010s
+year: 2009
+domains:
+  - Computing
+  - Programming Languages
+  - Systems Programming
+edges:
+  - target: c-programming-language
+    kind: influence
+    label: built_on
+    year: 2009
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Go_(programming_language)
+  - label: Official Site
+    url: https://go.dev/
+  - label: Go Blog
+    url: https://go.dev/blog/
+---
+
+Go (often called Golang) is a statically typed, compiled programming language designed at Google by Robert Griesemer, Rob Pike, and Ken Thompson. Announced in 2009 and reaching version 1.0 in 2012, Go was created to address the complexity of modern software development while maintaining the performance of compiled languages.
+
+## Origins at Google
+
+Go emerged from frustration with the complexity of C++ and Java at Google scale. The three designers—all veterans of Bell Labs' operating systems research—wanted a language that combined:
+
+- The ease of dynamically typed languages like Python
+- The efficiency and safety of compiled languages like C
+- Native support for modern concerns: concurrency, networking, multicore processors<sup><a href="#source-1">[1]</a></sup>
+
+Ken Thompson, co-creator of Unix and B (C's predecessor), brought decades of systems programming experience. Rob Pike and Robert Griesemer contributed expertise from Plan 9 and distributed systems.
+
+## Design Philosophy
+
+Go embodies deliberate simplicity:
+
+- **Minimal syntax**: Few keywords, consistent formatting, no header files
+- **Fast compilation**: Large programs compile in seconds
+- **Garbage collection**: Automatic memory management without manual allocation
+- **Built-in concurrency**: Goroutines and channels as first-class features
+- **Static typing with inference**: Type safety without verbose declarations
+
+The designers explicitly rejected features common in other languages—no inheritance, no generics (until Go 1.18 in 2022), no exceptions—believing simplicity aids readability and maintainability.
+
+## Goroutines and Channels
+
+Go's most distinctive feature is its approach to concurrency. Goroutines are lightweight threads managed by the Go runtime, allowing programs to spawn thousands of concurrent operations efficiently. Channels provide safe communication between goroutines, implementing Tony Hoare's Communicating Sequential Processes (CSP) model<sup><a href="#source-2">[2]</a></sup>.
+
+## Impact
+
+Go has become a major language for cloud infrastructure and distributed systems:
+
+- **Docker**: Container platform written in Go
+- **Kubernetes**: Container orchestration system from Google
+- **Terraform**: Infrastructure-as-code tool from HashiCorp
+- **Prometheus**: Monitoring system widely used in cloud-native environments
+
+Go consistently ranks among the top 10 programming languages and is particularly strong in DevOps and backend development.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>Go Blog. ["Go at Google: Language Design in the Service of Software
+   Engineering."](https://go.dev/talks/2012/splash.article) Rob Pike's discussion of Go's design
+   philosophy.
+2. <span id="source-2"></span>Wikipedia. ["Go (programming
+   language)."](https://en.wikipedia.org/wiki/Go_(programming_language)) History and features of Go.

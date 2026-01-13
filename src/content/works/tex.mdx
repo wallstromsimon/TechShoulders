@@ -1,0 +1,63 @@
+---
+id: tex
+type: work
+name: TeX
+kind: tool
+era: 1970s–1980s
+year: 1978
+domains:
+  - Computing
+  - Typography
+  - Publishing
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/TeX
+  - label: The TeX Users Group
+    url: https://tug.org/
+  - label: Knuth's TeX Page
+    url: https://www-cs-faculty.stanford.edu/~knuth/tex.html
+---
+
+TeX is a typesetting system created by Donald Knuth in 1978. Designed for mathematical and scientific documents, TeX produces publication-quality output and has become the standard for academic papers in mathematics, physics, and computer science.
+
+## Origins
+
+In 1976, Knuth received galley proofs for the second edition of "The Art of Computer Programming" Volume 2. The new phototypesetting looked terrible compared to the original hot-metal Monotype. Rather than accept inferior typography, Knuth decided to create his own typesetting system<sup><a href="#source-1">[1]</a></sup>.
+
+What he estimated would take six months consumed nearly a decade. Knuth developed not just TeX but also METAFONT (for designing fonts) and Computer Modern (a family of typefaces).
+
+## Design Philosophy
+
+TeX embodies Knuth's characteristic attention to precision:
+
+- **Stable and correct**: Knuth offers a cash reward for bugs; version numbers converge toward π (current: 3.141592653)
+- **Mathematical typography**: Sophisticated algorithms for equation layout, line breaking, and hyphenation
+- **Programmable**: Macro system allows extension and customization
+- **Device-independent**: Produces files that render identically on any printer
+
+## How TeX Works
+
+Authors write documents in a markup language, interspersing text with commands like `\alpha` for Greek letters or `\frac{a}{b}` for fractions. TeX processes this into a device-independent file (DVI) or PDF, applying algorithms for paragraph breaking, hyphenation, and page layout.
+
+Knuth's line-breaking algorithm considers entire paragraphs at once, producing more aesthetically pleasing results than the line-by-line approach of word processors.
+
+## LaTeX and Beyond
+
+Leslie Lamport developed LaTeX in the 1980s, adding document structure commands (chapters, sections, bibliographies) on top of TeX. LaTeX became the dominant way to use TeX and remains the standard for academic publishing.
+
+Today, nearly all mathematical papers, many computer science papers, and numerous books are written in LaTeX.
+
+## Open Source Pioneer
+
+TeX was among the first major free software projects. Knuth released the source code freely, allowing anyone to use, study, and modify it. This approach anticipated the open-source movement by over a decade<sup><a href="#source-2">[2]</a></sup>.
+
+---
+
+## Sources
+
+1. <span id="source-1"></span>MacTutor. ["Donald
+   Knuth."](https://mathshistory.st-andrews.ac.uk/Biographies/Knuth/) The origin of TeX from Knuth's
+   frustration with phototypesetting.
+2. <span id="source-2"></span>Wikipedia. ["TeX."](https://en.wikipedia.org/wiki/TeX) History and
+   impact of TeX.
