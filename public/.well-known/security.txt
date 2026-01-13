@@ -1,0 +1,7 @@
+# Security contact for TechShoulders
+# This is a legitimate educational website about computing history
+
+Contact: https://github.com/wallstromsimon/TechShoulders/issues
+Expires: 2027-01-01T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://techshoulders.com/.well-known/security.txt
