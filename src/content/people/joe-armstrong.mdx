@@ -1,0 +1,64 @@
+---
+id: joe-armstrong
+type: person
+name: Joe Armstrong
+title: Creator of Erlang
+era: 1980s–2019
+domains:
+  - Programming Languages
+  - Distributed Systems
+  - Telecommunications
+edges:
+  - target: erlang
+    kind: influence
+    label: created
+    year: 1986
+  - target: ericsson
+    kind: affiliation
+    label: worked at
+    year: 1986
+signatureWorks:
+  - erlang
+whyYouCare:
+  - Created Erlang, the language that powers WhatsApp and millions of reliable telecom systems
+  - Pioneered the "let it crash" philosophy that transformed fault-tolerant system design
+  - Demonstrated that functional programming could solve real-world reliability problems
+  - His actor model influenced Akka, Elixir, and modern concurrent programming
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Joe_Armstrong_(programmer)
+image:
+  file: ../../assets/images/entities/joe-armstrong.jpg
+  source: https://commons.wikimedia.org/wiki/File:Joe_Armstrong_2013.jpg
+  license: CC BY-SA 3.0
+  author: Brian Trammell
+---
+
+Joe Armstrong (1950–2019) was a British computer scientist who created Erlang and pioneered fault-tolerant distributed programming. His work at Ericsson established principles for building systems that handle failure gracefully.
+
+## Creating Erlang
+
+Armstrong joined Ericsson's Computer Science Laboratory in 1986 to work on programming language research. The goal was to find better ways to program telephone switches—systems requiring extreme reliability and the ability to update without downtime.
+
+## "Let It Crash"
+
+Armstrong's key insight was that trying to handle every possible error creates complexity that itself causes failures. Instead, Erlang programs are designed to crash cleanly and restart automatically:
+
+> "The right way to design the system is to accept that things will go wrong and to design for that."
+
+## Design Philosophy
+
+Armstrong articulated principles that influenced distributed systems:
+
+- Processes should be isolated and share nothing
+- Failure should be detected and handled by other processes
+- Systems should be designed to recover, not just to avoid failure
+- Simple code that crashes is better than complex code that tries to handle everything
+
+## PhD and Book
+
+Armstrong received his PhD in 2003 with a thesis on "Making reliable distributed systems in the presence of software errors." His book "Programming Erlang" became the standard introduction to the language and its philosophy.
+
+## Legacy
+
+Armstrong remained active in the Erlang community until his death in 2019. His ideas about fault tolerance and distributed systems continue to influence software design, particularly in systems requiring high availability.

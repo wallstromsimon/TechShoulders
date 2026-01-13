@@ -1,0 +1,54 @@
+---
+id: deno
+type: work
+name: Deno
+kind: project
+era: 2018–present
+year: 2018
+domains:
+  - JavaScript
+  - TypeScript
+  - Server-side Development
+edges:
+  - target: nodejs
+    kind: influence
+    label: built_on
+  - target: typescript
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Deno_(software)
+  - label: deno.land
+    url: https://deno.land/
+---
+
+Deno is a JavaScript/TypeScript runtime created by Ryan Dahl to address what he saw as Node.js's design mistakes. It features first-class TypeScript support, secure-by-default permissions, and modern JavaScript features.
+
+## Origins
+
+In a famous 2018 talk "10 Things I Regret About Node.js," Dahl announced Deno as a fresh approach to server-side JavaScript. The name is an anagram of "Node."
+
+## Key Differences from Node.js
+
+Deno addresses Node.js pain points:
+
+- **Secure by default**: No file/network access without explicit permission
+- **TypeScript native**: Run TypeScript without configuration
+- **ES modules only**: No CommonJS confusion
+- **URL imports**: Import from URLs, no package.json required
+- **Built-in tools**: Formatter, linter, test runner included
+- **Web-compatible**: Browser APIs where possible
+
+## Design Philosophy
+
+Deno prioritizes:
+
+- Security through explicit permissions
+- Simplicity through built-in tooling
+- Standards compliance with web APIs
+- Modern JavaScript features
+
+## Impact
+
+Deno influenced Node.js to add features like ES modules and a permission model. It demonstrated that runtime design could be rethought, and that TypeScript could be first-class.

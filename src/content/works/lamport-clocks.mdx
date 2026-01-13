@@ -1,0 +1,40 @@
+---
+id: lamport-clocks
+type: work
+name: Lamport Timestamps
+kind: paper
+era: "1978"
+year: 1978
+domains:
+  - Distributed Systems
+  - Computer Science Theory
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Lamport_timestamp
+  - label: Original Paper
+    url: https://lamport.azurewebsites.net/pubs/time-clocks.pdf
+---
+
+Lamport timestamps, introduced in Leslie Lamport's 1978 paper "Time, Clocks, and the Ordering of Events in a Distributed System," provide a method for ordering events in a distributed system without synchronized clocks. This paper is one of the most cited in computer science.
+
+## The Problem
+
+In a distributed system, there's no global clock. Different computers have different local times, and messages take unpredictable amounts of time to arrive. How can we determine the order in which events occurred across different machines?
+
+## The Solution
+
+Lamport proposed a simple logical clock algorithm:
+
+1. Each process maintains a counter
+2. Before each event, increment the counter
+3. When sending a message, include the counter value
+4. When receiving a message, set the counter to max(local, received) + 1
+
+## The "Happens-Before" Relation
+
+The paper introduced the "happens-before" relationship (→), a partial ordering of events that captures causality. Event A happens-before event B if A could have influenced B. This concept became fundamental to distributed systems theory.
+
+## Impact
+
+Lamport timestamps and the happens-before relation underpin modern distributed systems: version control, distributed databases, and consensus protocols all build on these foundations. The paper established the theoretical framework for reasoning about distributed computation.

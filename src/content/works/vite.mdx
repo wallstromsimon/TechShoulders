@@ -1,0 +1,54 @@
+---
+id: vite
+type: work
+name: Vite
+kind: project
+era: 2020–present
+year: 2020
+domains:
+  - Developer Tools
+  - Web Development
+  - Build Tools
+edges:
+  - target: vue
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Vite_(software)
+  - label: vitejs.dev
+    url: https://vitejs.dev/
+---
+
+Vite is a build tool that significantly improves the web development experience. Created by Evan You, it uses native ES modules for instant server start and lightning-fast hot module replacement.
+
+## The Problem
+
+Traditional bundlers like webpack bundle all code before starting the dev server. As applications grew, startup times stretched to minutes. Developers waited longer and longer just to see their changes.
+
+## The Solution
+
+Vite takes a different approach:
+
+- **Native ES modules**: Serve source code directly to the browser
+- **On-demand compilation**: Only transform files when requested
+- **esbuild pre-bundling**: Use the fastest bundler for dependencies
+- **Hot Module Replacement**: Near-instant updates without page reload
+
+## Key Features
+
+Vite revolutionized development experience:
+
+- **Instant server start**: No bundling required
+- **Fast HMR**: Updates in milliseconds, not seconds
+- **Framework agnostic**: Works with Vue, React, Svelte, and more
+- **Production builds**: Uses Rollup for optimized output
+
+## Impact
+
+Vite's success changed expectations:
+
+- Adopted by Vue, Svelte, and many projects
+- Inspired similar approaches in other tools
+- Made slow dev servers unacceptable
+- Showed that DX (developer experience) innovations matter

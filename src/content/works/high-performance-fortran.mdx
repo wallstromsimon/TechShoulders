@@ -1,0 +1,56 @@
+---
+id: high-performance-fortran
+type: work
+name: High Performance Fortran
+kind: language
+era: 1993–present
+year: 1993
+domains:
+  - Programming Languages
+  - High Performance Computing
+  - Parallel Computing
+edges:
+  - target: fortran
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/High_Performance_Fortran
+---
+
+High Performance Fortran (HPF) was a language extension for Fortran designed to support data-parallel programming on distributed memory systems. Led by Ken Kennedy, HPF aimed to make parallel programming accessible without explicit message passing.
+
+## The Problem
+
+In the early 1990s, parallel supercomputers were becoming common, but programming them required explicit message passing (MPI)—complex and error-prone. Scientists wanted to write simpler code that compilers could parallelize automatically.
+
+## HPF Approach
+
+HPF extended Fortran with directives for:
+
+- **Data distribution**: Specify how arrays are distributed across processors
+- **Alignment**: Keep related data on the same processor
+- **Parallel loops**: Indicate independent iterations
+- **Processor arrangements**: Define virtual processor grids
+
+## Design Goals
+
+HPF aimed to:
+
+- Make parallel programming look like sequential programming
+- Let compilers handle communication
+- Maintain portability across parallel architectures
+- Preserve Fortran's numerical computing strengths
+
+## Impact on Research
+
+HPF influenced:
+
+- Compiler optimization research
+- Automatic parallelization techniques
+- Later parallel languages (Chapel, X10)
+- Understanding of data distribution problems
+
+## Legacy
+
+While HPF itself saw limited adoption (explicit MPI proved more efficient for many applications), its ideas influenced parallel programming research. The goal of automatic parallelization continues to drive language and compiler development.

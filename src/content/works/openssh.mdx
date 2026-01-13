@@ -1,0 +1,60 @@
+---
+id: openssh
+type: work
+name: OpenSSH
+kind: project
+era: 1999–present
+year: 1999
+domains:
+  - Security
+  - Networking
+  - System Administration
+edges:
+  - target: openbsd
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/OpenSSH
+  - label: openssh.com
+    url: https://www.openssh.com/
+---
+
+OpenSSH is a suite of secure networking tools based on the SSH protocol. Developed as part of OpenBSD, it became the standard implementation for secure remote access and is installed on virtually every Unix-like system.
+
+## Origins
+
+After SSH Communications Security made SSH non-free for commercial use, the OpenBSD project developed OpenSSH from the last free version. Theo de Raadt and team built it into the standard SSH implementation.
+
+## Key Components
+
+OpenSSH provides:
+
+- **ssh**: Secure shell client
+- **sshd**: SSH server daemon
+- **scp**: Secure copy
+- **sftp**: Secure file transfer
+- **ssh-keygen**: Key generation
+- **ssh-agent**: Authentication agent
+
+## Security Features
+
+OpenSSH pioneered security practices:
+
+- Privilege separation
+- Strong cryptography
+- Key-based authentication
+- Frequent security audits
+
+## Ubiquity
+
+OpenSSH is effectively universal:
+
+- Default on all Linux distributions
+- Standard on macOS and BSDs
+- Available on Windows
+- Foundation for secure infrastructure management
+
+## Impact
+
+OpenSSH made secure remote access standard. Before SSH, telnet transmitted passwords in plaintext. OpenSSH's availability as free software ensured encrypted connections became the default everywhere.

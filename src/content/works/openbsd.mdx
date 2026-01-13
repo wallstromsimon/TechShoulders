@@ -1,0 +1,54 @@
+---
+id: openbsd
+type: work
+name: OpenBSD
+kind: project
+era: 1995–present
+year: 1995
+domains:
+  - Operating Systems
+  - Security
+  - Open Source
+edges:
+  - target: bsd
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/OpenBSD
+  - label: openbsd.org
+    url: https://www.openbsd.org/
+---
+
+OpenBSD is a security-focused, free Unix-like operating system. Created by Theo de Raadt after forking from NetBSD, it's renowned for code correctness, security, and producing widely-used portable software like OpenSSH.
+
+## Security Focus
+
+OpenBSD pioneered security practices:
+
+- **Proactive security auditing**: Continuous code review
+- **Secure by default**: Minimal services enabled
+- **W^X**: Write XOR Execute memory protection
+- **Privilege separation**: Isolate dangerous operations
+- **Randomization**: Address space layout randomization
+
+## Only Two Remote Holes
+
+OpenBSD's famous claim—"Only two remote holes in the default install, in a heck of a long time!"—reflects its security-focused development. The number has increased slightly but remains remarkably low.
+
+## Portable Software
+
+OpenBSD produces widely-used tools:
+
+- **OpenSSH**: Secure shell, used everywhere
+- **LibreSSL**: OpenSSL fork after Heartbleed
+- **OpenBGPD**: Border Gateway Protocol daemon
+- **PF**: Packet filter firewall
+
+## Impact
+
+OpenBSD's security innovations spread to other systems:
+
+- OpenSSH became the standard SSH implementation
+- Security practices influenced Linux and other BSDs
+- W^X and ASLR adopted industry-wide

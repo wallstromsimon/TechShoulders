@@ -1,0 +1,53 @@
+---
+id: utf-8
+type: work
+name: UTF-8
+kind: standard
+era: 1992–present
+year: 1992
+domains:
+  - Character Encoding
+  - Internationalization
+  - Web Standards
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/UTF-8
+  - label: RFC 3629
+    url: https://tools.ietf.org/html/rfc3629
+---
+
+UTF-8 is a variable-width character encoding that can represent every character in the Unicode standard. Created by Ken Thompson and Rob Pike, it became the dominant character encoding on the web, enabling true internationalization.
+
+## Origins
+
+In 1992, Thompson and Pike designed UTF-8 during dinner at a New Jersey diner. They sought an encoding that could represent all Unicode characters while remaining backward-compatible with ASCII and avoiding embedded null bytes.
+
+## Design Elegance
+
+UTF-8's brilliance lies in its properties:
+
+- **ASCII compatibility**: ASCII text is valid UTF-8
+- **Self-synchronizing**: Can find character boundaries from any position
+- **No null bytes**: Safe in C strings and file paths
+- **Prefix codes**: No character code is a prefix of another
+- **Compact for ASCII**: English text uses only one byte per character
+
+## How It Works
+
+UTF-8 uses variable-length encoding:
+
+- ASCII characters (0-127): 1 byte
+- Latin, Greek, Cyrillic: 2 bytes
+- Most other scripts: 3 bytes
+- Rare characters: 4 bytes
+
+## Impact
+
+UTF-8 transformed computing:
+
+- Dominant encoding on the web (over 98% of websites)
+- Default encoding in modern operating systems
+- Enabled true global text processing
+- Made internationalization practical for software
+- Solved decades of character encoding chaos

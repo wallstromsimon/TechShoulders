@@ -1,0 +1,49 @@
+---
+id: communicating-sequential-processes
+type: work
+name: Communicating Sequential Processes
+kind: theory
+era: 1978–present
+year: 1978
+domains:
+  - Concurrency
+  - Programming Languages
+  - Formal Methods
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Communicating_sequential_processes
+---
+
+Communicating Sequential Processes (CSP) is a formal language for describing patterns of interaction in concurrent systems, developed by Tony Hoare and published in 1978. It provides a mathematical framework for reasoning about concurrent programs.
+
+## Core Concepts
+
+CSP models concurrent systems as independent processes that interact through message passing:
+
+- **Processes**: Independent sequential components
+- **Channels**: Named communication pathways
+- **Events**: Synchronous communications between processes
+- **Choice**: Non-deterministic selection between events
+
+## Mathematical Foundation
+
+CSP provides:
+
+- Algebraic operators for composing processes
+- Formal semantics for reasoning about behavior
+- Methods to prove absence of deadlock
+- Techniques for refinement verification
+
+## Influence on Programming Languages
+
+CSP directly influenced:
+
+- **Go**: Goroutines and channels derive from CSP
+- **Occam**: Language built directly on CSP model
+- **Erlang**: Process-based concurrency with message passing
+- **Clojure core.async**: CSP-style channels
+
+## Legacy
+
+CSP demonstrated that complex concurrent systems could be reasoned about formally. Its concepts of channels and message-passing became standard tools for concurrent programming, offering an alternative to shared-memory approaches.

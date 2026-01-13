@@ -1,0 +1,56 @@
+---
+id: rest
+type: work
+name: REST
+kind: standard
+era: 2000–present
+year: 2000
+domains:
+  - Web Architecture
+  - API Design
+  - Distributed Systems
+edges:
+  - target: http
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Representational_state_transfer
+  - label: Original Dissertation
+    url: https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
+---
+
+REST (Representational State Transfer) is an architectural style for distributed systems, particularly web services. Defined by Roy Fielding in his 2000 doctoral dissertation, it provides principles for scalable, maintainable web architectures.
+
+## Origins
+
+Fielding defined REST while reflecting on why the web scaled so well. As a principal author of HTTP/1.1, he understood the web's architectural principles and codified them as REST.
+
+## Key Constraints
+
+REST defines architectural constraints:
+
+- **Client-server**: Separation of concerns
+- **Stateless**: Each request contains all needed information
+- **Cacheable**: Responses indicate cacheability
+- **Uniform interface**: Standardized resource interactions
+- **Layered system**: Intermediaries like proxies and gateways
+- **Code on demand** (optional): Executable code transfer
+
+## Uniform Interface
+
+The uniform interface includes:
+
+- **Resource identification**: URIs identify resources
+- **Resource manipulation through representations**: JSON, XML, etc.
+- **Self-descriptive messages**: Metadata explains content
+- **HATEOAS**: Hypermedia as the engine of application state
+
+## Impact
+
+REST became the dominant API paradigm:
+
+- "RESTful APIs" became standard for web services
+- Replaced SOAP/XML-RPC for most uses
+- Influenced API design across the industry
+- Sometimes misunderstood—many "REST" APIs aren't fully RESTful

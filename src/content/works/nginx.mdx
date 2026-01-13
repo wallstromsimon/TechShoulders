@@ -1,0 +1,52 @@
+---
+id: nginx
+type: work
+name: Nginx
+kind: project
+era: 2004–present
+year: 2004
+domains:
+  - Web Servers
+  - Infrastructure
+  - Networking
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Nginx
+  - label: nginx.org
+    url: https://nginx.org/
+---
+
+Nginx (pronounced "engine-x") is a web server known for high performance, stability, and low resource consumption. Created by Igor Sysoev, it challenged Apache's dominance and now powers a significant portion of the world's websites.
+
+## Origins
+
+Sysoev began developing Nginx in 2002 to solve the C10K problem—handling 10,000 concurrent connections. Apache's process-per-connection model struggled at scale; Nginx used an event-driven, asynchronous architecture.
+
+## Key Architecture
+
+Nginx's design enables high concurrency:
+
+- **Event-driven**: Non-blocking I/O handling
+- **Master-worker model**: One master, multiple workers
+- **Asynchronous**: Handle many connections per worker
+- **Low memory**: Efficient resource usage
+
+## Features
+
+Beyond serving static files, Nginx provides:
+
+- **Reverse proxy**: Route requests to backend servers
+- **Load balancing**: Distribute traffic across servers
+- **SSL termination**: Handle HTTPS connections
+- **Caching**: Cache responses for performance
+- **HTTP/2 support**: Modern protocol support
+
+## Adoption
+
+Nginx became critical infrastructure:
+
+- Second most popular web server globally
+- Powers Netflix, Dropbox, WordPress.com
+- Standard for container-based deployments
+- Essential component in modern architectures

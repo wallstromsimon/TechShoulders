@@ -1,0 +1,58 @@
+---
+id: forth
+type: work
+name: Forth
+kind: language
+era: 1970–present
+year: 1970
+domains:
+  - Programming Languages
+  - Embedded Systems
+  - Stack-based Computing
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Forth_(programming_language)
+  - label: forth.com
+    url: https://www.forth.com/
+---
+
+Forth is a stack-based programming language created by Chuck Moore. Its minimalist design and direct hardware control made it popular for embedded systems, astronomical software, and situations requiring maximum efficiency.
+
+## Design Philosophy
+
+Forth is radically minimalist:
+
+- **Stack-based**: Operations work on a stack, no variables needed
+- **Concatenative**: Functions compose by juxtaposition
+- **Extensible**: Define new words (functions) easily
+- **Interactive**: Immediate feedback like REPL
+- **Tiny**: Implementations in kilobytes
+
+## How It Works
+
+Forth programs consist of "words" that manipulate a stack:
+
+```forth
+3 4 + .  ( pushes 3, pushes 4, adds, prints 7 )
+```
+
+New words are defined in terms of existing words, extending the language.
+
+## Applications
+
+Forth excels in constrained environments:
+
+- Embedded systems and microcontrollers
+- Astronomical telescope control
+- Boot loaders (Open Firmware)
+- Real-time systems
+
+## Legacy
+
+Forth influenced:
+
+- PostScript (also stack-based)
+- Factor and other concatenative languages
+- Boot firmware on SPARC and PowerPC
+- Minimalist language design philosophy

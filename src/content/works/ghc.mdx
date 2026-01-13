@@ -1,0 +1,65 @@
+---
+id: ghc
+type: work
+name: GHC (Glasgow Haskell Compiler)
+kind: software
+era: 1992–present
+year: 1992
+domains:
+  - Programming Languages
+  - Functional Programming
+  - Compilers
+edges:
+  - target: haskell
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Glasgow_Haskell_Compiler
+---
+
+The Glasgow Haskell Compiler (GHC) is the leading implementation of Haskell, developed at the University of Glasgow. It has become both a production-quality compiler and a research vehicle for programming language innovation.
+
+## Origins
+
+GHC began in 1989 at Glasgow University. Simon Peyton Jones and Simon Marlow became its primary architects, developing it into the definitive Haskell implementation.
+
+## Technical Innovations
+
+GHC pioneered many compiler techniques:
+
+- **Type classes**: Advanced type system features
+- **Software transactional memory**: Composable concurrency
+- **Lazy evaluation**: Efficient implementation of non-strict semantics
+- **Core intermediate language**: Small, typed representation
+
+## Language Extensions
+
+GHC has served as a testbed for language features:
+
+- Generalized algebraic data types (GADTs)
+- Type families and data families
+- Template Haskell (compile-time metaprogramming)
+- Linear types (experimental)
+
+## Ecosystem
+
+GHC supports:
+
+- **Cabal/Stack**: Build tools
+- **Hackage**: Package repository
+- **GHCi**: Interactive interpreter
+- **Cross-compilation**: Multiple platforms
+
+## Research Impact
+
+Many programming language research papers prototype ideas in GHC:
+
+- Effect systems
+- Dependent types
+- Parallel and concurrent programming
+- Type-level programming
+
+## Legacy
+
+GHC demonstrates that a research compiler can become production-ready while continuing to advance the state of the art. It has influenced type systems in Rust, TypeScript, and other mainstream languages.

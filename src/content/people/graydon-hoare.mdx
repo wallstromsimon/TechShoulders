@@ -1,0 +1,63 @@
+---
+id: graydon-hoare
+type: person
+name: Graydon Hoare
+title: Creator of Rust
+era: 2000s–present
+domains:
+  - Programming Languages
+  - Systems Programming
+  - Memory Safety
+edges:
+  - target: rust
+    kind: influence
+    label: created
+    year: 2010
+  - target: mozilla
+    kind: affiliation
+    label: worked at
+    year: 2009
+signatureWorks:
+  - rust
+whyYouCare:
+  - Created Rust, solving memory safety without garbage collection
+  - Rust's borrow checker prevents entire categories of bugs at compile time
+  - Linux kernel now accepts Rust code thanks to its safety guarantees
+  - His work may finally make systems programming safe
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Graydon_Hoare
+---
+
+Graydon Hoare is a Canadian programmer who created Rust. His work on memory safety without garbage collection addresses problems that have plagued systems programming for decades.
+
+## Creating Rust
+
+Hoare started Rust as a personal project in 2006, frustrated by crashes in software he depended on. Mozilla began sponsoring development in 2009, and Hoare led the project until 2013.
+
+## Key Insight
+
+Hoare's key insight was that ownership rules could be checked at compile time:
+
+- Every value has exactly one owner
+- Borrowing must follow strict rules
+- The compiler ensures memory safety
+
+This approach provides C-like performance with memory safety guarantees.
+
+## Design Influences
+
+Rust drew from diverse sources:
+
+- ML family: Pattern matching, algebraic types
+- C++: Zero-cost abstractions, RAII
+- Cyclone: Region-based memory management
+- Haskell: Type classes (traits)
+
+## Stepping Back
+
+Hoare stepped away from Rust leadership in 2013, letting the community drive development. This transition proved successful—Rust continued growing and improving under community governance.
+
+## Impact
+
+Rust has gained remarkable adoption for a language its age, with Linux, Microsoft, AWS, and others adopting it for safety-critical code. Hoare's insight that ownership could be enforced statically may prove historically significant.

@@ -1,0 +1,65 @@
+---
+id: rollup
+type: work
+name: Rollup
+kind: project
+era: 2015–present
+year: 2015
+domains:
+  - Developer Tools
+  - JavaScript
+  - Build Tools
+edges:
+  - target: javascript
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Rollup_(software)
+  - label: rollupjs.org
+    url: https://rollupjs.org/
+---
+
+Rollup is a JavaScript module bundler that pioneered tree-shaking and ES module output. Created by Rich Harris, it influenced how all modern bundlers optimize code.
+
+## Key Innovation
+
+Rollup introduced tree-shaking to JavaScript:
+
+- **Dead code elimination**: Remove unused exports
+- **ES module output**: Native browser module format
+- **Flat bundles**: Hoist code to single scope
+- **Smaller output**: Significant size reductions
+
+## Tree-Shaking
+
+Tree-shaking eliminates code that isn't actually used:
+
+```javascript
+// library.js
+export function used() { }
+export function unused() { }
+
+// app.js
+import { used } from './library.js'
+```
+
+Rollup removes `unused()` from the final bundle.
+
+## Impact
+
+Rollup's innovations spread throughout the ecosystem:
+
+- Webpack added tree-shaking support
+- esbuild and other bundlers adopted the concept
+- Library authors optimize for tree-shaking
+- Vite uses Rollup for production builds
+
+## Use Cases
+
+Rollup excels at:
+
+- Building JavaScript libraries
+- Producing optimized ES module output
+- Creating multiple output formats from one source
+- Applications where bundle size matters most

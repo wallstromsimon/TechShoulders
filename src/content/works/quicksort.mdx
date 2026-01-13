@@ -1,0 +1,53 @@
+---
+id: quicksort
+type: work
+name: Quicksort
+kind: algorithm
+era: 1959–present
+year: 1959
+domains:
+  - Algorithms
+  - Computer Science
+edges:
+  - target: algol-60
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Quicksort
+---
+
+Quicksort is a highly efficient, general-purpose sorting algorithm developed by Tony Hoare in 1959. It remains one of the most widely used sorting algorithms due to its excellent average-case performance and cache efficiency.
+
+## How It Works
+
+Quicksort uses a divide-and-conquer strategy:
+
+1. Choose a "pivot" element from the array
+2. Partition: rearrange elements so smaller values go left of pivot, larger go right
+3. Recursively apply to the sub-arrays on each side
+
+## Performance Characteristics
+
+- **Average case**: O(n log n)
+- **Worst case**: O(n²) with poor pivot selection
+- **Space**: O(log n) auxiliary space for recursion
+- **In-place**: Sorts without additional array allocation
+
+## Why It's Fast in Practice
+
+Despite O(n²) worst case, Quicksort often outperforms O(n log n) algorithms:
+
+- Excellent cache locality
+- Low overhead compared to merge sort
+- Randomized pivot selection avoids worst case
+- Inner loop is simple and fast
+
+## Influence
+
+Quicksort influenced:
+
+- Standard library sort implementations (C's qsort, Java Arrays.sort)
+- Pivot selection strategies
+- Hybrid algorithms like Introsort
+- Analysis of randomized algorithms

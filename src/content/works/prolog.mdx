@@ -1,0 +1,55 @@
+---
+id: prolog
+type: work
+name: Prolog
+kind: language
+era: 1972–present
+year: 1972
+domains:
+  - Programming Languages
+  - Logic Programming
+  - Artificial Intelligence
+edges:
+  - target: lisp
+    kind: influence
+    label: influenced
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Prolog
+  - label: SWI-Prolog
+    url: https://www.swi-prolog.org/
+---
+
+Prolog (Programming in Logic) is a logic programming language based on formal logic. Created by Alain Colmerauer, it allows programmers to express problems as logical relations, with the computer determining how to solve them.
+
+## Origins
+
+Colmerauer developed Prolog at the University of Aix-Marseille in 1972, building on work in automatic theorem proving. The goal was to create a practical programming language based on first-order logic.
+
+## Key Concepts
+
+Prolog uses a different paradigm from conventional languages:
+
+- **Declarative**: Describe what, not how
+- **Unification**: Pattern matching between terms
+- **Backtracking**: Automatic search through possibilities
+- **Horn clauses**: Logical statements as facts and rules
+- **Query-based**: Pose questions the system answers
+
+## How It Works
+
+In Prolog, you define facts and rules:
+- `parent(tom, mary).` — Tom is a parent of Mary
+- `grandparent(X, Z) :- parent(X, Y), parent(Y, Z).` — X is a grandparent of Z if...
+
+Then query: `?- grandparent(tom, Who).`
+
+## Impact
+
+Prolog influenced computing significantly:
+
+- **Expert systems**: Dominant in early AI applications
+- **Natural language processing**: Pattern matching for language
+- **Datalog**: Query language for databases
+- **Constraint logic programming**: Extensions for optimization
+- **Fifth Generation Computing**: Japan's 1980s AI initiative

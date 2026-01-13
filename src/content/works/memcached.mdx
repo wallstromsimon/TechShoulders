@@ -1,0 +1,55 @@
+---
+id: memcached
+type: work
+name: Memcached
+kind: project
+era: 2003–present
+year: 2003
+domains:
+  - Distributed Systems
+  - Web Development
+  - Caching
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Memcached
+  - label: memcached.org
+    url: https://memcached.org/
+---
+
+Memcached is a distributed memory caching system used to speed up web applications by caching database queries and API calls. Created by Brad Fitzpatrick for LiveJournal, it became essential infrastructure for scaling web applications.
+
+## Origins
+
+Fitzpatrick created Memcached in 2003 to handle LiveJournal's growing traffic. Rather than hit the database for every request, frequently accessed data could be stored in memory across multiple servers.
+
+## Key Design
+
+Memcached's simplicity is its strength:
+
+- **Key-value store**: Simple get/set operations
+- **Distributed**: Spread across multiple servers
+- **In-memory**: Fast access, no persistence
+- **LRU eviction**: Automatic cache management
+- **Protocol simplicity**: Text-based protocol
+
+## Adoption
+
+Memcached became standard web infrastructure:
+
+- Facebook (before building their own)
+- Twitter
+- YouTube
+- Wikipedia
+- Reddit
+
+## Impact
+
+Memcached established patterns for web scaling:
+
+- Caching as a tier between app and database
+- Distributed caching for horizontal scaling
+- Trading consistency for performance
+- Simple protocols for wide adoption
+
+It influenced later systems like Redis and demonstrated that simple tools could solve complex scaling problems.

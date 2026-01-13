@@ -1,0 +1,43 @@
+---
+id: paxos
+type: work
+name: Paxos
+kind: paper
+era: "1989"
+year: 1989
+domains:
+  - Distributed Systems
+  - Consensus Algorithms
+edges:
+  - target: lamport-clocks
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Paxos_(computer_science)
+  - label: Original Paper
+    url: https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf
+---
+
+Paxos is a family of protocols for solving consensus in a network of unreliable processors. Developed by Leslie Lamport, it became the foundation for building reliable distributed systems and influenced virtually all modern consensus algorithms.
+
+## The Consensus Problem
+
+How can a group of computers agree on a single value when messages can be lost or delayed, and some computers might fail? This problem is fundamental to distributed systems—from database replication to distributed locks.
+
+## The Algorithm
+
+Paxos uses a sequence of proposals and acceptances:
+
+1. **Prepare**: A proposer sends a proposal number to acceptors
+2. **Promise**: Acceptors promise not to accept older proposals
+3. **Accept**: The proposer asks acceptors to accept a value
+4. **Learn**: Once a majority accepts, the value is chosen
+
+## Presentation and Reception
+
+Lamport first wrote about Paxos in 1989 using an allegory about a fictional Greek island parliament. The paper was considered too whimsical and wasn't published until 1998. A more straightforward explanation, "Paxos Made Simple," followed in 2001.
+
+## Impact
+
+Paxos and its variants underpin modern distributed systems: Google's Chubby and Spanner, Apache ZooKeeper, and countless other systems use Paxos-derived protocols. The Raft consensus algorithm was designed as a more understandable alternative to Paxos.

@@ -1,0 +1,48 @@
+---
+id: compcert
+type: work
+name: CompCert
+kind: project
+era: 2006–present
+year: 2006
+domains:
+  - Compilers
+  - Formal Verification
+  - Programming Languages
+edges:
+  - target: ocaml
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/CompCert
+  - label: CompCert Site
+    url: https://compcert.org/
+---
+
+CompCert is a formally verified C compiler developed by Xavier Leroy and collaborators. Unlike conventional compilers that may have bugs, CompCert comes with a mathematical proof that it correctly compiles C code, making it suitable for safety-critical systems.
+
+## The Problem
+
+Compilers are complex programs that can have bugs. A compiler bug might silently transform correct source code into incorrect machine code. For safety-critical software (medical devices, aircraft, nuclear reactors), this is unacceptable.
+
+## The Solution
+
+CompCert is written in Coq, a proof assistant that allows mathematical proofs about programs. The compiler comes with a machine-checked proof that the generated assembly code behaves exactly as the source code specifies.
+
+## What's Proven
+
+CompCert's proof guarantees that if a source program has defined behavior, the compiled program has the same observable behavior. This covers all the complex transformations a compiler performs: parsing, optimization, register allocation, code generation.
+
+## Impact
+
+CompCert demonstrated that verified compilation is practical:
+
+- Used in aerospace and other safety-critical industries
+- Showed formal methods could scale to realistic programs
+- Found bugs in other "production" compilers
+- Inspired verified systems research (seL4, CertiKOS)
+
+## Ongoing Development
+
+Leroy and collaborators continue developing CompCert, adding support for more C features and processor architectures. It represents a milestone in applying formal methods to practical software.

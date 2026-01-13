@@ -1,0 +1,57 @@
+---
+id: d-language
+type: work
+name: D
+kind: language
+era: 2001–present
+year: 2001
+domains:
+  - Programming Languages
+  - Systems Programming
+edges:
+  - target: cpp
+    kind: influence
+    label: built_on
+  - target: c-programming-language
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/D_(programming_language)
+  - label: dlang.org
+    url: https://dlang.org/
+---
+
+D is a systems programming language designed to modernize C and C++ while retaining their efficiency. Created by Walter Bright, it provides modern features like garbage collection and powerful metaprogramming while allowing low-level control when needed.
+
+## Origins
+
+Walter Bright, who had written the first native C++ compiler for DOS (Zortech C++), created D to address frustrations with C++. He wanted a language that kept C's efficiency but fixed its historical baggage.
+
+## Key Features
+
+D offers modern programming features:
+
+- **Optional garbage collection**: With manual memory control available
+- **Compile-time function execution (CTFE)**: Run arbitrary code at compile time
+- **Powerful templates**: More capable than C++ templates
+- **Built-in unit testing**: Testing is part of the language
+- **Contract programming**: Preconditions, postconditions, invariants
+- **Ranges**: Lazy sequences for efficient iteration
+
+## Design Philosophy
+
+D takes a pragmatic approach:
+
+- Compatible with C code and ABIs
+- Allows unsafe operations when needed
+- Prefers compile-time over runtime
+- Multiple paradigms: imperative, object-oriented, functional
+
+## Influence
+
+While not widely adopted, D influenced other languages:
+
+- Rust learned from D's approach to systems programming
+- D's CTFE concept appeared in other languages
+- Nim drew inspiration from D's metaprogramming

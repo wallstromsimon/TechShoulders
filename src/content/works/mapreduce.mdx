@@ -1,0 +1,56 @@
+---
+id: mapreduce
+type: work
+name: MapReduce
+kind: paper
+era: 2004–present
+year: 2004
+domains:
+  - Distributed Systems
+  - Big Data
+  - Cloud Computing
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/MapReduce
+---
+
+MapReduce is a programming model for processing large data sets with a distributed algorithm on a cluster. Introduced by Google in 2004, it enabled processing of petabytes of data across thousands of machines.
+
+## Origins
+
+Jeff Dean and Sanjay Ghemawat created MapReduce at Google to handle the massive scale of web indexing. Their 2004 paper described a model that abstracted away the complexity of distributed computing.
+
+## How It Works
+
+MapReduce has two phases:
+
+1. **Map**: Apply a function to each input element, producing key-value pairs
+2. **Reduce**: Aggregate all values for each key into final results
+
+The framework handles:
+
+- Distribution across machines
+- Fault tolerance and retries
+- Load balancing
+- Data shuffling between phases
+
+## Example: Word Count
+
+```
+Map: document → [(word, 1), (word, 1), ...]
+Reduce: (word, [1, 1, 1]) → (word, count)
+```
+
+## Industry Impact
+
+MapReduce influenced:
+
+- **Hadoop**: Open-source implementation that democratized big data
+- **Spark**: Evolution with in-memory processing
+- **Cloud services**: AWS EMR, Google Dataflow
+- **Data engineering**: Standard approach to batch processing
+
+## Legacy
+
+While newer frameworks have superseded MapReduce for many use cases, its fundamental insight—that complex distributed processing can be expressed through simple map and reduce functions—transformed data engineering.

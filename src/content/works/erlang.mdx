@@ -1,0 +1,56 @@
+---
+id: erlang
+type: work
+name: Erlang
+kind: language
+era: 1986–present
+year: 1986
+domains:
+  - Programming Languages
+  - Distributed Systems
+  - Telecommunications
+edges:
+  - target: prolog
+    kind: influence
+    label: influenced
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Erlang_(programming_language)
+  - label: erlang.org
+    url: https://www.erlang.org/
+---
+
+Erlang is a functional programming language designed for building massively scalable, fault-tolerant systems. Created at Ericsson for telecommunications, it pioneered the actor model and "let it crash" philosophy that influenced modern distributed systems.
+
+## Origins
+
+Joe Armstrong and colleagues at Ericsson developed Erlang in the 1980s to handle telephone switching systems. These systems required extreme reliability—"five nines" uptime (99.999%)—and the ability to update code without stopping.
+
+## Key Features
+
+Erlang introduced concepts for building reliable systems:
+
+- **Actor model**: Lightweight processes communicate via message passing
+- **Immutability**: No shared mutable state eliminates race conditions
+- **Pattern matching**: Elegant data destructuring
+- **Hot code swapping**: Update running systems without downtime
+- **Supervision trees**: Automatic restart of failed processes
+- **"Let it crash"**: Design for failure, not just success
+
+## The BEAM
+
+Erlang runs on the BEAM virtual machine, designed for:
+
+- Millions of lightweight processes
+- Soft real-time performance
+- Distributed computing primitives
+- Fault isolation between processes
+
+## Impact
+
+Erlang's influence extends beyond telecom:
+
+- WhatsApp handled billions of messages with tiny team using Erlang
+- RabbitMQ message broker built on Erlang
+- Elixir brought Erlang's runtime to modern syntax
+- Inspired actor systems in Akka (Scala) and others

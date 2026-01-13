@@ -1,0 +1,53 @@
+---
+id: qemu
+type: work
+name: QEMU
+kind: project
+era: 2003–present
+year: 2003
+domains:
+  - Virtualization
+  - Emulation
+  - Systems Programming
+edges: []
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/QEMU
+  - label: qemu.org
+    url: https://www.qemu.org/
+---
+
+QEMU is a generic machine emulator and virtualizer. Created by Fabrice Bellard, it can emulate various CPU architectures and serves as the foundation for KVM virtualization, powering much of cloud computing.
+
+## Capabilities
+
+QEMU operates in two main modes:
+
+- **Full system emulation**: Emulate entire machines including CPU, memory, and devices
+- **User mode emulation**: Run programs compiled for different architectures
+
+## Technical Innovations
+
+QEMU introduced sophisticated techniques:
+
+- **Dynamic binary translation**: Convert guest code to host code at runtime
+- **Tiny Code Generator (TCG)**: Portable intermediate representation
+- **Device emulation**: Virtual hardware implementation
+- **Copy-on-write images**: Efficient disk image management
+
+## KVM Integration
+
+QEMU combined with KVM (Kernel-based Virtual Machine) provides:
+
+- Near-native performance for Linux guests on Linux hosts
+- Hardware-assisted virtualization
+- Foundation for cloud computing infrastructure
+
+## Impact
+
+QEMU underlies much of modern computing:
+
+- Basis for cloud platforms (AWS, GCP use KVM)
+- Development and testing of operating systems
+- Cross-platform development
+- Security research and analysis

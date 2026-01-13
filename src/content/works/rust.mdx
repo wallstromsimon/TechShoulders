@@ -1,0 +1,60 @@
+---
+id: rust
+type: work
+name: Rust
+kind: language
+era: 2010–present
+year: 2010
+domains:
+  - Programming Languages
+  - Systems Programming
+  - Memory Safety
+edges:
+  - target: llvm
+    kind: influence
+    label: built_on
+  - target: ml
+    kind: influence
+    label: influenced
+  - target: cpp
+    kind: influence
+    label: influenced
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Rust_(programming_language)
+  - label: rust-lang.org
+    url: https://www.rust-lang.org/
+---
+
+Rust is a systems programming language focused on safety, concurrency, and performance. Created by Graydon Hoare at Mozilla, it prevents memory errors at compile time without garbage collection, addressing C and C++'s fundamental safety issues.
+
+## Origins
+
+Hoare started Rust as a personal project in 2006. Mozilla began sponsoring development in 2009, seeing Rust as a way to write safer browser code. The first stable release came in 2015.
+
+## Key Innovations
+
+Rust's borrow checker prevents memory errors:
+
+- **Ownership**: Each value has a single owner
+- **Borrowing**: References have rules preventing data races
+- **Lifetimes**: Compiler tracks how long references are valid
+- **No null**: Option type forces handling of missing values
+
+## Zero-Cost Abstractions
+
+Rust provides high-level features without runtime cost:
+
+- Pattern matching compiles to efficient code
+- Generics monomorphized at compile time
+- No garbage collector—predictable performance
+- Traits enable polymorphism without overhead
+
+## Adoption
+
+Rust has seen remarkable adoption:
+
+- Linux kernel accepting Rust code
+- Microsoft using Rust for Windows components
+- AWS using Rust for Firecracker and more
+- Most loved language in Stack Overflow surveys for years

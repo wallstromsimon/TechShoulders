@@ -1,0 +1,51 @@
+---
+id: ava
+type: work
+name: AVA
+kind: software
+era: 2015–present
+year: 2015
+domains:
+  - Testing
+  - JavaScript
+  - Developer Tools
+edges:
+  - target: nodejs
+    kind: influence
+    label: built_on
+links:
+  - label: GitHub
+    url: https://github.com/avajs/ava
+---
+
+AVA is a JavaScript test runner that runs tests concurrently, making test suites faster. Created by Sindre Sorhus, it introduced a minimal, modern approach to testing that influenced the JavaScript testing ecosystem.
+
+## Design Philosophy
+
+AVA prioritizes:
+
+- **Concurrent execution**: Tests run in parallel by default
+- **Isolated test files**: Each test file runs in its own process
+- **No global state**: No implicit globals that leak between tests
+- **Modern JavaScript**: First-class async/await support
+
+## Key Features
+
+AVA's approach differs from traditional test runners:
+
+- **Parallel by default**: Tests don't share state, enabling concurrency
+- **Serial when needed**: Opt-in sequential execution for specific tests
+- **Snapshot testing**: Built-in support for snapshot assertions
+- **TypeScript support**: Type definitions included
+
+## Influence
+
+AVA's concurrent-by-default approach influenced:
+
+- Other test runners' parallel execution features
+- Discussion about test isolation best practices
+- The "fast tests" movement in JavaScript
+
+## Community
+
+While Jest became the most popular JavaScript test runner, AVA demonstrated that test runners could be simpler and faster. Its focus on running tests concurrently pushed other tools to improve their parallelization.

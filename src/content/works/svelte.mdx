@@ -1,0 +1,58 @@
+---
+id: svelte
+type: work
+name: Svelte
+kind: project
+era: 2016–present
+year: 2016
+domains:
+  - Web Development
+  - JavaScript Frameworks
+  - Frontend Development
+edges:
+  - target: javascript
+    kind: influence
+    label: built_on
+links:
+  - label: Wikipedia
+    url: https://en.wikipedia.org/wiki/Svelte
+  - label: svelte.dev
+    url: https://svelte.dev/
+---
+
+Svelte is a JavaScript framework that shifts work from the browser to a compile step. Created by Rich Harris, it produces highly optimized vanilla JavaScript, eliminating the runtime overhead of traditional frameworks.
+
+## Key Innovation
+
+Unlike React or Vue, Svelte is a compiler:
+
+- **No virtual DOM**: Direct DOM updates at runtime
+- **No framework runtime**: Ships vanilla JavaScript
+- **Compile-time reactivity**: State changes become surgical DOM updates
+- **Smaller bundles**: No framework code included
+
+## How It Works
+
+Svelte compiles declarative component code into efficient imperative JavaScript. When you write `count += 1`, Svelte generates code that updates exactly the DOM elements that need changing.
+
+## Key Features
+
+Svelte provides modern framework features without runtime cost:
+
+- **Reactive declarations**: `$:` marks statements that rerun when dependencies change
+- **Scoped styles**: CSS scoped to components by default
+- **Built-in animations**: Transitions and animations as first-class features
+- **Stores**: Simple reactive state management
+
+## SvelteKit
+
+SvelteKit is Svelte's application framework, providing:
+
+- Server-side rendering
+- Static site generation
+- File-based routing
+- API endpoints
+
+## Impact
+
+Svelte challenged assumptions about how frameworks work. Its compile-time approach influenced other frameworks and raised questions about runtime overhead that was previously accepted.
