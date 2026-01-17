@@ -342,3 +342,249 @@ export async function buildNodeNeighborhoodData(nodeId: string): Promise<GraphDa
 
   return { nodes, edges };
 }
+
+// Domain-related functions
+
+export interface DomainStats {
+  domain: string;
+  total: number;
+  people: number;
+  works: number;
+  institutions: number;
+}
+
+export function getDomainCounts(nodes: SearchableNode[]): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const node of nodes) {
+    for (const domain of node.domains) {
+      counts.set(domain, (counts.get(domain) || 0) + 1);
+    }
+  }
+  return counts;
+}
+
+export function getDomainStats(domain: string, nodes: SearchableNode[]): DomainStats {
+  const domainNodes = nodes.filter((n) => n.domains.includes(domain));
+  return {
+    domain,
+    total: domainNodes.length,
+    people: domainNodes.filter((n) => n.kind === 'people').length,
+    works: domainNodes.filter((n) => n.kind === 'works').length,
+    institutions: domainNodes.filter((n) => n.kind === 'institutions').length,
+  };
+}
+
+export function getNodesForDomain(domain: string, nodes: SearchableNode[]): SearchableNode[] {
+  return nodes.filter((n) => n.domains.includes(domain));
+}
+
+export async function buildDomainGraphData(
+  domain: string,
+  includeAffiliations: boolean = true
+): Promise<GraphData> {
+  const [allNodes, allEdges] = await Promise.all([buildSearchIndex(), loadAllEdges()]);
+
+  // Get nodes in this domain
+  const domainNodes = allNodes.filter((n) => n.domains.includes(domain));
+  const domainNodeIds = new Set(domainNodes.map((n) => n.id));
+
+  // Filter edges to only those connecting domain nodes
+  const edges = allEdges.filter((edge) => {
+    const sourceInDomain = domainNodeIds.has(edge.source);
+    const targetInDomain = domainNodeIds.has(edge.target);
+
+    // Include edge if both endpoints are in the domain
+    if (!sourceInDomain || !targetInDomain) return false;
+
+    // Filter by affiliation preference
+    if (!includeAffiliations && edge.kind === 'affiliation') return false;
+
+    return true;
+  });
+
+  return { nodes: domainNodes, edges };
+}
+
+export function getRelatedDomains(
+  selectedDomains: string[],
+  nodes: SearchableNode[],
+  limit: number = 5
+): Array<{ domain: string; count: number }> {
+  // Find nodes that have the selected domains
+  const matchingNodes = nodes.filter((n) =>
+    selectedDomains.some((d) => n.domains.includes(d))
+  );
+
+  // Count co-occurring domains
+  const coOccurrence = new Map<string, number>();
+  for (const node of matchingNodes) {
+    for (const domain of node.domains) {
+      if (!selectedDomains.includes(domain)) {
+        coOccurrence.set(domain, (coOccurrence.get(domain) || 0) + 1);
+      }
+    }
+  }
+
+  // Return top related domains
+  return Array.from(coOccurrence.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([domain, count]) => ({ domain, count }));
+}
+
+export function getDomainsWithCounts(nodes: SearchableNode[]): Array<{ domain: string; count: number }> {
+  const counts = getDomainCounts(nodes);
+  return Array.from(counts.entries())
+    .map(([domain, count]) => ({ domain, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+// Topic-related functions
+
+export interface TopicDefinition {
+  slug: string;
+  name: string;
+  description: string;
+  domains: string[];
+  icon: string;
+}
+
+export function getBuiltInTopics(): TopicDefinition[] {
+  return [
+    {
+      slug: 'programming-languages',
+      name: 'Programming Languages',
+      description: 'The creators and languages that define how we communicate with computers.',
+      domains: ['Programming Languages', 'Compilers', 'Type Systems', 'Functional Programming'],
+      icon: '{ }',
+    },
+    {
+      slug: 'operating-systems',
+      name: 'Operating Systems',
+      description: 'The foundational software that powers our devices, from Unix to modern systems.',
+      domains: ['Operating Systems', 'Unix', 'Linux', 'Systems Programming'],
+      icon: '~$',
+    },
+    {
+      slug: 'web-development',
+      name: 'Web Development',
+      description: 'The technologies, standards, and people who built the modern web.',
+      domains: ['Web Development', 'Web Standards', 'JavaScript', 'JavaScript Frameworks', 'Browsers'],
+      icon: '</>',
+    },
+    {
+      slug: 'databases-data',
+      name: 'Databases & Data',
+      description: 'How we store, query, and manage the world\'s information.',
+      domains: ['Databases', 'Data Structures', 'Big Data', 'Data Science', 'Information Retrieval'],
+      icon: '|||',
+    },
+    {
+      slug: 'networking-internet',
+      name: 'Networking & Internet',
+      description: 'The protocols and infrastructure connecting billions of devices.',
+      domains: ['Networking', 'Internet', 'Protocols', 'TCP/IP', 'Email'],
+      icon: '://',
+    },
+    {
+      slug: 'artificial-intelligence',
+      name: 'Artificial Intelligence',
+      description: 'Machine learning, neural networks, and the quest for intelligent systems.',
+      domains: ['Artificial Intelligence', 'Machine Learning', 'Deep Learning', 'Neural Networks'],
+      icon: '(AI)',
+    },
+    {
+      slug: 'open-source',
+      name: 'Open Source & Tools',
+      description: 'The movement and tools that democratized software development.',
+      domains: ['Open Source', 'Free Software', 'Version Control', 'Developer Tools'],
+      icon: 'OS',
+    },
+    {
+      slug: 'security-cryptography',
+      name: 'Security & Cryptography',
+      description: 'Protecting data, privacy, and systems in the digital age.',
+      domains: ['Security', 'Cryptography', 'Privacy', 'Authentication'],
+      icon: '[*]',
+    },
+    {
+      slug: 'computer-graphics',
+      name: 'Computer Graphics',
+      description: 'Visual computing from early displays to modern GPUs and 3D rendering.',
+      domains: ['Computer Graphics', 'Graphics', 'GPU', 'Hardware'],
+      icon: '3D',
+    },
+    {
+      slug: 'computing-theory',
+      name: 'Computing Theory',
+      description: 'The mathematical and theoretical foundations of computer science.',
+      domains: ['Computing', 'Algorithms', 'Computer Science', 'Mathematics', 'Theory of Computation'],
+      icon: 'f(x)',
+    },
+    {
+      slug: 'telecommunications',
+      name: 'Telecommunications',
+      description: 'From telegraph to satellites - the history of global communication.',
+      domains: ['Telecommunications', 'Mobile', 'Wireless', 'Radio', 'Satellite'],
+      icon: '((()))',
+    },
+  ];
+}
+
+export interface TopicStats {
+  total: number;
+  people: number;
+  works: number;
+  institutions: number;
+}
+
+export function getTopicStats(topic: TopicDefinition, nodes: SearchableNode[]): TopicStats {
+  const topicNodes = nodes.filter((n) =>
+    n.domains.some((d) => topic.domains.includes(d))
+  );
+  return {
+    total: topicNodes.length,
+    people: topicNodes.filter((n) => n.kind === 'people').length,
+    works: topicNodes.filter((n) => n.kind === 'works').length,
+    institutions: topicNodes.filter((n) => n.kind === 'institutions').length,
+  };
+}
+
+export function getNodesForTopic(topic: TopicDefinition, nodes: SearchableNode[]): SearchableNode[] {
+  return nodes.filter((n) =>
+    n.domains.some((d) => topic.domains.includes(d))
+  );
+}
+
+export async function buildTopicGraphData(
+  topic: TopicDefinition,
+  includeAffiliations: boolean = true
+): Promise<GraphData> {
+  const [allNodes, allEdges] = await Promise.all([buildSearchIndex(), loadAllEdges()]);
+
+  // Get nodes matching any of the topic's domains
+  const topicNodes = allNodes.filter((n) =>
+    n.domains.some((d) => topic.domains.includes(d))
+  );
+  const topicNodeIds = new Set(topicNodes.map((n) => n.id));
+
+  // Filter edges to only those connecting topic nodes
+  const edges = allEdges.filter((edge) => {
+    const sourceInTopic = topicNodeIds.has(edge.source);
+    const targetInTopic = topicNodeIds.has(edge.target);
+
+    // Include edge if both endpoints are in the topic
+    if (!sourceInTopic || !targetInTopic) return false;
+
+    // Filter by affiliation preference
+    if (!includeAffiliations && edge.kind === 'affiliation') return false;
+
+    return true;
+  });
+
+  return { nodes: topicNodes, edges };
+}
+
+export function getTopicBySlug(slug: string): TopicDefinition | undefined {
+  return getBuiltInTopics().find((t) => t.slug === slug);
+}

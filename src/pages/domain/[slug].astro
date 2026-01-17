@@ -1,0 +1,383 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NodeCard from '../../components/NodeCard.astro';
+import DomainGraph from '../../components/DomainGraph';
+import {
+  loadAll,
+  buildSearchIndex,
+  getAllDomains,
+  getDomainStats,
+  getNodesForDomain,
+  buildDomainGraphData,
+  getRelatedDomains,
+  type NodeKind,
+} from '../../lib/data';
+import { getDomainSlug, getDomainColorInfo, slugToDomain } from '../../lib/domainColors';
+
+export async function getStaticPaths() {
+  const nodes = await buildSearchIndex();
+  const allDomains = getAllDomains(nodes);
+
+  return allDomains.map((domain) => ({
+    params: { slug: getDomainSlug(domain) },
+    props: { domain },
+  }));
+}
+
+interface Props {
+  domain: string;
+}
+
+const { domain } = Astro.props;
+const colorInfo = getDomainColorInfo(domain);
+
+// Get all data
+const allNodes = await buildSearchIndex();
+const stats = getDomainStats(domain, allNodes);
+const domainNodes = getNodesForDomain(domain, allNodes);
+const { nodes: graphNodes, edges: graphEdges } = await buildDomainGraphData(domain, true);
+const relatedDomains = getRelatedDomains([domain], allNodes, 8);
+
+// Get entries for NodeCards
+const { people, works, institutions } = await loadAll();
+
+// Map nodes to entries
+const nodeEntries = domainNodes.map((node) => {
+  let entry;
+  if (node.kind === 'people') {
+    entry = people.find((p) => p.data.id === node.id);
+  } else if (node.kind === 'works') {
+    entry = works.find((w) => w.data.id === node.id);
+  } else {
+    entry = institutions.find((i) => i.data.id === node.id);
+  }
+  return { entry, kind: node.kind };
+}).filter((item) => item.entry !== undefined) as Array<{ entry: any; kind: NodeKind }>;
+
+// Sort by name
+nodeEntries.sort((a, b) => a.entry.data.name.localeCompare(b.entry.data.name));
+---
+
+<BaseLayout
+  title={domain}
+  description={`Explore ${stats.total} tech pioneers, works, and institutions related to ${domain}.`}
+>
+  <div class="domain-header" style={`--domain-color: ${colorInfo.color}; --domain-bg: ${colorInfo.bgColor};`}>
+    <div class="domain-badge" style={`background: ${colorInfo.bgColor}; color: ${colorInfo.color}; border-color: ${colorInfo.borderColor};`}>
+      Domain
+    </div>
+    <h1>{domain}</h1>
+    <p class="domain-description">
+      Explore the people, works, and institutions that shaped {domain.toLowerCase()}.
+    </p>
+
+    <div class="domain-stats">
+      <div class="stat">
+        <span class="stat-value">{stats.total}</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" style="color: #e74c3c;">{stats.people}</span>
+        <span class="stat-label">People</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" style="color: #3498db;">{stats.works}</span>
+        <span class="stat-label">Works</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" style="color: #27ae60;">{stats.institutions}</span>
+        <span class="stat-label">Institutions</span>
+      </div>
+    </div>
+  </div>
+
+  {relatedDomains.length > 0 && (
+    <div class="related-domains">
+      <h3>Related Domains</h3>
+      <div class="related-tags">
+        {relatedDomains.map(({ domain: relDomain, count }) => {
+          const relColorInfo = getDomainColorInfo(relDomain);
+          return (
+            <a
+              href={`/domain/${getDomainSlug(relDomain)}`}
+              class="related-tag"
+              style={`--domain-color: ${relColorInfo.color}; --domain-bg: ${relColorInfo.bgColor}; --domain-border: ${relColorInfo.borderColor};`}
+            >
+              {relDomain}
+              <span class="tag-count">{count}</span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  )}
+
+  {graphNodes.length > 1 && (
+    <div class="domain-graph-section">
+      <h2>Influence Network</h2>
+      <p class="section-description">How nodes in this domain are connected.</p>
+      <DomainGraph
+        client:load
+        nodes={graphNodes.map((n) => ({ id: n.id, name: n.name, kind: n.kind }))}
+        edges={graphEdges.map((e) => ({ source: e.source, target: e.target, kind: e.kind, label: e.label }))}
+        height={350}
+      />
+    </div>
+  )}
+
+  <div class="domain-content">
+    <h2>All Items ({stats.total})</h2>
+
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All ({stats.total})</button>
+      {stats.people > 0 && <button class="filter-tab" data-filter="people">People ({stats.people})</button>}
+      {stats.works > 0 && <button class="filter-tab" data-filter="works">Works ({stats.works})</button>}
+      {stats.institutions > 0 && <button class="filter-tab" data-filter="institutions">Institutions ({stats.institutions})</button>}
+    </div>
+
+    <div class="card-grid" id="card-grid">
+      {nodeEntries.map(({ entry, kind }) => (
+        <div class="grid-item" data-kind={kind}>
+          <NodeCard entry={entry} kind={kind} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="domain-actions">
+    <a href="/browse" class="action-link">Browse All</a>
+    <a href={`/graph?domains=${encodeURIComponent(domain)}`} class="action-link primary">View in Full Graph</a>
+  </div>
+</BaseLayout>
+
+<script>
+  const filterTabs = document.querySelectorAll<HTMLButtonElement>('.filter-tab');
+  const gridItems = document.querySelectorAll<HTMLElement>('.grid-item');
+
+  filterTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      // Update active state
+      filterTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const filter = tab.dataset.filter;
+
+      // Filter items
+      gridItems.forEach((item) => {
+        if (filter === 'all' || item.dataset.kind === filter) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .domain-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .domain-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    border: 1px solid;
+  }
+
+  .domain-header h1 {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--domain-color);
+  }
+
+  .domain-description {
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .domain-stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-top: 0.25rem;
+  }
+
+  .related-domains {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+  }
+
+  .related-domains h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .related-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .related-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--domain-bg);
+    border: 1px solid var(--domain-border);
+    border-radius: 6px;
+    color: var(--domain-color);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+  }
+
+  .related-tag:hover {
+    background: var(--domain-border);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .tag-count {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .domain-graph-section {
+    margin-bottom: 2rem;
+  }
+
+  .domain-graph-section h2 {
+    margin-bottom: 0.25rem;
+  }
+
+  .section-description {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .domain-content h2 {
+    margin-bottom: 1rem;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-tab {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-card-bg);
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+  }
+
+  .filter-tab:hover {
+    background: var(--color-bg);
+  }
+
+  .filter-tab.active {
+    background: var(--color-link);
+    color: white;
+    border-color: var(--color-link);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .domain-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .action-link {
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .action-link:hover {
+    background: var(--color-bg);
+    text-decoration: none;
+  }
+
+  .action-link.primary {
+    background: var(--color-link);
+    color: white;
+    border-color: var(--color-link);
+  }
+
+  .action-link.primary:hover {
+    background: #0052a3;
+  }
+
+  @media (max-width: 600px) {
+    .domain-stats {
+      gap: 1.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+    }
+
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .domain-actions {
+      flex-direction: column;
+    }
+
+    .action-link {
+      text-align: center;
+    }
+  }
+</style>

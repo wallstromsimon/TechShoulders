@@ -3,6 +3,7 @@ import cytoscape, { type Core, type ElementDefinition } from 'cytoscape';
 import { NODE_COLORS, EDGE_COLORS, type NodeKind } from '../lib/constants';
 import { getNeighborhood, type GraphEdge } from '../lib/graph';
 import { GRAPH_CONFIG, URL_PARAMS } from '../lib/config';
+import TagCloud from './TagCloud';
 
 interface GraphNode {
   id: string;
@@ -100,6 +101,8 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
   const [selectedTypes, setSelectedTypes] = useState<NodeKind[]>([]);
   const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [clusterByDomain, setClusterByDomain] = useState(false);
+  const [showTagCloud, setShowTagCloud] = useState(false);
 
   // Initialize state from URL on mount
   useEffect(() => {
@@ -148,6 +151,42 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
       .filter((n) => n.name.toLowerCase().includes(query))
       .slice(0, GRAPH_CONFIG.SEARCH_MAX_RESULTS);
   }, [nodes, searchQuery]);
+
+  // Compute domain counts for tag cloud
+  const domainsWithCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const node of nodes) {
+      for (const domain of node.domains) {
+        counts.set(domain, (counts.get(domain) || 0) + 1);
+      }
+    }
+    return Array.from(counts.entries())
+      .map(([domain, count]) => ({ domain, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [nodes]);
+
+  // Compute related domains based on selection
+  const relatedDomains = useMemo(() => {
+    if (selectedDomains.length === 0) return [];
+
+    const matchingNodes = nodes.filter((n) =>
+      selectedDomains.some((d) => n.domains.includes(d))
+    );
+
+    const coOccurrence = new Map<string, number>();
+    for (const node of matchingNodes) {
+      for (const domain of node.domains) {
+        if (!selectedDomains.includes(domain)) {
+          coOccurrence.set(domain, (coOccurrence.get(domain) || 0) + 1);
+        }
+      }
+    }
+
+    return Array.from(coOccurrence.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([domain, count]) => ({ domain, count }));
+  }, [nodes, selectedDomains]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -228,13 +267,38 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
       (e) => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target)
     );
 
+    // Get unique domains for clustering
+    const uniqueDomains = new Set<string>();
+    if (clusterByDomain) {
+      for (const node of filteredNodes) {
+        if (node.domains[0]) {
+          uniqueDomains.add(node.domains[0]);
+        }
+      }
+    }
+
     const elements: ElementDefinition[] = [
+      // Add compound parent nodes for domains when clustering
+      ...(clusterByDomain
+        ? Array.from(uniqueDomains).map((domain) => ({
+            data: {
+              id: `domain-${domain.replace(/\s+/g, '-').toLowerCase()}`,
+              label: domain,
+              isCluster: true,
+            },
+          }))
+        : []),
+      // Add regular nodes
       ...filteredNodes.map((node) => ({
         data: {
           id: node.id,
           label: node.name,
           kind: node.kind,
           focused: node.id === focusedNode,
+          primaryDomain: node.domains[0] || '',
+          ...(clusterByDomain && node.domains[0]
+            ? { parent: `domain-${node.domains[0].replace(/\s+/g, '-').toLowerCase()}` }
+            : {}),
         },
       })),
       ...visibleEdges.map((edge, idx) => ({
@@ -306,6 +370,25 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
             'overlay-opacity': 0.2,
           },
         },
+        // Cluster (compound parent) styles
+        {
+          selector: 'node[?isCluster]',
+          style: {
+            'background-color': '#f0f0f0',
+            'background-opacity': 0.5,
+            'border-width': 2,
+            'border-color': '#ccc',
+            'border-style': 'dashed',
+            label: 'data(label)',
+            'text-valign': 'top',
+            'text-halign': 'center',
+            'text-margin-y': -10,
+            'font-size': 14,
+            'font-weight': 600,
+            color: '#666',
+            'padding': 20,
+          } as cytoscape.Css.Node,
+        },
       ],
       layout: {
         name: 'cose',
@@ -373,7 +456,7 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
       if (clickTimeout) clearTimeout(clickTimeout);
       cy.destroy();
     };
-  }, [nodes, edges, includeAffiliations, focusedNode, focusDepth, selectedTypes, selectedDomains]);
+  }, [nodes, edges, includeAffiliations, focusedNode, focusDepth, selectedTypes, selectedDomains, clusterByDomain]);
 
   // Get the focused node's name for display
   const focusedNodeName = focusedNode ? nodes.find((n) => n.id === focusedNode)?.name : null;
@@ -545,6 +628,42 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
           )}
         </button>
 
+        {/* Tag Cloud Toggle */}
+        <button
+          onClick={() => setShowTagCloud(!showTagCloud)}
+          style={{
+            padding: '0.5rem 0.75rem',
+            border: '1px solid #ccc',
+            borderRadius: 6,
+            backgroundColor: showTagCloud ? '#f0f0f0' : '#fff',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+          }}
+        >
+          {showTagCloud ? 'Hide' : 'Show'} Tag Cloud
+        </button>
+
+        {/* Cluster Toggle */}
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            cursor: 'pointer',
+            userSelect: 'none',
+            padding: '0.5rem 0',
+            fontSize: '0.85rem',
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={clusterByDomain}
+            onChange={(e) => setClusterByDomain(e.target.checked)}
+            style={{ cursor: 'pointer' }}
+          />
+          Cluster by domain
+        </label>
+
         {/* Share Link Button */}
         {hasShareableState && (
           <button
@@ -688,6 +807,72 @@ export default function InfluenceGraph({ nodes, edges, allDomains }: InfluenceGr
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Tag Cloud Panel */}
+      {showTagCloud && (
+        <div
+          style={{
+            marginBottom: '1rem',
+            padding: '1rem',
+            backgroundColor: '#f8f9fa',
+            border: '1px solid #e0e0e0',
+            borderRadius: 8,
+          }}
+        >
+          <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 }}>
+            Domain Tag Cloud
+          </h4>
+          <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.75rem', color: '#666' }}>
+            Click tags to filter. Size indicates frequency.
+          </p>
+          <TagCloud
+            domains={domainsWithCounts}
+            selectedDomains={selectedDomains}
+            onDomainClick={(domain) => {
+              if (selectedDomains.includes(domain)) {
+                setSelectedDomains(selectedDomains.filter((d) => d !== domain));
+              } else {
+                setSelectedDomains([...selectedDomains, domain]);
+              }
+            }}
+            maxTags={25}
+          />
+        </div>
+      )}
+
+      {/* Related Domains Suggestions */}
+      {selectedDomains.length > 0 && relatedDomains.length > 0 && (
+        <div
+          style={{
+            marginBottom: '1rem',
+            padding: '0.75rem 1rem',
+            backgroundColor: '#e8f4fc',
+            border: '1px solid #3498db',
+            borderRadius: 6,
+          }}
+        >
+          <span style={{ fontSize: '0.85rem', fontWeight: 500 }}>Related domains: </span>
+          {relatedDomains.map(({ domain, count }) => (
+            <button
+              key={domain}
+              onClick={() => setSelectedDomains([...selectedDomains, domain])}
+              style={{
+                marginLeft: '0.5rem',
+                padding: '0.25rem 0.5rem',
+                fontSize: '0.8rem',
+                backgroundColor: '#fff',
+                border: '1px solid #3498db',
+                borderRadius: 4,
+                cursor: 'pointer',
+                color: '#3498db',
+              }}
+              title={`${count} shared items`}
+            >
+              + {domain}
+            </button>
+          ))}
         </div>
       )}
 

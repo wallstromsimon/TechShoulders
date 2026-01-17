@@ -1,0 +1,468 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NodeCard from '../../components/NodeCard.astro';
+import DomainGraph from '../../components/DomainGraph';
+import {
+  loadAll,
+  buildSearchIndex,
+  getBuiltInTopics,
+  getTopicBySlug,
+  getTopicStats,
+  getNodesForTopic,
+  buildTopicGraphData,
+  type TopicDefinition,
+  type NodeKind,
+} from '../../lib/data';
+import { getDomainColorInfo, getDomainSlug } from '../../lib/domainColors';
+
+export async function getStaticPaths() {
+  const topics = getBuiltInTopics();
+
+  return topics.map((topic) => ({
+    params: { slug: topic.slug },
+    props: { topic },
+  }));
+}
+
+interface Props {
+  topic: TopicDefinition;
+}
+
+const { topic } = Astro.props;
+
+// Get all data
+const allNodes = await buildSearchIndex();
+const stats = getTopicStats(topic, allNodes);
+const topicNodes = getNodesForTopic(topic, allNodes);
+const { nodes: graphNodes, edges: graphEdges } = await buildTopicGraphData(topic, true);
+
+// Get entries for NodeCards
+const { people, works, institutions } = await loadAll();
+
+// Map nodes to entries
+const nodeEntries = topicNodes.map((node) => {
+  let entry;
+  if (node.kind === 'people') {
+    entry = people.find((p) => p.data.id === node.id);
+  } else if (node.kind === 'works') {
+    entry = works.find((w) => w.data.id === node.id);
+  } else {
+    entry = institutions.find((i) => i.data.id === node.id);
+  }
+  return { entry, kind: node.kind };
+}).filter((item) => item.entry !== undefined) as Array<{ entry: any; kind: NodeKind }>;
+
+// Sort by name
+nodeEntries.sort((a, b) => a.entry.data.name.localeCompare(b.entry.data.name));
+
+// Get other topics for navigation
+const allTopics = getBuiltInTopics();
+const otherTopics = allTopics.filter((t) => t.slug !== topic.slug).slice(0, 4);
+---
+
+<BaseLayout
+  title={topic.name}
+  description={topic.description}
+>
+  <div class="topic-header">
+    <div class="topic-icon">{topic.icon}</div>
+    <div class="topic-badge">Topic</div>
+    <h1>{topic.name}</h1>
+    <p class="topic-description">{topic.description}</p>
+
+    <div class="topic-stats">
+      <div class="stat">
+        <span class="stat-value">{stats.total}</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" style="color: #e74c3c;">{stats.people}</span>
+        <span class="stat-label">People</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" style="color: #3498db;">{stats.works}</span>
+        <span class="stat-label">Works</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" style="color: #27ae60;">{stats.institutions}</span>
+        <span class="stat-label">Institutions</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="included-domains">
+    <h3>Included Domains</h3>
+    <div class="domain-tags">
+      {topic.domains.map((domain) => {
+        const colorInfo = getDomainColorInfo(domain);
+        return (
+          <a
+            href={`/domain/${getDomainSlug(domain)}`}
+            class="domain-tag"
+            style={`--domain-color: ${colorInfo.color}; --domain-bg: ${colorInfo.bgColor}; --domain-border: ${colorInfo.borderColor};`}
+          >
+            {domain}
+          </a>
+        );
+      })}
+    </div>
+  </div>
+
+  {graphNodes.length > 1 && (
+    <div class="topic-graph-section">
+      <h2>Influence Network</h2>
+      <p class="section-description">How nodes in this topic are connected.</p>
+      <DomainGraph
+        client:load
+        nodes={graphNodes.map((n) => ({ id: n.id, name: n.name, kind: n.kind }))}
+        edges={graphEdges.map((e) => ({ source: e.source, target: e.target, kind: e.kind, label: e.label }))}
+        height={400}
+      />
+    </div>
+  )}
+
+  <div class="topic-content">
+    <h2>All Items ({stats.total})</h2>
+
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All ({stats.total})</button>
+      {stats.people > 0 && <button class="filter-tab" data-filter="people">People ({stats.people})</button>}
+      {stats.works > 0 && <button class="filter-tab" data-filter="works">Works ({stats.works})</button>}
+      {stats.institutions > 0 && <button class="filter-tab" data-filter="institutions">Institutions ({stats.institutions})</button>}
+    </div>
+
+    <div class="card-grid" id="card-grid">
+      {nodeEntries.map(({ entry, kind }) => (
+        <div class="grid-item" data-kind={kind}>
+          <NodeCard entry={entry} kind={kind} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {otherTopics.length > 0 && (
+    <div class="other-topics">
+      <h3>Explore More Topics</h3>
+      <div class="topic-links">
+        {otherTopics.map((t) => (
+          <a href={`/topics/${t.slug}`} class="topic-link">
+            <span class="topic-link-icon">{t.icon}</span>
+            <span class="topic-link-name">{t.name}</span>
+          </a>
+        ))}
+        <a href="/topics" class="topic-link view-all">
+          <span class="topic-link-name">View All Topics</span>
+        </a>
+      </div>
+    </div>
+  )}
+
+  <div class="topic-actions">
+    <a href="/topics" class="action-link">All Topics</a>
+    <a href="/browse" class="action-link">Browse All</a>
+    <a href={`/graph?domains=${encodeURIComponent(topic.domains.join(','))}`} class="action-link primary">View in Full Graph</a>
+  </div>
+</BaseLayout>
+
+<script>
+  const filterTabs = document.querySelectorAll<HTMLButtonElement>('.filter-tab');
+  const gridItems = document.querySelectorAll<HTMLElement>('.grid-item');
+
+  filterTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      // Update active state
+      filterTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const filter = tab.dataset.filter;
+
+      // Filter items
+      gridItems.forEach((item) => {
+        if (filter === 'all' || item.dataset.kind === filter) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .topic-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .topic-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    font-family: monospace;
+  }
+
+  .topic-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #667eea;
+    margin-bottom: 0.75rem;
+  }
+
+  .topic-header h1 {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .topic-description {
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .topic-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-top: 0.25rem;
+  }
+
+  .included-domains {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+  }
+
+  .included-domains h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .domain-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .domain-tag {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    background: var(--domain-bg);
+    border: 1px solid var(--domain-border);
+    border-radius: 6px;
+    color: var(--domain-color);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+  }
+
+  .domain-tag:hover {
+    background: var(--domain-border);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .topic-graph-section {
+    margin-bottom: 2rem;
+  }
+
+  .topic-graph-section h2 {
+    margin-bottom: 0.25rem;
+  }
+
+  .section-description {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .topic-content h2 {
+    margin-bottom: 1rem;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-tab {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-card-bg);
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+  }
+
+  .filter-tab:hover {
+    background: var(--color-bg);
+  }
+
+  .filter-tab.active {
+    background: var(--color-link);
+    color: white;
+    border-color: var(--color-link);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .other-topics {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+  }
+
+  .other-topics h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .topic-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .topic-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.15s ease;
+  }
+
+  .topic-link:hover {
+    border-color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .topic-link-icon {
+    font-family: monospace;
+    font-weight: 600;
+    color: #667eea;
+  }
+
+  .topic-link-name {
+    font-size: 0.9rem;
+  }
+
+  .topic-link.view-all {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+  }
+
+  .topic-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .action-link {
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .action-link:hover {
+    background: var(--color-bg);
+    text-decoration: none;
+  }
+
+  .action-link.primary {
+    background: var(--color-link);
+    color: white;
+    border-color: var(--color-link);
+  }
+
+  .action-link.primary:hover {
+    background: #0052a3;
+  }
+
+  @media (max-width: 600px) {
+    .topic-stats {
+      gap: 1.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+    }
+
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .topic-actions {
+      flex-direction: column;
+    }
+
+    .action-link {
+      text-align: center;
+    }
+  }
+</style>
